@@ -24,7 +24,7 @@ A full-stack web application for managing hockey players and teams, built to sho
 
 ### Frontend
 
-- **React 18** - Modern JavaScript library for building user interfaces
+- **React 19** - Modern JavaScript library for building user interfaces
 - **TypeScript** - Typed superset of JavaScript
 - **Axios** - Promise-based HTTP client
 - **CSS3** - Custom styling with modern CSS features

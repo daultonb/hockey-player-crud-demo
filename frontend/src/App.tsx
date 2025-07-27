@@ -1,5 +1,5 @@
 import './App.css';
-import PlayersTable from './PlayersTable';
+import PlayersTable from './components/players/PlayersTable';
 
 function App() {
   return (

@@ -127,7 +127,7 @@ def populate_database():
                 "goals": 28,
                 "assists": 25,
                 "points": 53,
-                "active_status": False,  # Injured/inactive
+                "active_status": False, # Retired player
                 "team_id": teams[0].id
             }
         ]
