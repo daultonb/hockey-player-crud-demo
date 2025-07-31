@@ -27,28 +27,28 @@ export interface PlayersResponse {
 }
 
 export type SearchField =
-  | "all"
-  | "name"
-  | "position"
-  | "team"
-  | "nationality"
-  | "jersey_number";
+  | 'all'
+  | 'name'
+  | 'position'
+  | 'team'
+  | 'nationality'
+  | 'jersey_number';
 
 export interface SearchConfig {
   value: SearchField;
   label: string;
-  searchKey?: keyof Player | "team.name";
+  searchKey?: keyof Player | 'team.name';
 }
 
 export const SEARCHABLE_FIELDS: SearchConfig[] = [
-  { value: "all", label: "All Fields" },
-  { value: "name", label: "Name", searchKey: "name" },
-  { value: "position", label: "Position", searchKey: "position" },
-  { value: "team", label: "Team", searchKey: "team.name" },
-  { value: "nationality", label: "Nationality", searchKey: "nationality" },
+  { value: 'all', label: 'All Fields' },
+  { value: 'name', label: 'Name', searchKey: 'name' },
+  { value: 'position', label: 'Position', searchKey: 'position' },
+  { value: 'team', label: 'Team', searchKey: 'team.name' },
+  { value: 'nationality', label: 'Nationality', searchKey: 'nationality' },
   {
-    value: "jersey_number",
-    label: "Jersey Number",
-    searchKey: "jersey_number",
+    value: 'jersey_number',
+    label: 'Jersey Number',
+    searchKey: 'jersey_number',
   },
 ];

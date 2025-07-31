@@ -50,17 +50,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
       <div className="modal-content">
         <div className="modal-header">
           {title && <h2 className="modal-title">{title}</h2>}
-          <button 
-            className="modal-close-button" 
+          <button
+            className="modal-close-button"
             onClick={handleCloseClick}
             aria-label="Close modal"
           >
             ×
           </button>
         </div>
-        <div className="modal-body">
-          {children}
-        </div>
+        <div className="modal-body">{children}</div>
       </div>
     </div>
   );

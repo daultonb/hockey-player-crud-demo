@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
-import { SEARCHABLE_FIELDS, SearchField } from "../../types/Player";
-import "./PlayerSearch.css";
+import React, { useState, useCallback } from 'react';
+import { SEARCHABLE_FIELDS, SearchField } from '../../types/Player';
+import './PlayerSearch.css';
 
 interface PlayerSearchProps {
   onSearch: (query: string, field: SearchField) => void;
@@ -13,15 +13,15 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   onClear,
   disabled = false,
 }) => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchField, setSearchField] = useState<SearchField>("all");
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchField, setSearchField] = useState<SearchField>('all');
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
     null
   );
 
   const performSearch = useCallback(
     (query: string, field: SearchField) => {
-      console.log("PlayerSearch: Performing search -", { query, field });
+      console.log('PlayerSearch: Performing search -', { query, field });
       onSearch(query, field);
     },
     [onSearch]
@@ -35,8 +35,8 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
       clearTimeout(debounceTimer);
     }
 
-    if (value.trim() === "") {
-      console.log("PlayerSearch: Search cleared, showing all players");
+    if (value.trim() === '') {
+      console.log('PlayerSearch: Search cleared, showing all players');
       onClear();
       return;
     }
@@ -50,11 +50,11 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   };
 
   const handleFieldChange = (field: SearchField) => {
-    console.log("PlayerSearch: Search field changed to:", field);
+    console.log('PlayerSearch: Search field changed to:', field);
     setSearchField(field);
 
     // Re-run search with new field if there's a query
-    if (searchQuery.trim() !== "") {
+    if (searchQuery.trim() !== '') {
       performSearch(searchQuery, field);
     }
   };
@@ -67,7 +67,7 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
       setDebounceTimer(null);
     }
 
-    if (searchQuery.trim() === "") {
+    if (searchQuery.trim() === '') {
       onClear();
     } else {
       performSearch(searchQuery, searchField);
@@ -75,15 +75,15 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleSearchSubmit(e as any);
     }
   };
 
   const handleClearClick = () => {
-    console.log("PlayerSearch: Clear button clicked");
-    setSearchQuery("");
+    console.log('PlayerSearch: Clear button clicked');
+    setSearchQuery('');
     onClear();
 
     if (debounceTimer) {
@@ -98,12 +98,12 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
         <div className="search-input-group">
           <select
             value={searchField}
-            onChange={(e) => handleFieldChange(e.target.value as SearchField)}
+            onChange={e => handleFieldChange(e.target.value as SearchField)}
             className="search-field-selector"
             disabled={disabled}
             aria-label="Select search field"
           >
-            {SEARCHABLE_FIELDS.map((field) => (
+            {SEARCHABLE_FIELDS.map(field => (
               <option key={field.value} value={field.value}>
                 {field.label}
               </option>
@@ -114,13 +114,13 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              onChange={e => handleSearchChange(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={`Search ${
-                searchField === "all"
-                  ? "all fields"
+                searchField === 'all'
+                  ? 'all fields'
                   : SEARCHABLE_FIELDS.find(
-                      (f) => f.value === searchField
+                      f => f.value === searchField
                     )?.label.toLowerCase()
               }...`}
               className="search-input"

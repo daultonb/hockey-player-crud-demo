@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PlayerDetailsModal from './PlayerDetailsModal';
 import PlayerSearch from './PlayerSearch';
-import { Player, PlayersResponse, SearchField, SEARCHABLE_FIELDS } from '../../types/Player';
+import {
+  Player,
+  PlayersResponse,
+  SearchField,
+  SEARCHABLE_FIELDS,
+} from '../../types/Player';
 
 const PlayersTable: React.FC = () => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
@@ -20,16 +25,25 @@ const PlayersTable: React.FC = () => {
       try {
         console.log('PlayersTable: Fetching players from API');
         setLoading(true);
-        const response = await axios.get<PlayersResponse>(`${apiBaseUrl}/players`);
+        const response = await axios.get<PlayersResponse>(
+          `${apiBaseUrl}/players`
+        );
         console.log('PlayersTable: Raw API response:', response.data);
-        
+
         if (response.data && Array.isArray(response.data.players)) {
-          console.log('PlayersTable: Successfully fetched', response.data.players.length, 'players');
+          console.log(
+            'PlayersTable: Successfully fetched',
+            response.data.players.length,
+            'players'
+          );
           setAllPlayers(response.data.players);
           setFilteredPlayers(response.data.players);
           setError(null);
         } else {
-          console.error('PlayersTable: Invalid API response structure:', response.data);
+          console.error(
+            'PlayersTable: Invalid API response structure:',
+            response.data
+          );
           setError('Invalid data format received from server.');
         }
       } catch (err) {
@@ -61,11 +75,16 @@ const PlayersTable: React.FC = () => {
   };
 
   const searchPlayers = (query: string, field: SearchField) => {
-    console.log('PlayersTable: Searching players with query:', query, 'field:', field);
+    console.log(
+      'PlayersTable: Searching players with query:',
+      query,
+      'field:',
+      field
+    );
     setIsSearching(true);
-    
+
     const searchTerm = query.toLowerCase().trim();
-    
+
     const filtered = allPlayers.filter(player => {
       if (field === 'all') {
         // Search across all searchable fields
@@ -80,8 +99,12 @@ const PlayersTable: React.FC = () => {
         return fieldValue.toLowerCase().includes(searchTerm);
       }
     });
-    
-    console.log('PlayersTable: Search results -', filtered.length, 'players found');
+
+    console.log(
+      'PlayersTable: Search results -',
+      filtered.length,
+      'players found'
+    );
     setFilteredPlayers(filtered);
   };
 
@@ -124,13 +147,13 @@ const PlayersTable: React.FC = () => {
   return (
     <div className="players-container">
       <h1>Hockey Players</h1>
-      
-      <PlayerSearch 
+
+      <PlayerSearch
         onSearch={searchPlayers}
         onClear={clearSearch}
         disabled={loading}
       />
-      
+
       <div className="table-container">
         <table className="players-table">
           <thead>
@@ -149,15 +172,20 @@ const PlayersTable: React.FC = () => {
             {filteredPlayers.length === 0 ? (
               <tr>
                 <td colSpan={8} className="no-results">
-                  {isSearching ? 'No players match your search criteria.' : 'No players to display.'}
+                  {isSearching
+                    ? 'No players match your search criteria.'
+                    : 'No players to display.'}
                 </td>
               </tr>
             ) : (
-              filteredPlayers.map((player) => (
-                <tr key={player.id} className={!player.active_status ? 'retired-player' : ''}>
+              filteredPlayers.map(player => (
+                <tr
+                  key={player.id}
+                  className={!player.active_status ? 'retired-player' : ''}
+                >
                   <td>
-                    <button 
-                      className="player-name-link" 
+                    <button
+                      className="player-name-link"
                       onClick={() => handlePlayerClick(player)}
                       aria-label={`View details for ${player.name}`}
                     >
@@ -167,7 +195,9 @@ const PlayersTable: React.FC = () => {
                   <td>{player.position}</td>
                   <td>{player.team.name}</td>
                   <td>
-                    <span className="jersey-number">#{player.jersey_number}</span>
+                    <span className="jersey-number">
+                      #{player.jersey_number}
+                    </span>
                   </td>
                   <td>
                     <span className="stat">{player.goals}</span>
@@ -179,7 +209,11 @@ const PlayersTable: React.FC = () => {
                     <span className="stat points">{player.points}</span>
                   </td>
                   <td>
-                    <span className={`status ${player.active_status ? 'active' : 'retired'}`}>
+                    <span
+                      className={`status ${
+                        player.active_status ? 'active' : 'retired'
+                      }`}
+                    >
                       {player.active_status ? 'Active' : 'Retired'}
                     </span>
                   </td>
@@ -191,7 +225,9 @@ const PlayersTable: React.FC = () => {
       </div>
 
       <div className="table-footer">
-        <p>Showing {filteredPlayers.length} of {allPlayers.length} players</p>
+        <p>
+          Showing {filteredPlayers.length} of {allPlayers.length} players
+        </p>
       </div>
 
       <PlayerDetailsModal

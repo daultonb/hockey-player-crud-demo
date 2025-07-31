@@ -12,12 +12,11 @@ interface PlayerDetailsModalProps {
 const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
   player,
   isOpen,
-  onClose
+  onClose,
 }) => {
   if (!player) {
     return null;
   }
-
 
   const formatDate = (dateString: string): string => {
     try {
@@ -25,7 +24,7 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch (error) {
       console.warn('PlayerDetailsModal: Invalid date format:', dateString);
@@ -34,9 +33,9 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
   };
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
       title={`${player.name} - #${player.jersey_number}`}
     >
       <div className="player-details">
@@ -49,7 +48,9 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
             </div>
             <div className="info-item">
               <span className="info-label">Team:</span>
-              <span className="info-value">{player.team.city} {player.team.name}</span>
+              <span className="info-value">
+                {player.team.city} {player.team.name}
+              </span>
             </div>
             <div className="info-item">
               <span className="info-label">Nationality:</span>
@@ -61,7 +62,9 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
             </div>
             <div className="info-item">
               <span className="info-label">Birth Date:</span>
-              <span className="info-value">{formatDate(player.birth_date)}</span>
+              <span className="info-value">
+                {formatDate(player.birth_date)}
+              </span>
             </div>
             <div className="info-item">
               <span className="info-label">Height:</span>
@@ -77,7 +80,11 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
             </div>
             <div className="info-item">
               <span className="info-label">Status:</span>
-              <span className={`info-value status ${player.active_status ? 'active' : 'retired'}`}>
+              <span
+                className={`info-value status ${
+                  player.active_status ? 'active' : 'retired'
+                }`}
+              >
                 {player.active_status ? 'Active' : 'Retired'}
               </span>
             </div>
