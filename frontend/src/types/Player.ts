@@ -52,3 +52,47 @@ export const SEARCHABLE_FIELDS: SearchConfig[] = [
     searchKey: 'jersey_number',
   },
 ];
+
+// Sort field type - matches backend SortFieldType
+export type SortField =
+  | 'name'
+  | 'position'
+  | 'team'
+  | 'jersey_number'
+  | 'goals'
+  | 'assists'
+  | 'points'
+  | 'active_status';
+
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortConfig {
+  field: SortField;
+  label: string;
+  displayName: string;
+}
+
+export const SORTABLE_FIELDS: SortConfig[] = [
+  { field: 'name', label: 'Name', displayName: 'Name' },
+  { field: 'position', label: 'Position', displayName: 'Position' },
+  { field: 'team', label: 'Team', displayName: 'Team' },
+  { field: 'jersey_number', label: 'Jersey #', displayName: 'Jersey #' },
+  { field: 'goals', label: 'Goals', displayName: 'Goals' },
+  { field: 'assists', label: 'Assists', displayName: 'Assists' },
+  { field: 'points', label: 'Points', displayName: 'Points' },
+  { field: 'active_status', label: 'Status', displayName: 'Status' },
+];
+
+// Extended API response interface to include sorting info
+export interface PlayersApiResponse {
+  players: Player[];
+  count: number;
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+  search_query: string | null;
+  search_field: SearchField;
+  sort_by: SortField;
+  sort_order: SortDirection;
+}

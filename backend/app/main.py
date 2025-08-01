@@ -8,14 +8,14 @@ from app.models.team import Team
 from app.schemas.player import (
     PlayerSearchParams, 
     PlayerSearchResponse, 
-    PlayersListResponse,
-    SearchFieldType
+    SearchFieldType,
+    SortFieldType,
+    SortDirectionType
 )
-from app.crud.player import get_players_with_search, get_all_players_paginated
+from app.crud.player import get_players_with_search
 from typing import Optional
 import math
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -83,22 +83,28 @@ async def get_players(
     field: SearchFieldType = Query("all", description="Field to search in"),
     page: int = Query(1, ge=1, description="Page number (starts from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Number of results per page"),
+    sort_by: SortFieldType = Query("name", description="Field to sort by"),
+    sort_order: SortDirectionType = Query("asc", description="Sort direction (asc or desc)"),
     db: Session = Depends(get_db)
 ):
     """
-    Get players with optional search and pagination.
+    Get players with optional search, sorting, and pagination.
     
     - **search**: Optional search query string
     - **field**: Field to search in (all, name, position, team, nationality, jersey_number)
     - **page**: Page number (starts from 1)
     - **limit**: Number of results per page (1-100)
+    - **sort_by**: Field to sort by (name, position, team, jersey_number, goals, assists, points, active_status)
+    - **sort_order**: Sort direction (asc or desc)
     """
     
     search_params = PlayerSearchParams(
         search=search,
         field=field,
         page=page,
-        limit=limit
+        limit=limit,
+        sort_by=sort_by,
+        sort_order=sort_order
     )
     
     print(f"API: Processing player request - {search_params}")
@@ -120,10 +126,12 @@ async def get_players(
         "limit": limit,
         "total_pages": total_pages,
         "search_query": search,
-        "search_field": field
+        "search_field": field,
+        "sort_by": sort_by,
+        "sort_order": sort_order
     }
     
-    print(f"API: Returning {len(players_data)} players (page {page}/{total_pages})")
+    print(f"API: Returning {len(players_data)} players (page {page}/{total_pages}) sorted by {sort_by} {sort_order}")
     
     return response
 

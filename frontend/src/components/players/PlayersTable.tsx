@@ -3,18 +3,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import PlayerDetailsModal from './PlayerDetailsModal';
 import PlayerSearch from './PlayerSearch';
-import { Player, SearchField } from '../../types/Player';
-
-interface PlayersApiResponse {
-  players: Player[];
-  count: number;
-  total: number;
-  page: number;
-  limit: number;
-  total_pages: number;
-  search_query: string | null;
-  search_field: SearchField;
-}
+import {
+  Player,
+  SearchField,
+  SortField,
+  SortDirection,
+  PlayersApiResponse,
+  SORTABLE_FIELDS,
+} from '../../types/Player';
 
 const PlayersTable: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -26,9 +22,16 @@ const PlayersTable: React.FC = () => {
 
   // Search and pagination state
   const [currentSearch, setCurrentSearch] = useState<string>('');
+  const [currentSearchField, setCurrentSearchField] =
+    useState<SearchField>('all');
   const [currentPage] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
+
+  // Sort state - default to name ascending
+  const [currentSortField, setCurrentSortField] = useState<SortField>('name');
+  const [currentSortDirection, setCurrentSortDirection] =
+    useState<SortDirection>('asc');
 
   const apiBaseUrl =
     process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -38,6 +41,8 @@ const PlayersTable: React.FC = () => {
       search?: string,
       field: SearchField = 'all',
       page: number = 1,
+      sortBy: SortField = 'name',
+      sortOrder: SortDirection = 'asc',
       showSearchLoading: boolean = false
     ) => {
       try {
@@ -45,6 +50,8 @@ const PlayersTable: React.FC = () => {
           search,
           field,
           page,
+          sortBy,
+          sortOrder,
         });
 
         if (showSearchLoading) {
@@ -53,10 +60,11 @@ const PlayersTable: React.FC = () => {
           setLoading(true);
         }
 
-        // Build query parameters
         const params = new URLSearchParams({
           page: page.toString(),
           limit: '20',
+          sort_by: sortBy,
+          sort_order: sortOrder,
         });
 
         if (search && search.trim()) {
@@ -72,6 +80,8 @@ const PlayersTable: React.FC = () => {
           playersCount: response.data.players.length,
           total: response.data.total,
           page: response.data.page,
+          sortBy: response.data.sort_by,
+          sortOrder: response.data.sort_order,
         });
 
         setPlayers(response.data.players);
@@ -92,25 +102,74 @@ const PlayersTable: React.FC = () => {
     [apiBaseUrl]
   );
 
-  // Initial load
+  // Initial load with default name ascending sort
   useEffect(() => {
-    fetchPlayers();
+    fetchPlayers('', 'all', 1, 'name', 'asc');
   }, [fetchPlayers]);
 
   const handleSearch = useCallback(
     (query: string, field: SearchField) => {
       console.log('PlayersTable: Search requested', { query, field });
       setCurrentSearch(query);
-      fetchPlayers(query, field, 1, true);
+      setCurrentSearchField(field);
+      // Maintain current sort when searching
+      fetchPlayers(
+        query,
+        field,
+        1,
+        currentSortField,
+        currentSortDirection,
+        true
+      );
     },
-    [fetchPlayers]
+    [fetchPlayers, currentSortField, currentSortDirection]
   );
 
   const handleClearSearch = useCallback(() => {
     console.log('PlayersTable: Clear search requested');
     setCurrentSearch('');
-    fetchPlayers('', 'all', 1, true);
-  }, [fetchPlayers]);
+    setCurrentSearchField('all');
+    // Maintain current sort when clearing search
+    fetchPlayers('', 'all', 1, currentSortField, currentSortDirection, true);
+  }, [fetchPlayers, currentSortField, currentSortDirection]);
+
+  const handleSort = useCallback(
+    (field: SortField) => {
+      console.log('PlayersTable: Sort requested', { field });
+
+      let newDirection: SortDirection = 'asc';
+
+      // Toggle direction on repeated sort
+      if (currentSortField === field) {
+        newDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+      }
+
+      console.log('PlayersTable: Applying sort', {
+        field,
+        direction: newDirection,
+      });
+
+      setCurrentSortField(field);
+      setCurrentSortDirection(newDirection);
+
+      // Maintain current search when sorting
+      fetchPlayers(
+        currentSearch,
+        currentSearchField,
+        1,
+        field,
+        newDirection,
+        true
+      );
+    },
+    [
+      fetchPlayers,
+      currentSearch,
+      currentSearchField,
+      currentSortField,
+      currentSortDirection,
+    ]
+  );
 
   const handlePlayerClick = (player: Player) => {
     console.log('PlayersTable: Player clicked:', player.name);
@@ -122,6 +181,24 @@ const PlayersTable: React.FC = () => {
     console.log('PlayersTable: Closing player details modal');
     setIsModalOpen(false);
     setSelectedPlayer(null);
+  };
+
+  const getSortArrow = (field: SortField): string => {
+    if (currentSortField !== field) return '';
+    return currentSortDirection === 'asc' ? ' ↑' : ' ↓';
+  };
+
+  const getSortTooltip = (field: SortField): string => {
+    const fieldConfig = SORTABLE_FIELDS.find(f => f.field === field);
+    const fieldLabel = fieldConfig?.displayName || field;
+
+    if (currentSortField === field) {
+      const nextDirection =
+        currentSortDirection === 'asc' ? 'descending' : 'ascending';
+      return `Sort by ${fieldLabel} ${nextDirection}`;
+    }
+
+    return `Sort by ${fieldLabel}`;
   };
 
   if (loading) {
@@ -164,14 +241,78 @@ const PlayersTable: React.FC = () => {
         <table className="players-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Team</th>
-              <th>Jersey #</th>
-              <th>Goals</th>
-              <th>Assists</th>
-              <th>Points</th>
-              <th>Status</th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'name' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('name')}
+                title={getSortTooltip('name')}
+              >
+                Name{getSortArrow('name')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'position' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('position')}
+                title={getSortTooltip('position')}
+              >
+                Position{getSortArrow('position')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'team' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('team')}
+                title={getSortTooltip('team')}
+              >
+                Team{getSortArrow('team')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'jersey_number' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('jersey_number')}
+                title={getSortTooltip('jersey_number')}
+              >
+                Jersey #{getSortArrow('jersey_number')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'goals' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('goals')}
+                title={getSortTooltip('goals')}
+              >
+                Goals{getSortArrow('goals')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'assists' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('assists')}
+                title={getSortTooltip('assists')}
+              >
+                Assists{getSortArrow('assists')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'points' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('points')}
+                title={getSortTooltip('points')}
+              >
+                Points{getSortArrow('points')}
+              </th>
+              <th
+                className={`sortable-header ${
+                  currentSortField === 'active_status' ? 'sorted' : ''
+                }`}
+                onClick={() => handleSort('active_status')}
+                title={getSortTooltip('active_status')}
+              >
+                Status{getSortArrow('active_status')}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -236,6 +377,16 @@ const PlayersTable: React.FC = () => {
             ? `Showing ${players.length} of ${totalCount} matching players`
             : `Showing ${players.length} of ${totalCount} players`}
           {totalPages > 1 && ` (Page ${currentPage} of ${totalPages})`}
+          {currentSortField && (
+            <span className="sort-info">
+              {' • '}Sorted by{' '}
+              {
+                SORTABLE_FIELDS.find(f => f.field === currentSortField)
+                  ?.displayName
+              }{' '}
+              ({currentSortDirection === 'asc' ? 'A-Z' : 'Z-A'})
+            </span>
+          )}
         </p>
       </div>
 

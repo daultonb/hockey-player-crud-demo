@@ -1,6 +1,6 @@
-/* ========================================
+/* =============================================================================
     GLOBAL STYLES
-   ======================================== */
+   ============================================================================= */
 
 * {
   margin: 0;
@@ -20,28 +20,9 @@ body {
   padding: 20px;
 }
 
-/* ========================================
-    LOADING & ERROR STATES
-   ======================================== */
-
-.loading,
-.error {
-  text-align: center;
-  padding: 40px;
-  font-size: 18px;
-}
-
-.loading {
-  color: #6c757d;
-}
-
-.error {
-  color: #dc3545;
-}
-
-/* ========================================
+/* =============================================================================
     MAIN CONTAINER
-   ======================================== */
+   ============================================================================= */
 
 .players-container {
   max-width: 1400px;
@@ -61,9 +42,42 @@ body {
   text-align: center;
 }
 
-/* ========================================
-    TABLE STYLES
-   ======================================== */
+/* =============================================================================
+    LOADING & ERROR STATES
+   ============================================================================= */
+
+.loading,
+.error {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+}
+
+.loading {
+  color: #6c757d;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.search-loading {
+  padding: 10px 20px;
+  background-color: #e9ecef;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center;
+}
+
+.search-loading p {
+  color: #6c757d;
+  font-style: italic;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* =============================================================================
+    TABLE CONTAINER & STRUCTURE
+   ============================================================================= */
 
 .table-container {
   overflow-x: auto;
@@ -75,6 +89,15 @@ body {
   font-size: 14px;
 }
 
+/* =============================================================================
+    TABLE HEADERS (INCLUDING SORTABLE FUNCTIONALITY)
+   ============================================================================= */
+
+.players-table thead tr {
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
 .players-table th {
   background-color: #343a40;
   color: white;
@@ -84,7 +107,44 @@ body {
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-height: 44px;
+  vertical-align: middle;
 }
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  position: relative;
+}
+
+.sortable-header:hover {
+  background-color: #495057;
+  color: #ffffff;
+}
+
+.sortable-header.sorted {
+  background-color: #007bff;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.sortable-header:after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  text-align: center;
+}
+
+.sortable-header:focus {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+    TABLE BODY & ROWS
+   ============================================================================= */
 
 .players-table td {
   padding: 12px 8px;
@@ -96,6 +156,10 @@ body {
   background-color: #f8f9fa;
 }
 
+.retired-player {
+  opacity: 0.7;
+}
+
 .no-results {
   text-align: center;
   padding: 40px 20px;
@@ -104,9 +168,9 @@ body {
   font-size: 16px;
 }
 
-/* ========================================
+/* =============================================================================
     TABLE CELL CONTENT STYLES
-   ======================================== */
+   ============================================================================= */
 
 .player-name {
   font-weight: 600;
@@ -173,13 +237,9 @@ body {
   border: 1px solid #f5c6cb;
 }
 
-.retired-player {
-  opacity: 0.7;
-}
-
-/* ========================================
+/* =============================================================================
     TABLE FOOTER
-   ======================================== */
+   ============================================================================= */
 
 .table-footer {
   padding: 15px 20px;
@@ -195,32 +255,83 @@ body {
   font-size: 14px;
 }
 
-/* Search loading state */
-.search-loading {
-  padding: 10px 20px;
-  background-color: #e9ecef;
-  border-bottom: 1px solid #dee2e6;
-  text-align: center;
-}
-
-.search-loading p {
-  color: #6c757d;
+.sort-info {
+  color: #6b7280;
+  font-size: 0.9em;
   font-style: italic;
-  margin: 0;
-  font-size: 14px;
 }
 
-/* ========================================
-    RESPONSIVE DESIGN
-   ======================================== */
+/* =============================================================================
+    RESPONSIVE DESIGN - TABLET (max-width: 991.98px)
+   ============================================================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
   .App {
     padding: 15px;
   }
 
+  .players-container {
+    max-width: 100%;
+  }
+
   .players-container h1 {
-    font-size: 24px;
+    font-size: 26px;
+    padding: 18px;
+  }
+
+  .players-table {
+    font-size: 13px;
+  }
+
+  .players-table th,
+  .players-table td {
+    padding: 10px 6px;
+  }
+
+  .players-table th {
+    font-size: 11px;
+  }
+
+  .table-footer {
+    padding: 12px 16px;
+  }
+
+  .table-footer p {
+    font-size: 13px;
+  }
+
+  .no-results {
+    padding: 35px 18px;
+    font-size: 15px;
+  }
+
+  .loading,
+  .error {
+    padding: 35px;
+    font-size: 17px;
+  }
+
+  .sort-info {
+    display: block;
+    margin-top: 4px;
+  }
+}
+
+/* =============================================================================
+    RESPONSIVE DESIGN - MOBILE (max-width: 767.98px)
+   ============================================================================= */
+
+@media (max-width: 767.98px) {
+  .App {
+    padding: 10px;
+  }
+
+  .players-container {
+    border-radius: 6px;
+  }
+
+  .players-container h1 {
+    font-size: 22px;
     padding: 15px;
   }
 
@@ -233,16 +344,68 @@ body {
     padding: 8px 4px;
   }
 
+  .players-table th {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .sortable-header:after {
+    width: 8px;
+  }
+
+  .table-footer {
+    padding: 10px 12px;
+  }
+
+  .table-footer p {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
   .no-results {
     padding: 30px 15px;
     font-size: 14px;
   }
 
-  .table-footer {
-    padding: 12px 16px;
+  .loading,
+  .error {
+    padding: 30px;
+    font-size: 16px;
   }
 
-  .table-footer p {
+  .search-loading {
+    padding: 8px 15px;
+  }
+
+  .search-loading p {
     font-size: 13px;
+  }
+
+  .status {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+
+  .points {
+    font-size: 14px;
+  }
+
+  .jersey-number {
+    font-size: 0.9em;
+  }
+
+  .sort-info {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.85em;
+  }
+
+  .player-name-link {
+    padding: 2px 4px;
+    margin: -2px -4px;
+  }
+
+  .sortable-header {
+    min-height: 40px;
   }
 }

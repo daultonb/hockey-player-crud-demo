@@ -1,9 +1,14 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
-from datetime import date
 
-# Search field options - matches frontend SearchField type
+# Search field frontend options
 SearchFieldType = Literal["all", "name", "position", "team", "nationality", "jersey_number"]
+
+# Sort field database options
+SortFieldType = Literal["name", "position", "team", "jersey_number", "goals", "assists", "points", "active_status"]
+
+# Sort direction options
+SortDirectionType = Literal["asc", "desc"]
 
 class PlayerSearchParams(BaseModel):
     """
@@ -13,6 +18,8 @@ class PlayerSearchParams(BaseModel):
     field: SearchFieldType = Field("all", description="Field to search in")
     page: int = Field(1, ge=1, description="Page number (starts from 1)")
     limit: int = Field(20, ge=1, le=100, description="Number of results per page")
+    sort_by: SortFieldType = Field("name", description="Field to sort by")
+    sort_order: SortDirectionType = Field("asc", description="Sort direction (asc or desc)")
 
 class TeamResponse(BaseModel):
     """
@@ -64,3 +71,5 @@ class PlayerSearchResponse(BaseModel):
     total_pages: int
     search_query: Optional[str]
     search_field: SearchFieldType
+    sort_by: SortFieldType
+    sort_order: SortDirectionType
