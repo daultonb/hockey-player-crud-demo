@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, func, String, cast, asc, desc
 from app.models.player import Player
 from app.models.team import Team
-from app.schemas.player import PlayerSearchParams, SearchFieldType, SortFieldType, SortDirectionType
+from app.schemas.player import PlayerSearchParams, SearchFieldType, SortFieldType, SortDirectionType, PlayerFilter
 from typing import Tuple, List
 
 def get_players_with_search(
@@ -10,18 +10,40 @@ def get_players_with_search(
     search_params: PlayerSearchParams
 ) -> Tuple[List[Player], int]:
     """
-    Get players with search, sorting, and pagination.
+    Get players with search, filtering, sorting, and pagination.
     
     Args:
         db: Database session
-        search_params: Search parameters including query, field, pagination, and sorting
+        search_params: Search parameters including query, field, pagination, sorting, and filtering
     
     Returns:
         Tuple of (players_list, total_count)
     """
     query = db.query(Player).join(Team)
     
-    # Apply search filter if search query provided
+    # Apply search
+    query = _apply_search_filters(query, search_params)
+    
+    # Apply filters
+    query = _apply_custom_filters(query, search_params.filters)
+    
+    # Apply sorting
+    query = _apply_sorting(query, search_params)
+    
+    total_count = query.count()
+    print(f"CRUD: Found {total_count} total matches after search and filters")
+    
+    offset = (search_params.page - 1) * search_params.limit
+    players = query.offset(offset).limit(search_params.limit).all()
+    
+    print(f"CRUD: Returning {len(players)} players for page {search_params.page}")
+    
+    return players, total_count
+
+def _apply_search_filters(query, search_params: PlayerSearchParams):
+    """
+    Apply search filters to the query.
+    """
     if search_params.search and search_params.search.strip():
         search_term = f"%{search_params.search.strip().lower()}%"
         
@@ -64,7 +86,74 @@ def get_players_with_search(
                 query = query.filter(Player.id == -1)  # No player will have ID -1
                 print(f"CRUD: Invalid jersey number search '{search_params.search}'")
     
-    # Apply sorting with special handling for active_status
+    return query
+
+def _apply_custom_filters(query, filters: List[PlayerFilter]):
+    """
+    Apply custom filters to the query.
+    """
+    if not filters:
+        return query
+    
+    print(f"CRUD: Applying {len(filters)} custom filters")
+    
+    for filter_item in filters:
+        field = filter_item.field
+        operator = filter_item.operator
+        value = filter_item.value
+        
+        print(f"CRUD: Applying filter: {field} {operator} {value}")
+        
+        if field == "team":
+            column = Team.name
+        else:
+            column = getattr(Player, field)
+        
+        # Apply the filter based on operator and field type
+        if field in ["position", "team"]:
+            # String fields
+            if operator == "=":
+                query = query.filter(func.lower(column) == str(value).lower())
+            elif operator == "!=":
+                query = query.filter(func.lower(column) != str(value).lower())
+            elif operator == "contains":
+                query = query.filter(func.lower(column).like(f"%{str(value).lower()}%"))
+            elif operator == "not_contains":
+                query = query.filter(~func.lower(column).like(f"%{str(value).lower()}%"))
+                
+        elif field in ["jersey_number", "goals", "assists", "points"]:
+            # Numeric fields
+            numeric_value = int(value) if isinstance(value, str) else value
+            if operator == "=":
+                query = query.filter(column == numeric_value)
+            elif operator == "!=":
+                query = query.filter(column != numeric_value)
+            elif operator == ">":
+                query = query.filter(column > numeric_value)
+            elif operator == "<":
+                query = query.filter(column < numeric_value)
+            elif operator == ">=":
+                query = query.filter(column >= numeric_value)
+            elif operator == "<=":
+                query = query.filter(column <= numeric_value)
+                
+        elif field == "active_status":
+            if isinstance(value, str):
+                bool_value = value.lower() in ('true', '1', 'yes', 'active')
+            else:
+                bool_value = bool(value)
+            
+            if operator == "=":
+                query = query.filter(column == bool_value)
+            elif operator == "!=":
+                query = query.filter(column != bool_value)
+    
+    return query
+
+def _apply_sorting(query, search_params: PlayerSearchParams):
+    """
+    Apply sorting to the query with special handling for active_status.
+    """
     if search_params.sort_by == "active_status":
         # For active_status, reverse the sort logic to match user-friendly display
         # "Active" (True) should come before "Retired" (False) when ascending
@@ -75,7 +164,6 @@ def get_players_with_search(
             query = query.order_by(desc(Player.active_status))  # Reversed: True first (Active)
             print(f"CRUD: Sorting by {search_params.sort_by} ascending (Active first)")
     else:
-        # Normal sorting for all other fields
         sort_column = _get_sort_column(search_params.sort_by)
         if search_params.sort_order == "desc":
             query = query.order_by(desc(sort_column))
@@ -84,16 +172,7 @@ def get_players_with_search(
             query = query.order_by(asc(sort_column))
             print(f"CRUD: Sorting by {search_params.sort_by} ascending")
     
-    total_count = query.count()
-    print(f"CRUD: Found {total_count} total matches")
-    
-    # Apply pagination
-    offset = (search_params.page - 1) * search_params.limit
-    players = query.offset(offset).limit(search_params.limit).all()
-    
-    print(f"CRUD: Returning {len(players)} players for page {search_params.page}")
-    
-    return players, total_count
+    return query
 
 def _get_sort_column(sort_field: SortFieldType):
     """
@@ -137,8 +216,7 @@ def get_all_players_paginated(
     query = db.query(Player).join(Team).order_by(asc(Player.name))
     
     total_count = query.count()
-    
-    # Apply pagination
+
     offset = (page - 1) * limit
     players = query.offset(offset).limit(limit).all()
     

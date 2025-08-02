@@ -1,14 +1,58 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from pydantic import BaseModel, Field, validator
+from typing import Optional, Literal, List, Union
+from datetime import date
 
-# Search field frontend options
+# Search field options - matches frontend SearchField type
 SearchFieldType = Literal["all", "name", "position", "team", "nationality", "jersey_number"]
 
-# Sort field database options
+# Sort field options - matches database fields and team join
 SortFieldType = Literal["name", "position", "team", "jersey_number", "goals", "assists", "points", "active_status"]
 
 # Sort direction options
 SortDirectionType = Literal["asc", "desc"]
+
+# Filter field options - fields that can be filtered
+FilterFieldType = Literal["position", "team", "jersey_number", "goals", "assists", "points", "active_status"]
+
+# Filter operators for different data types
+StringFilterOperator = Literal["=", "!=", "contains", "not_contains"]
+NumericFilterOperator = Literal["=", "!=", ">", "<", ">=", "<="]
+BooleanFilterOperator = Literal["=", "!="]
+
+# Union of all filter operators
+FilterOperatorType = Union[StringFilterOperator, NumericFilterOperator, BooleanFilterOperator]
+
+class PlayerFilter(BaseModel):
+    """
+    Individual filter configuration.
+    """
+    field: FilterFieldType = Field(..., description="Field to filter on")
+    operator: FilterOperatorType = Field(..., description="Filter operator")
+    value: Union[str, int, bool] = Field(..., description="Filter value")
+    
+    @validator('operator')
+    def validate_operator_for_field(cls, operator, values):
+        """
+        Validate that the operator is appropriate for the field type.
+        """
+        field = values.get('field')
+        
+        # String fields: position, team
+        if field in ['position', 'team']:
+            if operator not in ['=', '!=', 'contains', 'not_contains']:
+                raise ValueError(f"Invalid operator '{operator}' for string field '{field}'")
+        
+        # Numeric fields: jersey_number, goals, assists, points
+        elif field in ['jersey_number', 'goals', 'assists', 'points']:
+            if operator not in ['=', '!=', '>', '<', '>=', '<=']:
+                raise ValueError(f"Invalid operator '{operator}' for numeric field '{field}'")
+        
+        # Boolean field: active_status
+        elif field == 'active_status':
+            if operator not in ['=', '!=']:
+                raise ValueError(f"Invalid operator '{operator}' for boolean field '{field}'")
+        
+        return operator
 
 class PlayerSearchParams(BaseModel):
     """
@@ -20,6 +64,7 @@ class PlayerSearchParams(BaseModel):
     limit: int = Field(20, ge=1, le=100, description="Number of results per page")
     sort_by: SortFieldType = Field("name", description="Field to sort by")
     sort_order: SortDirectionType = Field("asc", description="Sort direction (asc or desc)")
+    filters: List[PlayerFilter] = Field([], description="List of filters to apply")
 
 class TeamResponse(BaseModel):
     """
@@ -73,3 +118,4 @@ class PlayerSearchResponse(BaseModel):
     search_field: SearchFieldType
     sort_by: SortFieldType
     sort_order: SortDirectionType
+    filters: List[PlayerFilter]

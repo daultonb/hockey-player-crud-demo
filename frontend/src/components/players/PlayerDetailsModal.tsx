@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import Modal from '../modal/Modal';
 import { Player } from '../../types/Player';

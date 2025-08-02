@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.config import settings
@@ -10,11 +10,13 @@ from app.schemas.player import (
     PlayerSearchResponse, 
     SearchFieldType,
     SortFieldType,
-    SortDirectionType
+    SortDirectionType,
+    PlayerFilter
 )
-from app.crud.player import get_players_with_search
-from typing import Optional
+from app.crud.player import get_players_with_search, get_all_players_paginated
+from typing import Optional, List
 import math
+import json
 
 Base.metadata.create_all(bind=engine)
 
@@ -85,10 +87,11 @@ async def get_players(
     limit: int = Query(20, ge=1, le=100, description="Number of results per page"),
     sort_by: SortFieldType = Query("name", description="Field to sort by"),
     sort_order: SortDirectionType = Query("asc", description="Sort direction (asc or desc)"),
+    filters: Optional[str] = Query(None, description="JSON string of filters array"),
     db: Session = Depends(get_db)
 ):
     """
-    Get players with optional search, sorting, and pagination.
+    Get players with optional search, filtering, sorting, and pagination.
     
     - **search**: Optional search query string
     - **field**: Field to search in (all, name, position, team, nationality, jersey_number)
@@ -96,7 +99,18 @@ async def get_players(
     - **limit**: Number of results per page (1-100)
     - **sort_by**: Field to sort by (name, position, team, jersey_number, goals, assists, points, active_status)
     - **sort_order**: Sort direction (asc or desc)
+    - **filters**: JSON string containing array of filter objects
     """
+    
+    parsed_filters = []
+    if filters:
+        try:
+            filter_data = json.loads(filters)
+            parsed_filters = [PlayerFilter(**f) for f in filter_data]
+            print(f"API: Parsed {len(parsed_filters)} filters")
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"API: Error parsing filters: {e}")
+            raise HTTPException(status_code=400, detail=f"Invalid filters format: {str(e)}")
     
     search_params = PlayerSearchParams(
         search=search,
@@ -104,18 +118,16 @@ async def get_players(
         page=page,
         limit=limit,
         sort_by=sort_by,
-        sort_order=sort_order
+        sort_order=sort_order,
+        filters=parsed_filters
     )
     
     print(f"API: Processing player request - {search_params}")
     
-    # Get players and total count
     players, total_count = get_players_with_search(db, search_params)
     
-    # Format players for response
     players_data = [format_player_response(player) for player in players]
     
-    # Calculate pagination info
     total_pages = math.ceil(total_count / limit) if total_count > 0 else 0
     
     response = {
@@ -128,10 +140,12 @@ async def get_players(
         "search_query": search,
         "search_field": field,
         "sort_by": sort_by,
-        "sort_order": sort_order
+        "sort_order": sort_order,
+        "filters": parsed_filters
     }
     
-    print(f"API: Returning {len(players_data)} players (page {page}/{total_pages}) sorted by {sort_by} {sort_order}")
+    filter_info = f" with {len(parsed_filters)} filters" if parsed_filters else ""
+    print(f"API: Returning {len(players_data)} players (page {page}/{total_pages}) sorted by {sort_by} {sort_order}{filter_info}")
     
     return response
 

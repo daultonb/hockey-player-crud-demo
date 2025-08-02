@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import PlayerDetailsModal from './PlayerDetailsModal';
 import PlayerSearch from './PlayerSearch';
+import FilterModal from './FilterModal';
 import {
   Player,
   SearchField,
@@ -10,6 +11,8 @@ import {
   SortDirection,
   PlayersApiResponse,
   SORTABLE_FIELDS,
+  PlayerFilter,
+  FILTERABLE_FIELDS,
 } from '../../types/Player';
 
 const PlayersTable: React.FC = () => {
@@ -33,6 +36,10 @@ const PlayersTable: React.FC = () => {
   const [currentSortDirection, setCurrentSortDirection] =
     useState<SortDirection>('asc');
 
+  // Filter state
+  const [currentFilters, setCurrentFilters] = useState<PlayerFilter[]>([]);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
+
   const apiBaseUrl =
     process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
 
@@ -43,6 +50,7 @@ const PlayersTable: React.FC = () => {
       page: number = 1,
       sortBy: SortField = 'name',
       sortOrder: SortDirection = 'asc',
+      filters: PlayerFilter[] = [],
       showSearchLoading: boolean = false
     ) => {
       try {
@@ -52,6 +60,7 @@ const PlayersTable: React.FC = () => {
           page,
           sortBy,
           sortOrder,
+          filtersCount: filters.length,
         });
 
         if (showSearchLoading) {
@@ -60,6 +69,7 @@ const PlayersTable: React.FC = () => {
           setLoading(true);
         }
 
+        // Build query parameters
         const params = new URLSearchParams({
           page: page.toString(),
           limit: '20',
@@ -72,6 +82,10 @@ const PlayersTable: React.FC = () => {
           params.append('field', field);
         }
 
+        if (filters.length > 0) {
+          params.append('filters', JSON.stringify(filters));
+        }
+
         const response = await axios.get<PlayersApiResponse>(
           `${apiBaseUrl}/players?${params.toString()}`
         );
@@ -82,6 +96,7 @@ const PlayersTable: React.FC = () => {
           page: response.data.page,
           sortBy: response.data.sort_by,
           sortOrder: response.data.sort_order,
+          filtersCount: response.data.filters.length,
         });
 
         setPlayers(response.data.players);
@@ -104,7 +119,7 @@ const PlayersTable: React.FC = () => {
 
   // Initial load with default name ascending sort
   useEffect(() => {
-    fetchPlayers('', 'all', 1, 'name', 'asc');
+    fetchPlayers('', 'all', 1, 'name', 'asc', []);
   }, [fetchPlayers]);
 
   const handleSearch = useCallback(
@@ -112,26 +127,35 @@ const PlayersTable: React.FC = () => {
       console.log('PlayersTable: Search requested', { query, field });
       setCurrentSearch(query);
       setCurrentSearchField(field);
-      // Maintain current sort when searching
+      // Maintain current sort and filters when searching
       fetchPlayers(
         query,
         field,
         1,
         currentSortField,
         currentSortDirection,
+        currentFilters,
         true
       );
     },
-    [fetchPlayers, currentSortField, currentSortDirection]
+    [fetchPlayers, currentSortField, currentSortDirection, currentFilters]
   );
 
   const handleClearSearch = useCallback(() => {
     console.log('PlayersTable: Clear search requested');
     setCurrentSearch('');
     setCurrentSearchField('all');
-    // Maintain current sort when clearing search
-    fetchPlayers('', 'all', 1, currentSortField, currentSortDirection, true);
-  }, [fetchPlayers, currentSortField, currentSortDirection]);
+    // Maintain current sort and filters when clearing search
+    fetchPlayers(
+      '',
+      'all',
+      1,
+      currentSortField,
+      currentSortDirection,
+      currentFilters,
+      true
+    );
+  }, [fetchPlayers, currentSortField, currentSortDirection, currentFilters]);
 
   const handleSort = useCallback(
     (field: SortField) => {
@@ -139,7 +163,7 @@ const PlayersTable: React.FC = () => {
 
       let newDirection: SortDirection = 'asc';
 
-      // Toggle direction on repeated sort
+      // If clicking the same field, toggle direction
       if (currentSortField === field) {
         newDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
       }
@@ -152,13 +176,50 @@ const PlayersTable: React.FC = () => {
       setCurrentSortField(field);
       setCurrentSortDirection(newDirection);
 
-      // Maintain current search when sorting
+      // Maintain current search and filters when sorting
       fetchPlayers(
         currentSearch,
         currentSearchField,
         1,
         field,
         newDirection,
+        currentFilters,
+        true
+      );
+    },
+    [
+      fetchPlayers,
+      currentSearch,
+      currentSearchField,
+      currentSortField,
+      currentSortDirection,
+      currentFilters,
+    ]
+  );
+
+  const handleOpenFilters = useCallback(() => {
+    console.log('PlayersTable: Opening filter modal');
+    setIsFilterModalOpen(true);
+  }, []);
+
+  const handleCloseFilters = useCallback(() => {
+    console.log('PlayersTable: Closing filter modal');
+    setIsFilterModalOpen(false);
+  }, []);
+
+  const handleApplyFilters = useCallback(
+    (filters: PlayerFilter[]) => {
+      console.log('PlayersTable: Applying filters', filters);
+      setCurrentFilters(filters);
+
+      // Maintain current search and sort when applying filters
+      fetchPlayers(
+        currentSearch,
+        currentSearchField,
+        1,
+        currentSortField,
+        currentSortDirection,
+        filters,
         true
       );
     },
@@ -219,7 +280,48 @@ const PlayersTable: React.FC = () => {
     );
   }
 
+  const formatFilterText = (filter: PlayerFilter): string => {
+    const fieldConfig = FILTERABLE_FIELDS.find(f => f.field === filter.field);
+    const fieldName = fieldConfig?.displayName || filter.field;
+
+    let operatorText = '';
+    switch (filter.operator) {
+      case '=':
+        operatorText = 'equals';
+        break;
+      case '!=':
+        operatorText = 'does not equal';
+        break;
+      case 'contains':
+        operatorText = 'contains';
+        break;
+      case 'not_contains':
+        operatorText = 'does not contain';
+        break;
+      case '>':
+        operatorText = 'greater than';
+        break;
+      case '<':
+        operatorText = 'less than';
+        break;
+      case '>=':
+        operatorText = 'greater than or equal to';
+        break;
+      case '<=':
+        operatorText = 'less than or equal to';
+        break;
+    }
+
+    let valueText = filter.value.toString();
+    if (filter.field === 'active_status') {
+      valueText = filter.value ? 'Active' : 'Retired';
+    }
+
+    return `${fieldName} ${operatorText} ${valueText}`;
+  };
+
   const isSearchActive = currentSearch.trim() !== '';
+  const hasActiveFilters = currentFilters.length > 0;
 
   return (
     <div className="players-container">
@@ -228,7 +330,9 @@ const PlayersTable: React.FC = () => {
       <PlayerSearch
         onSearch={handleSearch}
         onClear={handleClearSearch}
+        onOpenFilters={handleOpenFilters}
         disabled={loading || searchLoading}
+        activeFiltersCount={currentFilters.length}
       />
 
       {searchLoading && (
@@ -387,6 +491,12 @@ const PlayersTable: React.FC = () => {
               ({currentSortDirection === 'asc' ? 'A-Z' : 'Z-A'})
             </span>
           )}
+          {hasActiveFilters && (
+            <span className="filter-info">
+              {' • '}Filtered by:{' '}
+              {currentFilters.map(formatFilterText).join(', ')}
+            </span>
+          )}
         </p>
       </div>
 
@@ -394,6 +504,13 @@ const PlayersTable: React.FC = () => {
         player={selectedPlayer}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={handleCloseFilters}
+        onApplyFilters={handleApplyFilters}
+        currentFilters={currentFilters}
       />
     </div>
   );
