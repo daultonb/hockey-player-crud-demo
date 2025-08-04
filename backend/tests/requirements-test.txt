@@ -1,0 +1,29 @@
+# Test dependencies for hockey CRUD application
+# This extends the main requirements.txt with test-specific dependencies
+
+# Core testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Database testing utilities
+pytest-mock>=3.11.0
+
+# Coverage reporting
+pytest-cov>=4.1.0
+
+# Test timeout handling
+pytest-timeout>=2.1.0
+
+# Better test output formatting
+pytest-sugar>=0.9.7
+
+# Parallel test execution
+pytest-xdist>=3.3.0
+
+# Test data factories for complex test data
+factory-boy>=3.3.0
+
+# Additional development utilities
+freezegun>=1.2.0  # For date/time testing
+responses>=0.23.0  # For HTTP mocking
+httpx>=0.24.0  # For async HTTP requests in tests

@@ -120,3 +120,4 @@ dist
 # Storybook build outputs
 .out
 .storybook-out
+backend/.coverage
