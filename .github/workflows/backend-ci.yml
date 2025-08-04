@@ -27,7 +27,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/requirements-test.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/tests/requirements-test.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -36,7 +36,7 @@ jobs:
           cd backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -r requirements-test.txt
+          pip install -r /tests/requirements-test.txt
 
       - name: Run tests with coverage
         run: |
