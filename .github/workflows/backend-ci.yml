@@ -129,25 +129,26 @@ jobs:
 
           # Check safety results for critical issues
           if [ -f safety-report.json ]; then
-            python -c "
-            import json
-            try:
-                with open('safety-report.json', 'r') as f:
-                    data = json.load(f)
-                if isinstance(data, list) and len(data) > 0:
-                    critical_issues = [issue for issue in data if issue.get('vulnerability', {}).get('severity', '').lower() in ['critical', 'high']]
-                    if critical_issues:
-                        print(f'❌ Found {len(critical_issues)} critical/high severity vulnerabilities')
-                        for issue in critical_issues[:3]:  # Show first 3
-                            print(f\"  - {issue.get('package', 'Unknown')}: {issue.get('vulnerability', {}).get('summary', 'No summary')}\")
-                        exit(1)
-                    else:
-                        print('✅ No critical security vulnerabilities found')
-                else:
-                    print('✅ No security vulnerabilities detected')
-            except:
-                print('⚠️  Could not parse safety report, but scan completed')
-            "
+            cat <<EOF > check_safety.py
+import json
+try:
+    with open('safety-report.json', 'r') as f:
+        data = json.load(f)
+    if isinstance(data, list) and len(data) > 0:
+        critical_issues = [issue for issue in data if issue.get('vulnerability', {}).get('severity', '').lower() in ['critical', 'high']]
+        if critical_issues:
+            print(f'❌ Found {len(critical_issues)} critical/high severity vulnerabilities')
+            for issue in critical_issues[:3]:  # Show first 3
+                print(f"  - {issue.get('package', 'Unknown')}: {issue.get('vulnerability', {}).get('summary', 'No summary')}")
+            exit(1)
+        else:
+            print('✅ No critical security vulnerabilities found')
+    else:
+        print('✅ No security vulnerabilities detected')
+except Exception as e:
+    print(f'⚠️  Could not parse safety report, but scan completed: {e}')
+EOF
+            python check_safety.py
           fi
 
           echo "Security checks completed successfully"
@@ -189,30 +190,30 @@ jobs:
           cd backend
           if [ -f pip-audit-report.json ]; then
             echo "Checking for critical dependency vulnerabilities..."
-            python -c "
-            import json
-            try:
-                with open('pip-audit-report.json', 'r') as f:
-                    data = json.load(f)
-                
-                vulnerabilities = data.get('vulnerabilities', [])
-                if vulnerabilities:
-                    high_severity = [v for v in vulnerabilities if v.get('severity', '').lower() in ['critical', 'high']]
-                    if high_severity:
-                        print(f'❌ Found {len(high_severity)} high-severity dependency vulnerabilities')
-                        for vuln in high_severity[:3]:  # Show first 3
-                            package = vuln.get('package', 'Unknown')
-                            summary = vuln.get('summary', 'No summary')
-                            print(f'  - {package}: {summary}')
-                        exit(1)
-                    else:
-                        print(f'✅ Found {len(vulnerabilities)} low-severity issues (acceptable)')
-                else:
-                    print('✅ No dependency vulnerabilities found')
-            except Exception as e:
-                print(f'⚠️  Could not parse dependency report: {e}')
-                print('Dependency scan completed but results unclear')
-            "
+            cat <<EOF > check_pip_audit.py
+import json
+try:
+    with open('pip-audit-report.json', 'r') as f:
+        data = json.load(f)
+    vulnerabilities = data.get('vulnerabilities', [])
+    if vulnerabilities:
+        high_severity = [v for v in vulnerabilities if v.get('severity', '').lower() in ['critical', 'high']]
+        if high_severity:
+            print(f'❌ Found {len(high_severity)} high-severity dependency vulnerabilities')
+            for vuln in high_severity[:3]:  # Show first 3
+                package = vuln.get('package', 'Unknown')
+                summary = vuln.get('summary', 'No summary')
+                print(f'  - {package}: {summary}')
+            exit(1)
+        else:
+            print(f'✅ Found {len(vulnerabilities)} low-severity issues (acceptable)')
+    else:
+        print('✅ No dependency vulnerabilities found')
+except Exception as e:
+    print(f'⚠️  Could not parse dependency report: {e}')
+    print('Dependency scan completed but results unclear')
+EOF
+            python check_pip_audit.py
           else
             echo "✅ No dependency report generated (likely no vulnerabilities)"
           fi
