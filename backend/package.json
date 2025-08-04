@@ -1,0 +1,19 @@
+{
+  "name": "hockey-crud-backend",
+  "version": "1.0.0",
+  "description": "Backend linting and formatting scripts",
+  "scripts": {
+    "lint": "ruff check app/ tests/",
+    "lint:fix": "ruff check app/ tests/ --fix",
+    "format": "black app/ tests/",
+    "format:check": "black app/ tests/ --check",
+    "sort-imports": "isort app/ tests/",
+    "sort-imports:check": "isort app/ tests/ --check-only",
+    "type-check": "mypy app/",
+    "lint:all": "ruff check app/ tests/ && black app/ tests/ --check && isort app/ tests/ --check-only",
+    "fix:all": "ruff check app/ tests/ --fix && black app/ tests/ && isort app/ tests/",
+    "test": "python -m pytest tests/ -v",
+    "test:coverage": "python -m pytest tests/ --cov=app --cov-report=html --cov-report=term-missing -v"
+  },
+  "devDependencies": {}
+}

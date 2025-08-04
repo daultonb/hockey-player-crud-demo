@@ -1,0 +1,6 @@
+# Development and linting dependencies
+ruff>=0.1.0          # Fast Python linter and formatter
+black>=23.0.0        # Code formatter
+isort>=5.12.0        # Import sorting
+mypy>=1.7.0          # Type checking
+pre-commit>=3.5.0    # Git hooks for automatic linting

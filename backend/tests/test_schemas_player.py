@@ -8,29 +8,31 @@ This file tests all schema validation in app/schemas/player.py including:
 - Edge cases and error conditions for invalid inputs
 """
 
-import pytest
 from typing import cast
+
+import pytest
 from pydantic import ValidationError
+
 from app.schemas.player import (
-    PlayerFilter,
-    PlayerSearchParams,
-    PlayerResponse,
-    TeamResponse,
-    PlayersListResponse,
-    PlayerSearchResponse,
-    FilterOperatorType,
-    StringFilterOperator,
-    NumericFilterOperator,
     BooleanFilterOperator,
+    FilterOperatorType,
+    NumericFilterOperator,
+    PlayerFilter,
+    PlayerResponse,
+    PlayerSearchParams,
+    PlayerSearchResponse,
+    PlayersListResponse,
     SearchFieldType,
+    SortDirectionType,
     SortFieldType,
-    SortDirectionType
+    StringFilterOperator,
+    TeamResponse,
 )
-from datetime import date
+
 
 class TestPlayerFilterValidation:
     """Test PlayerFilter schema validation and operator compatibility."""
-    
+
     @pytest.mark.validation
     def test_valid_string_field_operators(self):
         """
@@ -38,18 +40,21 @@ class TestPlayerFilterValidation:
         Input: position field with string operators
         Expected: All string operators validate successfully
         """
-        string_operators: list[StringFilterOperator] = ["=", "!=", "contains", "not_contains"]
-        
+        string_operators: list[StringFilterOperator] = [
+            "=",
+            "!=",
+            "contains",
+            "not_contains",
+        ]
+
         for operator in string_operators:
             filter_obj = PlayerFilter(
-                field="position",
-                operator=operator,
-                value="Center"
+                field="position", operator=operator, value="Center"
             )
             assert filter_obj.field == "position"
             assert filter_obj.operator == operator
             assert filter_obj.value == "Center"
-    
+
     @pytest.mark.validation
     def test_valid_numeric_field_operators(self):
         """
@@ -57,18 +62,21 @@ class TestPlayerFilterValidation:
         Input: goals field with numeric operators
         Expected: All numeric operators validate successfully
         """
-        numeric_operators: list[NumericFilterOperator] = ["=", "!=", ">", "<", ">=", "<="]
-        
+        numeric_operators: list[NumericFilterOperator] = [
+            "=",
+            "!=",
+            ">",
+            "<",
+            ">=",
+            "<=",
+        ]
+
         for operator in numeric_operators:
-            filter_obj = PlayerFilter(
-                field="goals",
-                operator=operator,
-                value=25
-            )
+            filter_obj = PlayerFilter(field="goals", operator=operator, value=25)
             assert filter_obj.field == "goals"
             assert filter_obj.operator == operator
             assert filter_obj.value == 25
-    
+
     @pytest.mark.validation
     def test_valid_boolean_field_operators(self):
         """
@@ -77,17 +85,15 @@ class TestPlayerFilterValidation:
         Expected: Boolean operators validate successfully
         """
         boolean_operators: list[BooleanFilterOperator] = ["=", "!="]
-        
+
         for operator in boolean_operators:
             filter_obj = PlayerFilter(
-                field="active_status",
-                operator=operator,
-                value=True
+                field="active_status", operator=operator, value=True
             )
             assert filter_obj.field == "active_status"
             assert filter_obj.operator == operator
             assert filter_obj.value is True
-    
+
     @pytest.mark.validation
     def test_invalid_operator_for_string_field(self):
         """
@@ -97,14 +103,12 @@ class TestPlayerFilterValidation:
         """
         with pytest.raises(ValidationError) as exc_info:
             PlayerFilter(
-                field="position",
-                operator=cast(FilterOperatorType, ">"),
-                value="Center"
+                field="position", operator=cast(FilterOperatorType, ">"), value="Center"
             )
-        
+
         assert "Invalid operator" in str(exc_info.value)
         assert "string field" in str(exc_info.value)
-    
+
     @pytest.mark.validation
     def test_invalid_operator_for_numeric_field(self):
         """
@@ -114,14 +118,12 @@ class TestPlayerFilterValidation:
         """
         with pytest.raises(ValidationError) as exc_info:
             PlayerFilter(
-                field="goals",
-                operator=cast(FilterOperatorType, "contains"),
-                value=25
+                field="goals", operator=cast(FilterOperatorType, "contains"), value=25
             )
-        
+
         assert "Invalid operator" in str(exc_info.value)
         assert "numeric field" in str(exc_info.value)
-    
+
     @pytest.mark.validation
     def test_invalid_operator_for_boolean_field(self):
         """
@@ -133,12 +135,12 @@ class TestPlayerFilterValidation:
             PlayerFilter(
                 field="active_status",
                 operator=cast(FilterOperatorType, ">"),
-                value=True
+                value=True,
             )
-        
+
         assert "Invalid operator" in str(exc_info.value)
         assert "boolean field" in str(exc_info.value)
-    
+
     @pytest.mark.validation
     def test_team_field_string_operators(self):
         """
@@ -146,14 +148,10 @@ class TestPlayerFilterValidation:
         Input: team field with string operators
         Expected: Validates as string field
         """
-        filter_obj = PlayerFilter(
-            field="team",
-            operator="contains",
-            value="Hawks"
-        )
+        filter_obj = PlayerFilter(field="team", operator="contains", value="Hawks")
         assert filter_obj.field == "team"
         assert filter_obj.operator == "contains"
-    
+
     @pytest.mark.validation
     def test_jersey_number_numeric_operators(self):
         """
@@ -161,18 +159,15 @@ class TestPlayerFilterValidation:
         Input: jersey_number field with numeric operators
         Expected: Validates as numeric field
         """
-        filter_obj = PlayerFilter(
-            field="jersey_number",
-            operator=">=",
-            value=50
-        )
+        filter_obj = PlayerFilter(field="jersey_number", operator=">=", value=50)
         assert filter_obj.field == "jersey_number"
         assert filter_obj.operator == ">="
         assert filter_obj.value == 50
 
+
 class TestPlayerSearchParamsValidation:
     """Test PlayerSearchParams schema validation and defaults."""
-    
+
     @pytest.mark.validation
     def test_default_values(self):
         """
@@ -182,14 +177,14 @@ class TestPlayerSearchParamsValidation:
         """
         params = PlayerSearchParams(
             search=None,
-            field="all", 
+            field="all",
             page=1,
             limit=20,
             sort_by="name",
             sort_order="asc",
-            filters=[]
+            filters=[],
         )
-        
+
         assert params.search is None
         assert params.field == "all"
         assert params.page == 1
@@ -197,7 +192,7 @@ class TestPlayerSearchParamsValidation:
         assert params.sort_by == "name"
         assert params.sort_order == "asc"
         assert params.filters == []
-    
+
     @pytest.mark.validation
     def test_valid_search_fields(self):
         """
@@ -205,8 +200,15 @@ class TestPlayerSearchParamsValidation:
         Input: All valid SearchFieldType values
         Expected: All validate successfully
         """
-        valid_fields: list[SearchFieldType] = ["all", "name", "position", "team", "nationality", "jersey_number"]
-        
+        valid_fields: list[SearchFieldType] = [
+            "all",
+            "name",
+            "position",
+            "team",
+            "nationality",
+            "jersey_number",
+        ]
+
         for field in valid_fields:
             params = PlayerSearchParams(
                 search=None,
@@ -215,10 +217,10 @@ class TestPlayerSearchParamsValidation:
                 limit=20,
                 sort_by="name",
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
             assert params.field == field
-    
+
     @pytest.mark.validation
     def test_valid_sort_fields(self):
         """
@@ -226,8 +228,17 @@ class TestPlayerSearchParamsValidation:
         Input: All valid SortFieldType values
         Expected: All validate successfully
         """
-        valid_fields: list[SortFieldType] = ["name", "position", "team", "jersey_number", "goals", "assists", "points", "active_status"]
-        
+        valid_fields: list[SortFieldType] = [
+            "name",
+            "position",
+            "team",
+            "jersey_number",
+            "goals",
+            "assists",
+            "points",
+            "active_status",
+        ]
+
         for field in valid_fields:
             params = PlayerSearchParams(
                 search=None,
@@ -236,10 +247,10 @@ class TestPlayerSearchParamsValidation:
                 limit=20,
                 sort_by=field,
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
             assert params.sort_by == field
-    
+
     @pytest.mark.validation
     def test_valid_sort_directions(self):
         """
@@ -248,7 +259,7 @@ class TestPlayerSearchParamsValidation:
         Expected: Both validate successfully
         """
         valid_directions: list[SortDirectionType] = ["asc", "desc"]
-        
+
         for direction in valid_directions:
             params = PlayerSearchParams(
                 search=None,
@@ -257,10 +268,10 @@ class TestPlayerSearchParamsValidation:
                 limit=20,
                 sort_by="name",
                 sort_order=direction,
-                filters=[]
+                filters=[],
             )
             assert params.sort_order == direction
-    
+
     @pytest.mark.validation
     def test_page_validation_positive(self):
         """
@@ -275,10 +286,10 @@ class TestPlayerSearchParamsValidation:
             limit=20,
             sort_by="name",
             sort_order="asc",
-            filters=[]
+            filters=[],
         )
         assert params.page == 5
-    
+
     @pytest.mark.validation
     def test_page_validation_zero_or_negative(self):
         """
@@ -294,9 +305,9 @@ class TestPlayerSearchParamsValidation:
                 limit=20,
                 sort_by="name",
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
-        
+
         with pytest.raises(ValidationError):
             PlayerSearchParams(
                 search=None,
@@ -305,9 +316,9 @@ class TestPlayerSearchParamsValidation:
                 limit=20,
                 sort_by="name",
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
-    
+
     @pytest.mark.validation
     def test_limit_validation_range(self):
         """
@@ -322,10 +333,10 @@ class TestPlayerSearchParamsValidation:
             limit=50,
             sort_by="name",
             sort_order="asc",
-            filters=[]
+            filters=[],
         )
         assert params.limit == 50
-        
+
         params = PlayerSearchParams(
             search=None,
             field="all",
@@ -333,10 +344,10 @@ class TestPlayerSearchParamsValidation:
             limit=1,
             sort_by="name",
             sort_order="asc",
-            filters=[]
+            filters=[],
         )
         assert params.limit == 1
-        
+
         params = PlayerSearchParams(
             search=None,
             field="all",
@@ -344,10 +355,10 @@ class TestPlayerSearchParamsValidation:
             limit=100,
             sort_by="name",
             sort_order="asc",
-            filters=[]
+            filters=[],
         )
         assert params.limit == 100
-    
+
     @pytest.mark.validation
     def test_limit_validation_out_of_range(self):
         """
@@ -363,9 +374,9 @@ class TestPlayerSearchParamsValidation:
                 limit=0,
                 sort_by="name",
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
-        
+
         with pytest.raises(ValidationError):
             PlayerSearchParams(
                 search=None,
@@ -374,9 +385,9 @@ class TestPlayerSearchParamsValidation:
                 limit=101,
                 sort_by="name",
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
-    
+
     @pytest.mark.validation
     def test_filters_list_validation(self):
         """
@@ -387,9 +398,9 @@ class TestPlayerSearchParamsValidation:
         filters = [
             PlayerFilter(field="position", operator="=", value="Center"),
             PlayerFilter(field="goals", operator=">", value=20),
-            PlayerFilter(field="active_status", operator="=", value=True)
+            PlayerFilter(field="active_status", operator="=", value=True),
         ]
-        
+
         params = PlayerSearchParams(
             search=None,
             field="all",
@@ -397,13 +408,13 @@ class TestPlayerSearchParamsValidation:
             limit=20,
             sort_by="name",
             sort_order="asc",
-            filters=filters
+            filters=filters,
         )
         assert len(params.filters) == 3
         assert params.filters[0].field == "position"
         assert params.filters[1].field == "goals"
         assert params.filters[2].field == "active_status"
-    
+
     @pytest.mark.validation
     def test_complex_search_params(self):
         """
@@ -412,7 +423,7 @@ class TestPlayerSearchParamsValidation:
         Expected: All values validate and are set correctly
         """
         filters = [PlayerFilter(field="goals", operator=">=", value=10)]
-        
+
         params = PlayerSearchParams(
             search="Alex",
             field="name",
@@ -420,9 +431,9 @@ class TestPlayerSearchParamsValidation:
             limit=15,
             sort_by="goals",
             sort_order="desc",
-            filters=filters
+            filters=filters,
         )
-        
+
         assert params.search == "Alex"
         assert params.field == "name"
         assert params.page == 2
@@ -431,9 +442,10 @@ class TestPlayerSearchParamsValidation:
         assert params.sort_order == "desc"
         assert len(params.filters) == 1
 
+
 class TestResponseModels:
     """Test response model structure and validation."""
-    
+
     @pytest.mark.validation
     def test_team_response_model(self):
         """
@@ -441,17 +453,13 @@ class TestResponseModels:
         Input: Team data dictionary
         Expected: TeamResponse object with correct fields
         """
-        team_data = {
-            "id": 1,
-            "name": "Test Team",
-            "city": "Test City"
-        }
-        
+        team_data = {"id": 1, "name": "Test Team", "city": "Test City"}
+
         team = TeamResponse(**team_data)
         assert team.id == 1
         assert team.name == "Test Team"
         assert team.city == "Test City"
-    
+
     @pytest.mark.validation
     def test_player_response_model(self):
         """
@@ -474,9 +482,9 @@ class TestResponseModels:
             "assists": 30,
             "points": 55,
             "active_status": True,
-            "team": team_data
+            "team": team_data,
         }
-        
+
         player = PlayerResponse(**player_data)
         assert player.id == 1
         assert player.name == "Test Player"
@@ -485,7 +493,7 @@ class TestResponseModels:
         assert player.goals == 25
         assert player.active_status is True
         assert player.team.name == "Test Team"
-    
+
     @pytest.mark.validation
     def test_players_list_response_model(self):
         """
@@ -495,22 +503,31 @@ class TestResponseModels:
         """
         team_data = {"id": 1, "name": "Test Team", "city": "Test City"}
         player_data = {
-            "id": 1, "name": "Test Player", "position": "Center",
-            "nationality": "Canadian", "jersey_number": 87,
-            "birth_date": "1995-03-15", "height": "6'2\"", "weight": 195,
-            "handedness": "Left", "goals": 25, "assists": 30, "points": 55,
-            "active_status": True, "team": team_data
+            "id": 1,
+            "name": "Test Player",
+            "position": "Center",
+            "nationality": "Canadian",
+            "jersey_number": 87,
+            "birth_date": "1995-03-15",
+            "height": "6'2\"",
+            "weight": 195,
+            "handedness": "Left",
+            "goals": 25,
+            "assists": 30,
+            "points": 55,
+            "active_status": True,
+            "team": team_data,
         }
-        
+
         response_data = {
             "players": [player_data],
             "count": 1,
             "total": 50,
             "page": 1,
             "limit": 20,
-            "total_pages": 3
+            "total_pages": 3,
         }
-        
+
         response = PlayersListResponse(**response_data)
         assert len(response.players) == 1
         assert response.count == 1
@@ -518,7 +535,7 @@ class TestResponseModels:
         assert response.page == 1
         assert response.limit == 20
         assert response.total_pages == 3
-    
+
     @pytest.mark.validation
     def test_player_search_response_model(self):
         """
@@ -528,15 +545,24 @@ class TestResponseModels:
         """
         team_data = {"id": 1, "name": "Test Team", "city": "Test City"}
         player_data = {
-            "id": 1, "name": "Test Player", "position": "Center",
-            "nationality": "Canadian", "jersey_number": 87,
-            "birth_date": "1995-03-15", "height": "6'2\"", "weight": 195,
-            "handedness": "Left", "goals": 25, "assists": 30, "points": 55,
-            "active_status": True, "team": team_data
+            "id": 1,
+            "name": "Test Player",
+            "position": "Center",
+            "nationality": "Canadian",
+            "jersey_number": 87,
+            "birth_date": "1995-03-15",
+            "height": "6'2\"",
+            "weight": 195,
+            "handedness": "Left",
+            "goals": 25,
+            "assists": 30,
+            "points": 55,
+            "active_status": True,
+            "team": team_data,
         }
-        
+
         filter_data = {"field": "goals", "operator": ">", "value": 20}
-        
+
         response_data = {
             "players": [player_data],
             "count": 1,
@@ -548,9 +574,9 @@ class TestResponseModels:
             "search_field": "name",
             "sort_by": "goals",
             "sort_order": "desc",
-            "filters": [filter_data]
+            "filters": [filter_data],
         }
-        
+
         response = PlayerSearchResponse(**response_data)
         assert len(response.players) == 1
         assert response.search_query == "Test"
@@ -560,9 +586,10 @@ class TestResponseModels:
         assert len(response.filters) == 1
         assert response.filters[0].field == "goals"
 
+
 class TestEdgeCasesValidation:
     """Test edge cases and boundary conditions for schema validation."""
-    
+
     @pytest.mark.validation
     def test_invalid_search_field(self):
         """
@@ -578,9 +605,9 @@ class TestEdgeCasesValidation:
                 limit=20,
                 sort_by="name",
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
-    
+
     @pytest.mark.validation
     def test_invalid_sort_field(self):
         """
@@ -596,9 +623,9 @@ class TestEdgeCasesValidation:
                 limit=20,
                 sort_by="invalid_sort_field",  # type: ignore
                 sort_order="asc",
-                filters=[]
+                filters=[],
             )
-    
+
     @pytest.mark.validation
     def test_invalid_sort_direction(self):
         """
@@ -614,9 +641,9 @@ class TestEdgeCasesValidation:
                 limit=20,
                 sort_by="name",
                 sort_order="invalid_direction",  # type: ignore
-                filters=[]
+                filters=[],
             )
-    
+
     @pytest.mark.validation
     def test_filter_missing_required_fields(self):
         """
@@ -626,10 +653,10 @@ class TestEdgeCasesValidation:
         """
         with pytest.raises(ValidationError):
             PlayerFilter(field="position")  # type: ignore
-        
+
         with pytest.raises(ValidationError):
             PlayerFilter(operator="=")  # type: ignore
-    
+
     @pytest.mark.validation
     def test_filter_with_none_values(self):
         """
@@ -639,10 +666,10 @@ class TestEdgeCasesValidation:
         """
         with pytest.raises(ValidationError):
             PlayerFilter(field=None, operator="=", value="test")  # type: ignore
-        
+
         with pytest.raises(ValidationError):
             PlayerFilter(field="position", operator=None, value="test")  # type: ignore
-    
+
     @pytest.mark.validation
     def test_search_params_with_invalid_filter(self):
         """
@@ -651,7 +678,11 @@ class TestEdgeCasesValidation:
         Expected: ValidationError raised during filter validation
         """
         with pytest.raises(ValidationError):
-            invalid_filter_dict = {"field": "position", "operator": ">", "value": "Center"}
+            invalid_filter_dict = {
+                "field": "position",
+                "operator": ">",
+                "value": "Center",
+            }
             PlayerSearchParams(
                 search=None,
                 field="all",
@@ -659,9 +690,9 @@ class TestEdgeCasesValidation:
                 limit=20,
                 sort_by="name",
                 sort_order="asc",
-                filters=[invalid_filter_dict]  # type: ignore
+                filters=[invalid_filter_dict],  # type: ignore
             )
-    
+
     @pytest.mark.validation
     def test_empty_string_values(self):
         """
@@ -669,13 +700,9 @@ class TestEdgeCasesValidation:
         Input: Filter with empty string value
         Expected: Validates successfully (empty string is valid)
         """
-        filter_obj = PlayerFilter(
-            field="position",
-            operator="=",
-            value=""
-        )
+        filter_obj = PlayerFilter(field="position", operator="=", value="")
         assert filter_obj.value == ""
-    
+
     @pytest.mark.validation
     def test_numeric_string_conversion(self):
         """
@@ -683,9 +710,5 @@ class TestEdgeCasesValidation:
         Input: Numeric filter value as string
         Expected: Validates successfully (Pydantic handles conversion)
         """
-        filter_obj = PlayerFilter(
-            field="goals",
-            operator=">",
-            value="25"
-        )
+        filter_obj = PlayerFilter(field="goals", operator=">", value="25")
         assert filter_obj.value == "25"
