@@ -38,12 +38,20 @@ jobs:
           pip install -r requirements.txt
           pip install -r tests/requirements-test.txt
 
+      - name: Create scripts directory
+        run: |
+          mkdir -p .github/scripts
+
       - name: Run tests with coverage
         env:
           DATABASE_URL: sqlite:///./test_hockey_players.db
         run: |
           cd backend
           python -m pytest tests/ --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing -v
+
+      - name: Check coverage threshold
+        run: |
+          python .github/scripts/check_coverage.py
 
       - name: Upload coverage reports as artifacts
         uses: actions/upload-artifact@v4
@@ -54,29 +62,6 @@ jobs:
             backend/htmlcov/
             backend/coverage.xml
           retention-days: 30
-
-      - name: Display coverage summary
-        env:
-          DATABASE_URL: sqlite:///./test_hockey_players.db
-        run: |
-          cd backend
-          python -m pytest tests/ --cov=app --cov-report=term
-
-      - name: Check coverage threshold
-        run: |
-          cd backend
-          python -c "
-          import xml.etree.ElementTree as ET
-          tree = ET.parse('coverage.xml')
-          root = tree.getroot()
-          coverage = float(root.attrib['line-rate']) * 100
-          print(f'Total coverage: {coverage:.1f}%')
-          if coverage < 95.0:
-              print(f'❌ Coverage {coverage:.1f}% is below 95% threshold')
-              exit(1)
-          else:
-              print(f'✅ Coverage {coverage:.1f}% meets threshold')
-          "
 
   security:
     runs-on: ubuntu-latest
@@ -112,6 +97,10 @@ jobs:
           bandit -r app/ -f json -o bandit-report.json || true
           echo "Bandit security scan completed - check artifacts for details"
 
+      - name: Check for critical security issues
+        run: |
+          python .github/scripts/check_security.py
+
       - name: Upload security reports
         uses: actions/upload-artifact@v4
         if: always()
@@ -121,37 +110,6 @@ jobs:
             backend/safety-report.json
             backend/bandit-report.json
           retention-days: 30
-
-      - name: Check for critical security issues
-        run: |
-          cd backend
-          echo "Checking for critical security vulnerabilities..."
-
-          # Check safety results for critical issues
-          if [ -f safety-report.json ]; then
-            cat <<EOF > check_safety.py
-import json
-try:
-    with open('safety-report.json', 'r') as f:
-        data = json.load(f)
-    if isinstance(data, list) and len(data) > 0:
-        critical_issues = [issue for issue in data if issue.get('vulnerability', {}).get('severity', '').lower() in ['critical', 'high']]
-        if critical_issues:
-            print(f'❌ Found {len(critical_issues)} critical/high severity vulnerabilities')
-            for issue in critical_issues[:3]:  # Show first 3
-                print(f"  - {issue.get('package', 'Unknown')}: {issue.get('vulnerability', {}).get('summary', 'No summary')}")
-            exit(1)
-        else:
-            print('✅ No critical security vulnerabilities found')
-    else:
-        print('✅ No security vulnerabilities detected')
-except Exception as e:
-    print(f'⚠️  Could not parse safety report, but scan completed: {e}')
-EOF
-            python check_safety.py
-          fi
-
-          echo "Security checks completed successfully"
 
   dependency-check:
     runs-on: ubuntu-latest
@@ -177,6 +135,10 @@ EOF
           pip-audit --format=json --output=pip-audit-report.json --requirement=requirements.txt || true
           echo "Dependency vulnerability scan completed"
 
+      - name: Check for high-severity dependency issues
+        run: |
+          python .github/scripts/check_dependencies.py
+
       - name: Upload dependency reports
         uses: actions/upload-artifact@v4
         if: always()
@@ -184,36 +146,3 @@ EOF
           name: dependency-reports
           path: backend/pip-audit-report.json
           retention-days: 30
-
-      - name: Check for high-severity dependency issues
-        run: |
-          cd backend
-          if [ -f pip-audit-report.json ]; then
-            echo "Checking for critical dependency vulnerabilities..."
-            cat <<EOF > check_pip_audit.py
-import json
-try:
-    with open('pip-audit-report.json', 'r') as f:
-        data = json.load(f)
-    vulnerabilities = data.get('vulnerabilities', [])
-    if vulnerabilities:
-        high_severity = [v for v in vulnerabilities if v.get('severity', '').lower() in ['critical', 'high']]
-        if high_severity:
-            print(f'❌ Found {len(high_severity)} high-severity dependency vulnerabilities')
-            for vuln in high_severity[:3]:  # Show first 3
-                package = vuln.get('package', 'Unknown')
-                summary = vuln.get('summary', 'No summary')
-                print(f'  - {package}: {summary}')
-            exit(1)
-        else:
-            print(f'✅ Found {len(vulnerabilities)} low-severity issues (acceptable)')
-    else:
-        print('✅ No dependency vulnerabilities found')
-except Exception as e:
-    print(f'⚠️  Could not parse dependency report: {e}')
-    print('Dependency scan completed but results unclear')
-EOF
-            python check_pip_audit.py
-          else
-            echo "✅ No dependency report generated (likely no vulnerabilities)"
-          fi
