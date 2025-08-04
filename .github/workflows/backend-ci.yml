@@ -40,7 +40,7 @@ jobs:
 
       - name: Create scripts directory
         run: |
-          mkdir -p .github/scripts
+          mkdir -p .github/workflows/scripts
 
       - name: Run tests with coverage
         env:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Check coverage threshold
         run: |
-          python .github/scripts/check_coverage.py
+          python .github/workflows/scripts/check_coverage.py
 
       - name: Upload coverage reports as artifacts
         uses: actions/upload-artifact@v4
@@ -99,7 +99,7 @@ jobs:
 
       - name: Check for critical security issues
         run: |
-          python .github/scripts/check_security.py
+          python .github/workflows/scripts/check_security.py
 
       - name: Upload security reports
         uses: actions/upload-artifact@v4
@@ -137,7 +137,7 @@ jobs:
 
       - name: Check for high-severity dependency issues
         run: |
-          python .github/scripts/check_dependencies.py
+          python .github/workflows/scripts/check_dependencies.py
 
       - name: Upload dependency reports
         uses: actions/upload-artifact@v4
