@@ -1,19 +1,18 @@
-/* eslint-disable no-console */
-import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  FILTERABLE_FIELDS,
+  Player,
+  PlayerFilter,
+  PlayersApiResponse,
+  SearchField,
+  SORTABLE_FIELDS,
+  SortDirection,
+  SortField,
+} from '../../types/Player';
+import FilterModal from '../modals/FilterModal';
 import PlayerDetailsModal from './PlayerDetailsModal';
 import PlayerSearch from './PlayerSearch';
-import FilterModal from './FilterModal';
-import {
-  Player,
-  SearchField,
-  SortField,
-  SortDirection,
-  PlayersApiResponse,
-  SORTABLE_FIELDS,
-  PlayerFilter,
-  FILTERABLE_FIELDS,
-} from '../../types/Player';
 
 const PlayersTable: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -54,15 +53,6 @@ const PlayersTable: React.FC = () => {
       showSearchLoading: boolean = false
     ) => {
       try {
-        console.log('PlayersTable: Fetching players from API', {
-          search,
-          field,
-          page,
-          sortBy,
-          sortOrder,
-          filtersCount: filters.length,
-        });
-
         if (showSearchLoading) {
           setSearchLoading(true);
         } else {
@@ -90,15 +80,6 @@ const PlayersTable: React.FC = () => {
           `${apiBaseUrl}/players?${params.toString()}`
         );
 
-        console.log('PlayersTable: API response received', {
-          playersCount: response.data.players.length,
-          total: response.data.total,
-          page: response.data.page,
-          sortBy: response.data.sort_by,
-          sortOrder: response.data.sort_order,
-          filtersCount: response.data.filters.length,
-        });
-
         setPlayers(response.data.players);
         setTotalCount(response.data.total);
         setTotalPages(response.data.total_pages);
@@ -124,7 +105,6 @@ const PlayersTable: React.FC = () => {
 
   const handleSearch = useCallback(
     (query: string, field: SearchField) => {
-      console.log('PlayersTable: Search requested', { query, field });
       setCurrentSearch(query);
       setCurrentSearchField(field);
       // Maintain current sort and filters when searching
@@ -142,7 +122,6 @@ const PlayersTable: React.FC = () => {
   );
 
   const handleClearSearch = useCallback(() => {
-    console.log('PlayersTable: Clear search requested');
     setCurrentSearch('');
     setCurrentSearchField('all');
     // Maintain current sort and filters when clearing search
@@ -159,19 +138,12 @@ const PlayersTable: React.FC = () => {
 
   const handleSort = useCallback(
     (field: SortField) => {
-      console.log('PlayersTable: Sort requested', { field });
-
       let newDirection: SortDirection = 'asc';
 
       // If clicking the same field, toggle direction
       if (currentSortField === field) {
         newDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
       }
-
-      console.log('PlayersTable: Applying sort', {
-        field,
-        direction: newDirection,
-      });
 
       setCurrentSortField(field);
       setCurrentSortDirection(newDirection);
@@ -198,18 +170,15 @@ const PlayersTable: React.FC = () => {
   );
 
   const handleOpenFilters = useCallback(() => {
-    console.log('PlayersTable: Opening filter modal');
     setIsFilterModalOpen(true);
   }, []);
 
   const handleCloseFilters = useCallback(() => {
-    console.log('PlayersTable: Closing filter modal');
     setIsFilterModalOpen(false);
   }, []);
 
   const handleApplyFilters = useCallback(
     (filters: PlayerFilter[]) => {
-      console.log('PlayersTable: Applying filters', filters);
       setCurrentFilters(filters);
 
       // Maintain current search and sort when applying filters
@@ -233,13 +202,11 @@ const PlayersTable: React.FC = () => {
   );
 
   const handlePlayerClick = (player: Player) => {
-    console.log('PlayersTable: Player clicked:', player.name);
     setSelectedPlayer(player);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    console.log('PlayersTable: Closing player details modal');
     setIsModalOpen(false);
     setSelectedPlayer(null);
   };

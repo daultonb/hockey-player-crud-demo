@@ -1,16 +1,15 @@
-/* eslint-disable no-console */
-import React, { useState, useEffect } from 'react';
-import Modal from '../modal/Modal';
+import React, { useEffect, useState } from 'react';
 import {
-  PlayerFilter,
+  BOOLEAN_OPTIONS,
+  FILTERABLE_FIELDS,
+  FilterDataType,
   FilterField,
   FilterOperator,
-  FilterDataType,
-  FILTERABLE_FIELDS,
   OPERATOR_LABELS,
-  BOOLEAN_OPTIONS,
+  PlayerFilter,
 } from '../../types/Player';
 import './FilterModal.css';
+import Modal from './Modal';
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -130,7 +129,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
         value: row.value,
       }));
 
-    console.log('FilterModal: Applying filters', validFilters);
     onApplyFilters(validFilters);
     onClose();
   };
@@ -264,8 +262,8 @@ const FilterModal: React.FC<FilterModalProps> = ({
         <div className="filter-summary">
           {validFilterCount > 0 ? (
             <p>
-              {validFilterCount} filter{validFilterCount === 1 ? '' : 's'} ready
-              to apply
+              {validFilterCount} filter
+              {validFilterCount === 1 ? '' : 's'} ready to apply
             </p>
           ) : (
             <p className="no-filters">

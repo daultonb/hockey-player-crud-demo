@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { SEARCHABLE_FIELDS, SearchField } from '../../types/Player';
 import './PlayerSearch.css';
 
@@ -26,7 +25,6 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
 
   const performSearch = useCallback(
     (query: string, field: SearchField) => {
-      console.log('PlayerSearch: Performing search -', { query, field });
       onSearch(query, field);
     },
     [onSearch]
@@ -40,7 +38,6 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
     }
 
     if (value.trim() === '') {
-      console.log('PlayerSearch: Search cleared, showing all players');
       onClear();
       return;
     }
@@ -54,7 +51,6 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   };
 
   const handleFieldChange = (field: SearchField) => {
-    console.log('PlayerSearch: Search field changed to:', field);
     setSearchField(field);
 
     if (searchQuery.trim() !== '') {
@@ -85,7 +81,6 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   };
 
   const handleClearClick = () => {
-    console.log('PlayerSearch: Clear button clicked');
     setSearchQuery('');
     onClear();
 
@@ -96,7 +91,6 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   };
 
   const handleFilterClick = () => {
-    console.log('PlayerSearch: Filter button clicked');
     onOpenFilters();
   };
 
