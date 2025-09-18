@@ -14,10 +14,25 @@ export interface Player {
   height: string;
   weight: number;
   handedness: string;
+
+  // Legacy combined stats
   goals: number;
   assists: number;
   points: number;
   active_status: boolean;
+
+  // Regular season statistics
+  regular_season_goals: number;
+  regular_season_assists: number;
+  regular_season_points: number;
+  regular_season_games_played: number;
+
+  // Playoff statistics
+  playoff_goals: number;
+  playoff_assists: number;
+  playoff_points: number;
+  playoff_games_played: number;
+
   team: Team;
 }
 
@@ -62,7 +77,15 @@ export type SortField =
   | 'goals'
   | 'assists'
   | 'points'
-  | 'active_status';
+  | 'active_status'
+  | 'regular_season_goals'
+  | 'regular_season_assists'
+  | 'regular_season_points'
+  | 'regular_season_games_played'
+  | 'playoff_goals'
+  | 'playoff_assists'
+  | 'playoff_points'
+  | 'playoff_games_played';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -77,10 +100,50 @@ export const SORTABLE_FIELDS: SortConfig[] = [
   { field: 'position', label: 'Position', displayName: 'Position' },
   { field: 'team', label: 'Team', displayName: 'Team' },
   { field: 'jersey_number', label: 'Jersey #', displayName: 'Jersey #' },
-  { field: 'goals', label: 'Goals', displayName: 'Goals' },
-  { field: 'assists', label: 'Assists', displayName: 'Assists' },
-  { field: 'points', label: 'Points', displayName: 'Points' },
+  { field: 'goals', label: 'Goals (Total)', displayName: 'Goals (Total)' },
+  {
+    field: 'assists',
+    label: 'Assists (Total)',
+    displayName: 'Assists (Total)',
+  },
+  { field: 'points', label: 'Points (Total)', displayName: 'Points (Total)' },
   { field: 'active_status', label: 'Status', displayName: 'Status' },
+  {
+    field: 'regular_season_goals',
+    label: 'RS Goals',
+    displayName: 'Regular Season Goals',
+  },
+  {
+    field: 'regular_season_assists',
+    label: 'RS Assists',
+    displayName: 'Regular Season Assists',
+  },
+  {
+    field: 'regular_season_points',
+    label: 'RS Points',
+    displayName: 'Regular Season Points',
+  },
+  {
+    field: 'regular_season_games_played',
+    label: 'RS Games',
+    displayName: 'Regular Season Games',
+  },
+  { field: 'playoff_goals', label: 'PO Goals', displayName: 'Playoff Goals' },
+  {
+    field: 'playoff_assists',
+    label: 'PO Assists',
+    displayName: 'Playoff Assists',
+  },
+  {
+    field: 'playoff_points',
+    label: 'PO Points',
+    displayName: 'Playoff Points',
+  },
+  {
+    field: 'playoff_games_played',
+    label: 'PO Games',
+    displayName: 'Playoff Games',
+  },
 ];
 
 // Filter types - matches backend FilterFieldType
@@ -91,7 +154,15 @@ export type FilterField =
   | 'goals'
   | 'assists'
   | 'points'
-  | 'active_status';
+  | 'active_status'
+  | 'regular_season_goals'
+  | 'regular_season_assists'
+  | 'regular_season_points'
+  | 'regular_season_games_played'
+  | 'playoff_goals'
+  | 'playoff_assists'
+  | 'playoff_points'
+  | 'playoff_games_played';
 
 // Filter operator types
 export type StringFilterOperator = '=' | '!=' | 'contains' | 'not_contains';

@@ -6,7 +6,7 @@ from app.database import Base
 
 class Player(Base):
     """
-    Player database model representing hockey players.
+    Player database model representing hockey players with comprehensive stats.
     """
 
     __tablename__ = "players"
@@ -20,10 +20,24 @@ class Player(Base):
     height = Column(String, nullable=False)
     weight = Column(Integer, nullable=False)
     handedness = Column(String, nullable=False)
+    
+    # Legacy combined stats (for backward compatibility)
     goals = Column(Integer, default=0)
     assists = Column(Integer, default=0)
     points = Column(Integer, default=0)
     active_status = Column(Boolean, default=True)
+
+    # Regular season statistics
+    regular_season_goals = Column(Integer, default=0)
+    regular_season_assists = Column(Integer, default=0)
+    regular_season_points = Column(Integer, default=0)
+    regular_season_games_played = Column(Integer, default=0)
+
+    # Playoff statistics
+    playoff_goals = Column(Integer, default=0)
+    playoff_assists = Column(Integer, default=0)
+    playoff_points = Column(Integer, default=0)
+    playoff_games_played = Column(Integer, default=0)
 
     # Foreign key relationship to team
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=False)

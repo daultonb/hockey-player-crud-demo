@@ -244,35 +244,6 @@ class TestPlayersEndpoint:
         assert data["sort_order"] == "desc"
         assert len(data["filters"]) == 1
 
-
-class TestLegacyEndpoint:
-    """Test legacy players endpoint for backward compatibility."""
-
-    @pytest.mark.integration
-    def test_get_all_players_legacy(
-        self, client: TestClient, sample_players: list[Player]
-    ):
-        """
-        Test legacy endpoint returns all players without pagination.
-        Maintains backward compatibility for existing integrations.
-        """
-        response = client.get("/players/all")
-
-        assert response.status_code == 200
-        data = response.json()
-
-        assert "players" in data
-        assert "count" in data
-        assert data["count"] == len(data["players"])
-
-        # Verify player data structure
-        if data["players"]:
-            player = data["players"][0]
-            assert "id" in player
-            assert "name" in player
-            assert "team" in player
-
-
 class TestHelperFunctions:
     """Test utility functions used by endpoints."""
 

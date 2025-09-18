@@ -10,13 +10,21 @@ SearchFieldType = Literal[
 # Sort field options - matches database fields and team join
 SortFieldType = Literal[
     "name",
-    "position",
+    "position", 
     "team",
     "jersey_number",
     "goals",
-    "assists",
+    "assists", 
     "points",
     "active_status",
+    "regular_season_goals",
+    "regular_season_assists",
+    "regular_season_points", 
+    "regular_season_games_played",
+    "playoff_goals",
+    "playoff_assists",
+    "playoff_points",
+    "playoff_games_played",
 ]
 
 # Sort direction options
@@ -24,7 +32,21 @@ SortDirectionType = Literal["asc", "desc"]
 
 # Filter field options - fields that can be filtered
 FilterFieldType = Literal[
-    "position", "team", "jersey_number", "goals", "assists", "points", "active_status"
+    "position", 
+    "team", 
+    "jersey_number", 
+    "goals", 
+    "assists", 
+    "points", 
+    "active_status",
+    "regular_season_goals",
+    "regular_season_assists", 
+    "regular_season_points",
+    "regular_season_games_played",
+    "playoff_goals",
+    "playoff_assists",
+    "playoff_points", 
+    "playoff_games_played",
 ]
 
 # Filter operators for different data types
@@ -60,8 +82,21 @@ class PlayerFilter(BaseModel):
                     f"Invalid operator '{operator}' for string field '{field}'"
                 )
 
-        # Numeric fields: jersey_number, goals, assists, points
-        elif field in ["jersey_number", "goals", "assists", "points"]:
+        # Numeric fields: jersey_number, all stat fields
+        elif field in [
+            "jersey_number", 
+            "goals", 
+            "assists", 
+            "points",
+            "regular_season_goals",
+            "regular_season_assists", 
+            "regular_season_points",
+            "regular_season_games_played",
+            "playoff_goals",
+            "playoff_assists",
+            "playoff_points",
+            "playoff_games_played",
+        ]:
             if operator not in ["=", "!=", ">", "<", ">=", "<="]:
                 raise ValueError(
                     f"Invalid operator '{operator}' for numeric field '{field}'"
@@ -117,10 +152,25 @@ class PlayerResponse(BaseModel):
     height: str
     weight: int
     handedness: str
+    
+    # Legacy combined stats
     goals: int
     assists: int
     points: int
     active_status: bool
+    
+    # Regular season statistics
+    regular_season_goals: int
+    regular_season_assists: int
+    regular_season_points: int
+    regular_season_games_played: int
+    
+    # Playoff statistics
+    playoff_goals: int
+    playoff_assists: int
+    playoff_points: int
+    playoff_games_played: int
+    
     team: TeamResponse
 
 

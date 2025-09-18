@@ -1,0 +1,324 @@
+{
+  "teams": [
+    {
+      "id": 1,
+      "name": "Anaheim Ducks",
+      "city": "Anaheim",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 1993,
+      "arena": "Honda Center",
+      "team_code": "ANA"
+    },
+    {
+      "id": 2,
+      "name": "Boston Bruins",
+      "city": "Boston",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1924,
+      "arena": "TD Garden",
+      "team_code": "BOS"
+    },
+    {
+      "id": 3,
+      "name": "Buffalo Sabres",
+      "city": "Buffalo",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1970,
+      "arena": "KeyBank Center",
+      "team_code": "BUF"
+    },
+    {
+      "id": 4,
+      "name": "Calgary Flames",
+      "city": "Calgary",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 1972,
+      "arena": "Scotiabank Saddledome",
+      "team_code": "CGY"
+    },
+    {
+      "id": 5,
+      "name": "Carolina Hurricanes",
+      "city": "Raleigh",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1972,
+      "arena": "PNC Arena",
+      "team_code": "CAR"
+    },
+    {
+      "id": 6,
+      "name": "Chicago Blackhawks",
+      "city": "Chicago",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1926,
+      "arena": "United Center",
+      "team_code": "CHI"
+    },
+    {
+      "id": 7,
+      "name": "Colorado Avalanche",
+      "city": "Denver",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1972,
+      "arena": "Ball Arena",
+      "team_code": "COL"
+    },
+    {
+      "id": 8,
+      "name": "Columbus Blue Jackets",
+      "city": "Columbus",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 2000,
+      "arena": "Nationwide Arena",
+      "team_code": "CBJ"
+    },
+    {
+      "id": 9,
+      "name": "Dallas Stars",
+      "city": "Dallas",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1967,
+      "arena": "American Airlines Center",
+      "team_code": "DAL"
+    },
+    {
+      "id": 10,
+      "name": "Detroit Red Wings",
+      "city": "Detroit",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1926,
+      "arena": "Little Caesars Arena",
+      "team_code": "DET"
+    },
+    {
+      "id": 11,
+      "name": "Edmonton Oilers",
+      "city": "Edmonton",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 1972,
+      "arena": "Rogers Place",
+      "team_code": "EDM"
+    },
+    {
+      "id": 12,
+      "name": "Florida Panthers",
+      "city": "Sunrise",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1993,
+      "arena": "Amerant Bank Arena",
+      "team_code": "FLA"
+    },
+    {
+      "id": 13,
+      "name": "Los Angeles Kings",
+      "city": "Los Angeles",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 1967,
+      "arena": "Crypto.com Arena",
+      "team_code": "LAK"
+    },
+    {
+      "id": 14,
+      "name": "Minnesota Wild",
+      "city": "Saint Paul",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 2000,
+      "arena": "Xcel Energy Center",
+      "team_code": "MIN"
+    },
+    {
+      "id": 15,
+      "name": "Montreal Canadiens",
+      "city": "Montreal",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1909,
+      "arena": "Bell Centre",
+      "team_code": "MTL"
+    },
+    {
+      "id": 16,
+      "name": "Nashville Predators",
+      "city": "Nashville",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1998,
+      "arena": "Bridgestone Arena",
+      "team_code": "NSH"
+    },
+    {
+      "id": 17,
+      "name": "New Jersey Devils",
+      "city": "Newark",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1974,
+      "arena": "Prudential Center",
+      "team_code": "NJD"
+    },
+    {
+      "id": 18,
+      "name": "New York Islanders",
+      "city": "Elmont",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1972,
+      "arena": "UBS Arena",
+      "team_code": "NYI"
+    },
+    {
+      "id": 19,
+      "name": "New York Rangers",
+      "city": "New York",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1926,
+      "arena": "Madison Square Garden",
+      "team_code": "NYR"
+    },
+    {
+      "id": 20,
+      "name": "Ottawa Senators",
+      "city": "Ottawa",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1992,
+      "arena": "Canadian Tire Centre",
+      "team_code": "OTT"
+    },
+    {
+      "id": 21,
+      "name": "Philadelphia Flyers",
+      "city": "Philadelphia",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1967,
+      "arena": "Wells Fargo Center",
+      "team_code": "PHI"
+    },
+    {
+      "id": 22,
+      "name": "Pittsburgh Penguins",
+      "city": "Pittsburgh",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1967,
+      "arena": "PPG Paints Arena",
+      "team_code": "PIT"
+    },
+    {
+      "id": 23,
+      "name": "San Jose Sharks",
+      "city": "San Jose",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 1991,
+      "arena": "SAP Center",
+      "team_code": "SJS"
+    },
+    {
+      "id": 24,
+      "name": "Seattle Kraken",
+      "city": "Seattle",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 2021,
+      "arena": "Climate Pledge Arena",
+      "team_code": "SEA"
+    },
+    {
+      "id": 25,
+      "name": "St. Louis Blues",
+      "city": "St. Louis",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1967,
+      "arena": "Enterprise Center",
+      "team_code": "STL"
+    },
+    {
+      "id": 26,
+      "name": "Tampa Bay Lightning",
+      "city": "Tampa",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1992,
+      "arena": "Amalie Arena",
+      "team_code": "TBL"
+    },
+    {
+      "id": 27,
+      "name": "Toronto Maple Leafs",
+      "city": "Toronto",
+      "conference": "Eastern",
+      "division": "Atlantic",
+      "founded_year": 1917,
+      "arena": "Scotiabank Arena",
+      "team_code": "TOR"
+    },
+    {
+      "id": 28,
+      "name": "Utah Hockey Club",
+      "city": "Salt Lake City",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1972,
+      "arena": "Delta Center",
+      "team_code": "UTA"
+    },
+    {
+      "id": 29,
+      "name": "Vancouver Canucks",
+      "city": "Vancouver",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 1970,
+      "arena": "Rogers Arena",
+      "team_code": "VAN"
+    },
+    {
+      "id": 30,
+      "name": "Vegas Golden Knights",
+      "city": "Las Vegas",
+      "conference": "Western",
+      "division": "Pacific",
+      "founded_year": 2017,
+      "arena": "T-Mobile Arena",
+      "team_code": "VGK"
+    },
+    {
+      "id": 31,
+      "name": "Washington Capitals",
+      "city": "Washington",
+      "conference": "Eastern",
+      "division": "Metropolitan",
+      "founded_year": 1974,
+      "arena": "Capital One Arena",
+      "team_code": "WSH"
+    },
+    {
+      "id": 32,
+      "name": "Winnipeg Jets",
+      "city": "Winnipeg",
+      "conference": "Western",
+      "division": "Central",
+      "founded_year": 1999,
+      "arena": "Canada Life Centre",
+      "team_code": "WPG"
+    }
+  ]
+}

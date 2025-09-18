@@ -1,0 +1,633 @@
+{
+  "team": {
+    "id": 29,
+    "name": "Vancouver Canucks",
+    "city": "Vancouver",
+    "conference": "Western",
+    "division": "Pacific",
+    "founded_year": 1970,
+    "arena": "Rogers Arena"
+  },
+  "players": [
+    {
+      "id": 8482496,
+      "name": "Nils Aman",
+      "position": "Center",
+      "nationality": "SWE",
+      "jersey_number": 88,
+      "birth_date": "2000-02-07",
+      "height": "6'2\"",
+      "weight": 179,
+      "handedness": "L",
+      "goals": 1,
+      "assists": 5,
+      "points": 6,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 1,
+        "assists": 5,
+        "points": 6,
+        "games_played": 19
+      }
+    },
+    {
+      "id": 8476927,
+      "name": "Teddy Blueger",
+      "position": "Center",
+      "nationality": "LAT",
+      "jersey_number": 53,
+      "birth_date": "1994-08-15",
+      "height": "6'0\"",
+      "weight": 185,
+      "handedness": "L",
+      "goals": 8,
+      "assists": 18,
+      "points": 26,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 8,
+        "assists": 18,
+        "points": 26,
+        "games_played": 82
+      }
+    },
+    {
+      "id": 8478444,
+      "name": "Brock Boeser",
+      "position": "Right Wing",
+      "nationality": "USA",
+      "jersey_number": 6,
+      "birth_date": "1997-02-25",
+      "height": "6'1\"",
+      "weight": 208,
+      "handedness": "R",
+      "goals": 25,
+      "assists": 25,
+      "points": 50,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 25,
+        "assists": 25,
+        "points": 50,
+        "games_played": 75
+      }
+    },
+    {
+      "id": 8480078,
+      "name": "Filip Chytil",
+      "position": "Center",
+      "nationality": "CZE",
+      "jersey_number": 72,
+      "birth_date": "1999-09-05",
+      "height": "6'2\"",
+      "weight": 210,
+      "handedness": "L",
+      "goals": 13,
+      "assists": 13,
+      "points": 26,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 13,
+        "assists": 13,
+        "points": 26,
+        "games_played": 56
+      }
+    },
+    {
+      "id": 8478498,
+      "name": "Jake DeBrusk",
+      "position": "Left Wing",
+      "nationality": "CAN",
+      "jersey_number": 74,
+      "birth_date": "1996-10-17",
+      "height": "6'1\"",
+      "weight": 198,
+      "handedness": "L",
+      "goals": 28,
+      "assists": 20,
+      "points": 48,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 28,
+        "assists": 20,
+        "points": 48,
+        "games_played": 82
+      }
+    },
+    {
+      "id": 8478856,
+      "name": "Conor Garland",
+      "position": "Right Wing",
+      "nationality": "USA",
+      "jersey_number": 8,
+      "birth_date": "1996-03-11",
+      "height": "5'10\"",
+      "weight": 165,
+      "handedness": "R",
+      "goals": 19,
+      "assists": 31,
+      "points": 50,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 19,
+        "assists": 31,
+        "points": 50,
+        "games_played": 81
+      }
+    },
+    {
+      "id": 8481535,
+      "name": "Nils Hoglander",
+      "position": "Left Wing",
+      "nationality": "SWE",
+      "jersey_number": 21,
+      "birth_date": "2000-12-20",
+      "height": "5'9\"",
+      "weight": 185,
+      "handedness": "L",
+      "goals": 8,
+      "assists": 17,
+      "points": 25,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 8,
+        "assists": 17,
+        "points": 25,
+        "games_played": 72
+      }
+    },
+    {
+      "id": 8478057,
+      "name": "Dakota Joshua",
+      "position": "Center",
+      "nationality": "USA",
+      "jersey_number": 81,
+      "birth_date": "1996-05-15",
+      "height": "6'3\"",
+      "weight": 206,
+      "handedness": "L",
+      "goals": 7,
+      "assists": 7,
+      "points": 14,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 7,
+        "assists": 7,
+        "points": 14,
+        "games_played": 57
+      }
+    },
+    {
+      "id": 8475169,
+      "name": "Evander Kane",
+      "position": "Left Wing",
+      "nationality": "CAN",
+      "jersey_number": 0,
+      "birth_date": "1991-08-02",
+      "height": "6'2\"",
+      "weight": 218,
+      "handedness": "L",
+      "goals": 0,
+      "assists": 0,
+      "points": 0,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 6,
+        "assists": 6,
+        "points": 12,
+        "games_played": 21
+      },
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      }
+    },
+    {
+      "id": 8482055,
+      "name": "Drew O'Connor",
+      "position": "Left Wing",
+      "nationality": "USA",
+      "jersey_number": 18,
+      "birth_date": "1998-06-09",
+      "height": "6'4\"",
+      "weight": 209,
+      "handedness": "L",
+      "goals": 10,
+      "assists": 15,
+      "points": 25,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 10,
+        "assists": 15,
+        "points": 25,
+        "games_played": 84
+      }
+    },
+    {
+      "id": 8480012,
+      "name": "Elias Pettersson",
+      "position": "Center",
+      "nationality": "SWE",
+      "jersey_number": 40,
+      "birth_date": "1998-11-12",
+      "height": "6'2\"",
+      "weight": 176,
+      "handedness": "L",
+      "goals": 15,
+      "assists": 30,
+      "points": 45,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 15,
+        "assists": 30,
+        "points": 45,
+        "games_played": 64
+      }
+    },
+    {
+      "id": 8480748,
+      "name": "Kiefer Sherwood",
+      "position": "Left Wing",
+      "nationality": "USA",
+      "jersey_number": 44,
+      "birth_date": "1995-03-31",
+      "height": "6'0\"",
+      "weight": 194,
+      "handedness": "R",
+      "goals": 19,
+      "assists": 21,
+      "points": 40,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 19,
+        "assists": 21,
+        "points": 40,
+        "games_played": 78
+      }
+    },
+    {
+      "id": 8480459,
+      "name": "Pius Suter",
+      "position": "Center",
+      "nationality": "SUI",
+      "jersey_number": 24,
+      "birth_date": "1996-05-24",
+      "height": "5'11\"",
+      "weight": 179,
+      "handedness": "L",
+      "goals": 25,
+      "assists": 21,
+      "points": 46,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 25,
+        "assists": 21,
+        "points": 46,
+        "games_played": 81
+      }
+    },
+    {
+      "id": 8475762,
+      "name": "Derek Forbort",
+      "position": "Defense",
+      "nationality": "USA",
+      "jersey_number": 27,
+      "birth_date": "1992-03-04",
+      "height": "6'4\"",
+      "weight": 216,
+      "handedness": "L",
+      "goals": 2,
+      "assists": 9,
+      "points": 11,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 2,
+        "assists": 9,
+        "points": 11,
+        "games_played": 54
+      }
+    },
+    {
+      "id": 8479425,
+      "name": "Filip Hronek",
+      "position": "Defense",
+      "nationality": "CZE",
+      "jersey_number": 17,
+      "birth_date": "1997-11-02",
+      "height": "6'0\"",
+      "weight": 190,
+      "handedness": "R",
+      "goals": 5,
+      "assists": 28,
+      "points": 33,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 5,
+        "assists": 28,
+        "points": 33,
+        "games_played": 61
+      }
+    },
+    {
+      "id": 8480800,
+      "name": "Quinn Hughes",
+      "position": "Defense",
+      "nationality": "USA",
+      "jersey_number": 43,
+      "birth_date": "1999-10-14",
+      "height": "5'10\"",
+      "weight": 180,
+      "handedness": "L",
+      "goals": 16,
+      "assists": 60,
+      "points": 76,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 16,
+        "assists": 60,
+        "points": 76,
+        "games_played": 68
+      }
+    },
+    {
+      "id": 8478454,
+      "name": "Noah Juulsen",
+      "position": "Defense",
+      "nationality": "CAN",
+      "jersey_number": 47,
+      "birth_date": "1997-04-02",
+      "height": "6'2\"",
+      "weight": 201,
+      "handedness": "R",
+      "goals": 0,
+      "assists": 0,
+      "points": 0,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 35
+      }
+    },
+    {
+      "id": 8474574,
+      "name": "Tyler Myers",
+      "position": "Defense",
+      "nationality": "USA",
+      "jersey_number": 57,
+      "birth_date": "1990-02-01",
+      "height": "6'8\"",
+      "weight": 229,
+      "handedness": "R",
+      "goals": 6,
+      "assists": 18,
+      "points": 24,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 6,
+        "assists": 18,
+        "points": 24,
+        "games_played": 71
+      }
+    },
+    {
+      "id": 8483678,
+      "name": "Elias Pettersson",
+      "position": "Defense",
+      "nationality": "SWE",
+      "jersey_number": 25,
+      "birth_date": "2004-02-16",
+      "height": "6'2\"",
+      "weight": 185,
+      "handedness": "L",
+      "goals": 1,
+      "assists": 2,
+      "points": 3,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 1,
+        "assists": 2,
+        "points": 3,
+        "games_played": 28
+      }
+    },
+    {
+      "id": 8477969,
+      "name": "Marcus Pettersson",
+      "position": "Defense",
+      "nationality": "SWE",
+      "jersey_number": 29,
+      "birth_date": "1996-05-08",
+      "height": "6'5\"",
+      "weight": 174,
+      "handedness": "L",
+      "goals": 4,
+      "assists": 25,
+      "points": 29,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 4,
+        "assists": 25,
+        "points": 29,
+        "games_played": 78
+      }
+    },
+    {
+      "id": 8477967,
+      "name": "Thatcher Demko",
+      "position": "Goalie",
+      "nationality": "USA",
+      "jersey_number": 35,
+      "birth_date": "1995-12-08",
+      "height": "6'4\"",
+      "weight": 192,
+      "handedness": "L",
+      "goals": 0,
+      "assists": 0,
+      "points": 0,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 23
+      }
+    },
+    {
+      "id": 8480947,
+      "name": "Kevin Lankinen",
+      "position": "Goalie",
+      "nationality": "FIN",
+      "jersey_number": 32,
+      "birth_date": "1995-04-28",
+      "height": "6'2\"",
+      "weight": 190,
+      "handedness": "L",
+      "goals": 0,
+      "assists": 1,
+      "points": 1,
+      "active_status": true,
+      "team_id": 29,
+      "playoff_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 1,
+        "points": 1,
+        "games_played": 51
+      }
+    }
+  ],
+  "season": "2024-25",
+  "team_code": "VAN",
+  "generated_at": "2025-09-15T21:35:34.224572",
+  "data_source": "NHL Official APIs - 2024-25 Historical Roster"
+}

@@ -3,11 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.models.player import Player
 from app.models.team import Team
-from app.schemas.player import (
-    PlayerFilter,
-    PlayerSearchParams,
-    SortFieldType,
-)
+from app.schemas.player import PlayerFilter, PlayerSearchParams, SortFieldType
 
 
 def get_players_with_search(
@@ -209,10 +205,19 @@ def _get_sort_column(sort_field: SortFieldType):
         "assists": Player.assists,
         "points": Player.points,
         "active_status": Player.active_status,
+        # Regular season stats
+        "regular_season_goals": Player.regular_season_goals,
+        "regular_season_assists": Player.regular_season_assists,
+        "regular_season_points": Player.regular_season_points,
+        "regular_season_games_played": Player.regular_season_games_played,
+        # Playoff stats
+        "playoff_goals": Player.playoff_goals,
+        "playoff_assists": Player.playoff_assists,
+        "playoff_points": Player.playoff_points,
+        "playoff_games_played": Player.playoff_games_played,
     }
 
     return sort_mapping.get(sort_field, Player.name)  # Default to name if invalid field
-
 
 def get_all_players_paginated(
     db: Session, page: int = 1, limit: int = 20

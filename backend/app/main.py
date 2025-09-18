@@ -1,5 +1,7 @@
 import json
 import math
+import re
+from typing import get_args
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,7 +13,9 @@ from app.database import Base, engine, get_db
 from app.models.player import Player
 from app.models.team import Team
 from app.schemas.player import (
+    FilterFieldType,
     PlayerFilter,
+    PlayerResponse,
     PlayerSearchParams,
     PlayerSearchResponse,
     SearchFieldType,
@@ -159,15 +163,69 @@ async def get_players(
 
     return response
 
-
-@app.get("/players/all")
-async def get_all_players_legacy(db: Session = Depends(get_db)):
+def _field_name_to_label(field_name: str) -> str:
     """
-    Legacy endpoint: Get all players without pagination (for backward compatibility).
+    Convert field name to human-readable label.
+    Examples: jersey_number -> Jersey Number, active_status -> Status
     """
-    print("API: Legacy endpoint - fetching all players")
+    # Special cases for better labeling
+    special_cases = {
+        "jersey_number": "Number",
+        "active_status": "Status", 
+        "birth_date": "Birth Date"
+    }
+    
+    if field_name in special_cases:
+        return special_cases[field_name]
+    
+    # Convert snake_case to Title Case
+    return re.sub(r'_', ' ', field_name).title()
 
-    players = db.query(Player).join(Team).all()
-    players_data = [format_player_response(player) for player in players]
-
-    return {"players": players_data, "count": len(players_data)}
+@app.get("/column-metadata")
+async def get_column_metadata():
+    """
+    Get metadata about column capabilities for table management.
+    Returns information about which columns support search, sort, and filter operations
+    based on the schema definitions. Column names and types are extracted directly
+    from the PlayerResponse model.
+    """
+    # Get the actual field lists from the schema type definitions
+    searchable_fields = set(get_args(SearchFieldType)) - {"all"}  # Remove "all" as it's not a real field
+    sortable_fields = set(get_args(SortFieldType))
+    filterable_fields = set(get_args(FilterFieldType))
+    
+    # Get all fields from PlayerResponse model, excluding nested objects and metadata
+    player_fields = PlayerResponse.__fields__
+    excluded_fields = {"id", "team"}  # Exclude ID (not user-manageable) and team (nested object)
+    
+    # Build column metadata dynamically from PlayerResponse schema
+    columns_metadata = []
+    
+    for field_name, field_info in player_fields.items():
+        if field_name in excluded_fields:
+            continue
+            
+        # Determine capabilities based on schema type definitions
+        capabilities = []
+        if field_name in searchable_fields:
+            capabilities.append("searchable")
+        if field_name in sortable_fields:
+            capabilities.append("sortable") 
+        if field_name in filterable_fields:
+            capabilities.append("filterable")
+            
+        columns_metadata.append({
+            "key": field_name,
+            "label": _field_name_to_label(field_name),
+            "required": field_name == "name",  # Only name is required for display
+            "capabilities": capabilities,
+            "field_type": str(field_info.annotation).replace("typing.", "").replace("<class '", "").replace("'>", "")
+        })
+    
+    # Sort by importance (required fields first, then alphabetically)
+    columns_metadata.sort(key=lambda x: (not x["required"], x["label"]))
+    
+    return {
+        "columns": columns_metadata,
+        "count": len(columns_metadata)
+    }
