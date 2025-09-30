@@ -163,59 +163,123 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = ({
         </div>
 
         <div className="columns-list">
-          {availableColumns.map((column: ColumnConfig) => {
-            const isVisible = visibleColumns.includes(column.key);
-            const isDisabled = column.required;
+          {/* First show selected columns in backend order */}
+          {availableColumns
+            .filter(col => visibleColumns.includes(col.key))
+            .map((column: ColumnConfig) => {
+              const isDisabled = column.required;
+              return (
+                <div
+                  key={column.key}
+                  className={`column-item ${isDisabled ? 'required' : ''}`}
+                >
+                  <label className="column-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={true}
+                      disabled={isDisabled}
+                      onChange={e =>
+                        handleColumnChange(column.key, e.target.checked)
+                      }
+                    />
+                    <span className="checkbox-label">
+                      <span className="checkbox-label-text">
+                        {column.label}
+                        {column.required && (
+                          <span className="required-indicator">
+                            {' '}
+                            (Required)
+                          </span>
+                        )}
+                      </span>
+                      <span className="column-capabilities">
+                        {column.capabilities &&
+                        column.capabilities.length > 0 ? (
+                          <>
+                            {column.capabilities.join(', ')}
+                            {column.field_type && (
+                              <span className="field-type">
+                                {' '}
+                                • {column.field_type}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            display only
+                            {column.field_type && (
+                              <span className="field-type">
+                                {' '}
+                                • {column.field_type}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              );
+            })}
 
-            return (
-              <div
-                key={column.key}
-                className={`column-item ${isDisabled ? 'required' : ''}`}
-              >
-                <label className="column-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={isVisible}
-                    disabled={isDisabled}
-                    onChange={e =>
-                      handleColumnChange(column.key, e.target.checked)
-                    }
-                  />
-                  <span className="checkbox-label">
-                    <span className="checkbox-label-text">
-                      {column.label}
-                      {column.required && (
-                        <span className="required-indicator"> (Required)</span>
-                      )}
+          {/* Then show unselected columns in backend order */}
+          {availableColumns
+            .filter(col => !visibleColumns.includes(col.key))
+            .map((column: ColumnConfig) => {
+              const isDisabled = column.required;
+              return (
+                <div
+                  key={column.key}
+                  className={`column-item ${isDisabled ? 'required' : ''}`}
+                >
+                  <label className="column-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={false}
+                      disabled={isDisabled}
+                      onChange={e =>
+                        handleColumnChange(column.key, e.target.checked)
+                      }
+                    />
+                    <span className="checkbox-label">
+                      <span className="checkbox-label-text">
+                        {column.label}
+                        {column.required && (
+                          <span className="required-indicator">
+                            {' '}
+                            (Required)
+                          </span>
+                        )}
+                      </span>
+                      <span className="column-capabilities">
+                        {column.capabilities &&
+                        column.capabilities.length > 0 ? (
+                          <>
+                            {column.capabilities.join(', ')}
+                            {column.field_type && (
+                              <span className="field-type">
+                                {' '}
+                                • {column.field_type}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            display only
+                            {column.field_type && (
+                              <span className="field-type">
+                                {' '}
+                                • {column.field_type}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </span>
                     </span>
-                    <span className="column-capabilities">
-                      {column.capabilities && column.capabilities.length > 0 ? (
-                        <>
-                          {column.capabilities.join(', ')}
-                          {column.field_type && (
-                            <span className="field-type">
-                              {' '}
-                              • {column.field_type}
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          display only
-                          {column.field_type && (
-                            <span className="field-type">
-                              {' '}
-                              • {column.field_type}
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </span>
-                  </span>
-                </label>
-              </div>
-            );
-          })}
+                  </label>
+                </div>
+              );
+            })}
         </div>
 
         <div className="modal-footer">

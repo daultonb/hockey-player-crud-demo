@@ -56,10 +56,25 @@ def format_player_response(player: Player) -> dict:
         "height": player.height,
         "weight": player.weight,
         "handedness": player.handedness,
+        
+        # Legacy combined stats
         "goals": player.goals,
         "assists": player.assists,
         "points": player.points,
         "active_status": player.active_status,
+        
+        # Regular season statistics
+        "regular_season_goals": player.regular_season_goals,
+        "regular_season_assists": player.regular_season_assists,
+        "regular_season_points": player.regular_season_points,
+        "regular_season_games_played": player.regular_season_games_played,
+        
+        # Playoff statistics
+        "playoff_goals": player.playoff_goals,
+        "playoff_assists": player.playoff_assists,
+        "playoff_points": player.playoff_points,
+        "playoff_games_played": player.playoff_games_played,
+        
         "team": {
             "id": player.team.id,
             "name": player.team.name,
@@ -189,10 +204,35 @@ async def get_column_metadata():
     based on the schema definitions. Column names and types are extracted directly
     from the PlayerResponse model.
     """
-    # Get the actual field lists from the schema type definitions
+     # Get the actual field lists from the schema type definitions
     searchable_fields = set(get_args(SearchFieldType)) - {"all"}  # Remove "all" as it's not a real field
     sortable_fields = set(get_args(SortFieldType))
     filterable_fields = set(get_args(FilterFieldType))
+    
+    # Define the desired display order
+    desired_order = [
+        'jersey_number',
+        'name',
+        'position',
+        'team',
+        'regular_season_games_played',
+        'regular_season_goals',
+        'regular_season_assists',
+        'regular_season_points',
+        'playoff_games_played',
+        'playoff_goals',
+        'playoff_assists',
+        'playoff_points',
+        'goals',
+        'assists',
+        'points',
+        'height',
+        'weight',
+        'birth_date',
+        'nationality',
+        'handedness',
+        'active_status',
+    ]
     
     # Get all fields from PlayerResponse model, excluding nested objects and metadata
     player_fields = PlayerResponse.__fields__
@@ -222,8 +262,15 @@ async def get_column_metadata():
             "field_type": str(field_info.annotation).replace("typing.", "").replace("<class '", "").replace("'>", "")
         })
     
-    # Sort by importance (required fields first, then alphabetically)
-    columns_metadata.sort(key=lambda x: (not x["required"], x["label"]))
+    # Sort columns by the desired order
+    def get_order_index(column):
+        try:
+            return desired_order.index(column["key"])
+        except ValueError:
+            # If not in desired_order, put at the end
+            return len(desired_order)
+    
+    columns_metadata.sort(key=get_order_index)
     
     return {
         "columns": columns_metadata,

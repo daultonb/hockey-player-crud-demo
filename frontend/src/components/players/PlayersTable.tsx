@@ -15,6 +15,7 @@ import './PaginationControls.css';
 import PlayerDetailsModal from './PlayerDetailsModal';
 import PlayerSearch from './PlayerSearch';
 import './PlayersTable.css';
+import { JSX } from 'react/jsx-runtime';
 
 const PlayersTable: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -300,10 +301,6 @@ const PlayersTable: React.FC = () => {
     setSelectedPlayer(null);
   };
 
-  const isColumnVisible = (columnKey: string): boolean => {
-    return visibleColumns.includes(columnKey);
-  };
-
   const getSortArrow = (field: SortField): string => {
     if (currentSortField !== field) return '';
     return currentSortDirection === 'asc' ? ' ↑' : ' ↓';
@@ -316,6 +313,110 @@ const PlayersTable: React.FC = () => {
     const nextDirection =
       currentSortDirection === 'asc' ? 'descending' : 'ascending';
     return `Currently sorted by ${field} ${currentSortDirection}, click for ${nextDirection}`;
+  };
+  const getColumnHeader = (columnKey: string): JSX.Element | null => {
+    const headerMap: Record<string, { label: string; sortable: boolean }> = {
+      name: { label: 'Name', sortable: true },
+      jersey_number: { label: '#', sortable: true },
+      position: { label: 'Position', sortable: true },
+      team: { label: 'Team', sortable: true },
+      goals: { label: 'Goals', sortable: true },
+      assists: { label: 'Assists', sortable: true },
+      points: { label: 'Points', sortable: true },
+      active_status: { label: 'Status', sortable: true },
+      regular_season_goals: { label: 'Regular Season Goals', sortable: true },
+      regular_season_assists: {
+        label: 'Regular Season Assists',
+        sortable: true,
+      },
+      regular_season_points: { label: 'Regular Season Points', sortable: true },
+      regular_season_games_played: {
+        label: 'Regular Season GP',
+        sortable: true,
+      },
+      playoff_goals: { label: 'Playoff Goals', sortable: true },
+      playoff_assists: { label: 'Playoff Assists', sortable: true },
+      playoff_points: { label: 'Playoff Points', sortable: true },
+      playoff_games_played: { label: 'Playoff GP', sortable: true },
+    };
+
+    const config = headerMap[columnKey];
+    if (!config) return null;
+
+    if (config.sortable) {
+      return (
+        <th
+          className={`sortable-header ${
+            currentSortField === columnKey ? 'sorted' : ''
+          }`}
+          onClick={() => handleSort(columnKey as SortField)}
+          title={getSortTooltip(columnKey as SortField)}
+        >
+          {config.label}
+          {getSortArrow(columnKey as SortField)}
+        </th>
+      );
+    }
+
+    return <th>{config.label}</th>;
+  };
+
+  const getCellValue = (
+    player: Player,
+    columnKey: string
+  ): JSX.Element | null => {
+    switch (columnKey) {
+      case 'name':
+        return (
+          <button
+            className="player-name-link"
+            onClick={() => handlePlayerClick(player)}
+            aria-label={`View details for ${player.name}`}
+          >
+            <span className="player-name">{player.name}</span>
+          </button>
+        );
+      case 'jersey_number':
+        return <span className="jersey-number">#{player.jersey_number}</span>;
+      case 'position':
+        return <>{player.position}</>;
+      case 'team':
+        return <>{player.team.name}</>;
+      case 'goals':
+        return <span className="stat">{player.goals}</span>;
+      case 'assists':
+        return <span className="stat">{player.assists}</span>;
+      case 'points':
+        return <span className="stat points">{player.points}</span>;
+      case 'active_status':
+        return (
+          <span
+            className={`status ${player.active_status ? 'active' : 'retired'}`}
+          >
+            {player.active_status ? 'Active' : 'Retired'}
+          </span>
+        );
+      case 'regular_season_goals':
+        return <span className="stat">{player.regular_season_goals}</span>;
+      case 'regular_season_assists':
+        return <span className="stat">{player.regular_season_assists}</span>;
+      case 'regular_season_points':
+        return <span className="stat">{player.regular_season_points}</span>;
+      case 'regular_season_games_played':
+        return (
+          <span className="stat">{player.regular_season_games_played}</span>
+        );
+      case 'playoff_goals':
+        return <span className="stat">{player.playoff_goals}</span>;
+      case 'playoff_assists':
+        return <span className="stat">{player.playoff_assists}</span>;
+      case 'playoff_points':
+        return <span className="stat">{player.playoff_points}</span>;
+      case 'playoff_games_played':
+        return <span className="stat">{player.playoff_games_played}</span>;
+      default:
+        return <>{player[columnKey as keyof Player]?.toString() || '-'}</>;
+    }
   };
 
   const isSearchActive = currentSearch.trim().length > 0;
@@ -421,101 +522,11 @@ const PlayersTable: React.FC = () => {
         <table className="players-table">
           <thead>
             <tr>
-              {isColumnVisible('name') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'name' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('name')}
-                  title={getSortTooltip('name')}
-                >
-                  Name{getSortArrow('name')}
-                </th>
-              )}
-
-              {isColumnVisible('jersey_number') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'jersey_number' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('jersey_number')}
-                  title={getSortTooltip('jersey_number')}
-                >
-                  #{getSortArrow('jersey_number')}
-                </th>
-              )}
-
-              {isColumnVisible('position') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'position' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('position')}
-                  title={getSortTooltip('position')}
-                >
-                  Position{getSortArrow('position')}
-                </th>
-              )}
-
-              {isColumnVisible('team') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'team' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('team')}
-                  title={getSortTooltip('team')}
-                >
-                  Team{getSortArrow('team')}
-                </th>
-              )}
-
-              {isColumnVisible('goals') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'goals' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('goals')}
-                  title={getSortTooltip('goals')}
-                >
-                  Goals{getSortArrow('goals')}
-                </th>
-              )}
-
-              {isColumnVisible('assists') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'assists' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('assists')}
-                  title={getSortTooltip('assists')}
-                >
-                  Assists{getSortArrow('assists')}
-                </th>
-              )}
-
-              {isColumnVisible('points') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'points' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('points')}
-                  title={getSortTooltip('points')}
-                >
-                  Points{getSortArrow('points')}
-                </th>
-              )}
-
-              {isColumnVisible('active_status') && (
-                <th
-                  className={`sortable-header ${
-                    currentSortField === 'active_status' ? 'sorted' : ''
-                  }`}
-                  onClick={() => handleSort('active_status')}
-                  title={getSortTooltip('active_status')}
-                >
-                  Status{getSortArrow('active_status')}
-                </th>
-              )}
+              {visibleColumns.map(columnKey => (
+                <React.Fragment key={columnKey}>
+                  {getColumnHeader(columnKey)}
+                </React.Fragment>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -533,59 +544,9 @@ const PlayersTable: React.FC = () => {
                   key={player.id}
                   className={!player.active_status ? 'retired-player' : ''}
                 >
-                  {isColumnVisible('name') && (
-                    <td>
-                      <button
-                        className="player-name-link"
-                        onClick={() => handlePlayerClick(player)}
-                        aria-label={`View details for ${player.name}`}
-                      >
-                        <span className="player-name">{player.name}</span>
-                      </button>
-                    </td>
-                  )}
-
-                  {isColumnVisible('jersey_number') && (
-                    <td>
-                      <span className="jersey-number">
-                        #{player.jersey_number}
-                      </span>
-                    </td>
-                  )}
-
-                  {isColumnVisible('position') && <td>{player.position}</td>}
-
-                  {isColumnVisible('team') && <td>{player.team.name}</td>}
-
-                  {isColumnVisible('goals') && (
-                    <td>
-                      <span className="stat">{player.goals}</span>
-                    </td>
-                  )}
-
-                  {isColumnVisible('assists') && (
-                    <td>
-                      <span className="stat">{player.assists}</span>
-                    </td>
-                  )}
-
-                  {isColumnVisible('points') && (
-                    <td>
-                      <span className="stat points">{player.points}</span>
-                    </td>
-                  )}
-
-                  {isColumnVisible('active_status') && (
-                    <td>
-                      <span
-                        className={`status ${
-                          player.active_status ? 'active' : 'retired'
-                        }`}
-                      >
-                        {player.active_status ? 'Active' : 'Retired'}
-                      </span>
-                    </td>
-                  )}
+                  {visibleColumns.map(columnKey => (
+                    <td key={columnKey}>{getCellValue(player, columnKey)}</td>
+                  ))}
                 </tr>
               ))
             )}
