@@ -14,11 +14,6 @@ export interface Player {
   height: string;
   weight: number;
   handedness: string;
-
-  // Legacy combined stats
-  goals: number;
-  assists: number;
-  points: number;
   active_status: boolean;
 
   // Regular season statistics
@@ -32,6 +27,11 @@ export interface Player {
   playoff_assists: number;
   playoff_points: number;
   playoff_games_played: number;
+  // Combined statistics
+  games_played: number;
+  goals: number;
+  assists: number;
+  points: number;
 
   team: Team;
 }
@@ -74,9 +74,6 @@ export type SortField =
   | 'position'
   | 'team'
   | 'jersey_number'
-  | 'goals'
-  | 'assists'
-  | 'points'
   | 'active_status'
   | 'regular_season_goals'
   | 'regular_season_assists'
@@ -85,7 +82,11 @@ export type SortField =
   | 'playoff_goals'
   | 'playoff_assists'
   | 'playoff_points'
-  | 'playoff_games_played';
+  | 'playoff_games_played'
+  | 'games_played'
+  | 'goals'
+  | 'assists'
+  | 'points';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -100,13 +101,6 @@ export const SORTABLE_FIELDS: SortConfig[] = [
   { field: 'position', label: 'Position', displayName: 'Position' },
   { field: 'team', label: 'Team', displayName: 'Team' },
   { field: 'jersey_number', label: 'Jersey #', displayName: 'Jersey #' },
-  { field: 'goals', label: 'Goals (Total)', displayName: 'Goals (Total)' },
-  {
-    field: 'assists',
-    label: 'Assists (Total)',
-    displayName: 'Assists (Total)',
-  },
-  { field: 'points', label: 'Points (Total)', displayName: 'Points (Total)' },
   { field: 'active_status', label: 'Status', displayName: 'Status' },
   {
     field: 'regular_season_goals',
@@ -144,6 +138,22 @@ export const SORTABLE_FIELDS: SortConfig[] = [
     label: 'PO Games',
     displayName: 'Playoff Games',
   },
+  {
+    field: 'games_played',
+    label: 'Games Played (Total)',
+    displayName: 'Games Played (Total)',
+  },
+  {
+    field: 'goals',
+    label: 'Goals (Total)',
+    displayName: 'Goals (Total)',
+  },
+  {
+    field: 'assists',
+    label: 'Assists (Total)',
+    displayName: 'Assists (Total)',
+  },
+  { field: 'points', label: 'Points (Total)', displayName: 'Points (Total)' },
 ];
 
 // Filter types - matches backend FilterFieldType
@@ -151,9 +161,6 @@ export type FilterField =
   | 'position'
   | 'team'
   | 'jersey_number'
-  | 'goals'
-  | 'assists'
-  | 'points'
   | 'active_status'
   | 'regular_season_goals'
   | 'regular_season_assists'
@@ -162,7 +169,11 @@ export type FilterField =
   | 'playoff_goals'
   | 'playoff_assists'
   | 'playoff_points'
-  | 'playoff_games_played';
+  | 'playoff_games_played'
+  | 'games_played'
+  | 'goals'
+  | 'assists'
+  | 'points';
 
 // Filter operator types
 export type StringFilterOperator = '=' | '!=' | 'contains' | 'not_contains';

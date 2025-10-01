@@ -352,25 +352,25 @@ class NHLDataFetcher:
                     "height": self.format_height(bio_data.get("heightInInches", "")),
                     "weight": bio_data.get("weightInPounds", 180),
                     "handedness": bio_data.get("shootsCatches", "Right"),
-                    # Use regular season stats as primary
-                    "goals": regular_stats.get("goals", 0),
-                    "assists": regular_stats.get("assists", 0), 
-                    "points": regular_stats.get("points", 0),
                     "active_status": True,  # All roster players are active for the season
                     "team_id": team_id,  # Use correct team ID from mapping
-                    # Store additional playoff stats for future use
+                    "regular_season_stats": {
+                        "goals": regular_stats.get("goals", 0),
+                        "assists": regular_stats.get("assists", 0),
+                        "points": regular_stats.get("points", 0),
+                        "games_played": regular_stats.get("gamesPlayed", 0)
+                    },
+                    
                     "playoff_stats": {
                         "goals": playoff_stats.get("goals", 0),
                         "assists": playoff_stats.get("assists", 0),
                         "points": playoff_stats.get("points", 0),
                         "games_played": playoff_stats.get("gamesPlayed", 0)
                     },
-                    "regular_season_stats": {
-                        "goals": regular_stats.get("goals", 0),
-                        "assists": regular_stats.get("assists", 0),
-                        "points": regular_stats.get("points", 0),
-                        "games_played": regular_stats.get("gamesPlayed", 0)
-                    }
+                    "games_played": regular_stats.get("gamesPlayed", 0) + playoff_stats.get("gamesPlayed", 0),
+                    "goals": regular_stats.get("goals", 0) + playoff_stats.get("goals", 0),
+                    "assists": regular_stats.get("assists", 0) + playoff_stats.get("assists", 0),
+                    "points": regular_stats.get("points", 0) + playoff_stats.get("points", 0),
                 }
                 
                 players.append(player_info)

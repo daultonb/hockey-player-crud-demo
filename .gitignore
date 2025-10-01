@@ -121,3 +121,4 @@ dist
 .out
 .storybook-out
 backend/.coverage
+.claude/settings.local.json

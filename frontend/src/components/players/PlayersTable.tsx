@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
+import { JSX } from 'react/jsx-runtime';
 import {
   Player,
   PlayerFilter,
@@ -15,7 +16,6 @@ import './PaginationControls.css';
 import PlayerDetailsModal from './PlayerDetailsModal';
 import PlayerSearch from './PlayerSearch';
 import './PlayersTable.css';
-import { JSX } from 'react/jsx-runtime';
 
 const PlayersTable: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -45,16 +45,7 @@ const PlayersTable: React.FC = () => {
 
   // Column visibility state
   const [isColumnModalOpen, setIsColumnModalOpen] = useState<boolean>(false);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>([
-    'name',
-    'jersey_number',
-    'position',
-    'team',
-    'goals',
-    'assists',
-    'points',
-    'active_status',
-  ]);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
 
   const apiBaseUrl =
     process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -124,9 +115,39 @@ const PlayersTable: React.FC = () => {
     ]
   );
 
+  // Fetch default visible columns from backend on mount
   useEffect(() => {
-    fetchPlayers();
-  }, []);
+    const fetchDefaultColumns = async () => {
+      try {
+        const response = await axios.get(`${apiBaseUrl}/column-metadata`);
+        if (response.data?.default_visible_columns) {
+          setVisibleColumns(response.data.default_visible_columns);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch default columns, using fallback:', error);
+        // Fallback to hardcoded defaults if API fails
+        setVisibleColumns([
+          'name',
+          'jersey_number',
+          'position',
+          'team',
+          'goals',
+          'assists',
+          'points',
+          'active_status',
+        ]);
+      }
+    };
+
+    fetchDefaultColumns();
+  }, [apiBaseUrl]);
+
+  useEffect(() => {
+    // Only fetch players once default columns are loaded
+    if (visibleColumns.length > 0) {
+      fetchPlayers();
+    }
+  }, [visibleColumns.length]);
 
   const handleSearch = useCallback(
     (search: string, field: SearchField) => {
@@ -230,14 +251,9 @@ const PlayersTable: React.FC = () => {
     setIsColumnModalOpen(false);
   }, []);
 
-  const handleColumnToggle = useCallback(
-    (columnKey: string, isVisible: boolean) => {
-      setVisibleColumns(prev =>
-        isVisible ? [...prev, columnKey] : prev.filter(col => col !== columnKey)
-      );
-    },
-    []
-  );
+  const handleColumnsChange = useCallback((columns: string[]) => {
+    setVisibleColumns(columns);
+  }, []);
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -320,24 +336,25 @@ const PlayersTable: React.FC = () => {
       jersey_number: { label: '#', sortable: true },
       position: { label: 'Position', sortable: true },
       team: { label: 'Team', sortable: true },
-      goals: { label: 'Goals', sortable: true },
-      assists: { label: 'Assists', sortable: true },
-      points: { label: 'Points', sortable: true },
       active_status: { label: 'Status', sortable: true },
+      regular_season_games_played: {
+        label: 'Regular Season GP',
+        sortable: true,
+      },
       regular_season_goals: { label: 'Regular Season Goals', sortable: true },
       regular_season_assists: {
         label: 'Regular Season Assists',
         sortable: true,
       },
       regular_season_points: { label: 'Regular Season Points', sortable: true },
-      regular_season_games_played: {
-        label: 'Regular Season GP',
-        sortable: true,
-      },
+      playoff_games_played: { label: 'Playoff GP', sortable: true },
       playoff_goals: { label: 'Playoff Goals', sortable: true },
       playoff_assists: { label: 'Playoff Assists', sortable: true },
       playoff_points: { label: 'Playoff Points', sortable: true },
-      playoff_games_played: { label: 'Playoff GP', sortable: true },
+      games_played: { label: 'Games Played', sortable: true },
+      goals: { label: 'Goals', sortable: true },
+      assists: { label: 'Assists', sortable: true },
+      points: { label: 'Points', sortable: true },
     };
 
     const config = headerMap[columnKey];
@@ -570,8 +587,8 @@ const PlayersTable: React.FC = () => {
       <ColumnToggleModal
         isOpen={isColumnModalOpen}
         onClose={handleCloseColumnModal}
-        visibleColumns={visibleColumns}
-        onColumnToggle={handleColumnToggle}
+        initialVisibleColumns={visibleColumns}
+        onColumnsChange={handleColumnsChange}
       />
     </div>
   );

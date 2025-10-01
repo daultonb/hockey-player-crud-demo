@@ -3,6 +3,7 @@
 }
 
 .player-section {
+  margin-top: -24px;
   margin-bottom: 24px;
 }
 
@@ -64,17 +65,47 @@
   border: 1px solid #f5c6cb;
 }
 
+.stats-row {
+  margin-bottom: 20px;
+}
+
+.stats-row:last-child {
+  margin-bottom: 0;
+}
+
+.stats-row-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 12px 0;
+}
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.total-stats {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #dee2e6;
+}
+
+.total-stats .stats-row-title {
+  color: #007bff;
+}
+
+.total-stats .stat-value {
+  color: #28a745;
+  font-weight: 800;
 }
 
 .stat-item {
   background-color: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 6px;
-  padding: 16px;
+  border-radius: 8px;
+  padding: 8px;
   text-align: center;
 }
 
@@ -100,8 +131,8 @@
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .stat-item {
@@ -115,19 +146,23 @@
 
 @media (max-width: 480px) {
   .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
 
   .stat-item {
-    padding: 8px;
+    padding: 10px 8px;
   }
 
   .stat-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .stat-value {
     font-size: 1.1rem;
+  }
+
+  .stats-row-title {
+    font-size: 0.9rem;
   }
 }

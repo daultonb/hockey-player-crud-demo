@@ -13,18 +13,19 @@ SortFieldType = Literal[
     "position", 
     "team",
     "jersey_number",
-    "goals",
-    "assists", 
-    "points",
     "active_status",
+    "regular_season_games_played",
     "regular_season_goals",
     "regular_season_assists",
     "regular_season_points", 
-    "regular_season_games_played",
+    "playoff_games_played",
     "playoff_goals",
     "playoff_assists",
     "playoff_points",
-    "playoff_games_played",
+    "games_played",
+    "goals", 
+    "assists", 
+    "points", 
 ]
 
 # Sort direction options
@@ -35,18 +36,19 @@ FilterFieldType = Literal[
     "position", 
     "team", 
     "jersey_number", 
-    "goals", 
-    "assists", 
-    "points", 
     "active_status",
+    "regular_season_games_played",
     "regular_season_goals",
     "regular_season_assists", 
     "regular_season_points",
-    "regular_season_games_played",
+    "playoff_games_played",
     "playoff_goals",
     "playoff_assists",
     "playoff_points", 
-    "playoff_games_played",
+    "games_played",
+    "goals", 
+    "assists", 
+    "points", 
 ]
 
 # Filter operators for different data types
@@ -84,18 +86,19 @@ class PlayerFilter(BaseModel):
 
         # Numeric fields: jersey_number, all stat fields
         elif field in [
-            "jersey_number", 
-            "goals", 
-            "assists", 
-            "points",
+            "jersey_number",
+            "regular_season_games_played",
             "regular_season_goals",
             "regular_season_assists", 
             "regular_season_points",
-            "regular_season_games_played",
+            "playoff_games_played",
             "playoff_goals",
             "playoff_assists",
             "playoff_points",
-            "playoff_games_played",
+            "games_played",
+            "goals", 
+            "assists", 
+            "points",
         ]:
             if operator not in ["=", "!=", ">", "<", ">=", "<="]:
                 raise ValueError(
@@ -152,11 +155,6 @@ class PlayerResponse(BaseModel):
     height: str
     weight: int
     handedness: str
-    
-    # Legacy combined stats
-    goals: int
-    assists: int
-    points: int
     active_status: bool
     
     # Regular season statistics
@@ -170,6 +168,12 @@ class PlayerResponse(BaseModel):
     playoff_assists: int
     playoff_points: int
     playoff_games_played: int
+
+    # Combined statistics
+    games_played: int
+    goals: int
+    assists: int
+    points: int
     
     team: TeamResponse
 

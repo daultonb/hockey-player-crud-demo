@@ -56,11 +56,6 @@ def format_player_response(player: Player) -> dict:
         "height": player.height,
         "weight": player.weight,
         "handedness": player.handedness,
-        
-        # Legacy combined stats
-        "goals": player.goals,
-        "assists": player.assists,
-        "points": player.points,
         "active_status": player.active_status,
         
         # Regular season statistics
@@ -74,6 +69,11 @@ def format_player_response(player: Player) -> dict:
         "playoff_assists": player.playoff_assists,
         "playoff_points": player.playoff_points,
         "playoff_games_played": player.playoff_games_played,
+        # Combined statistics
+        "games_played": player.games_played,
+        "goals": player.goals,
+        "assists": player.assists,
+        "points": player.points,
         
         "team": {
             "id": player.team.id,
@@ -204,12 +204,12 @@ async def get_column_metadata():
     based on the schema definitions. Column names and types are extracted directly
     from the PlayerResponse model.
     """
-     # Get the actual field lists from the schema type definitions
+    # Get the actual field lists from the schema type definitions
     searchable_fields = set(get_args(SearchFieldType)) - {"all"}  # Remove "all" as it's not a real field
     sortable_fields = set(get_args(SortFieldType))
     filterable_fields = set(get_args(FilterFieldType))
     
-    # Define the desired display order
+    # Define the desired display order for unselected columns (for easy discovery)
     desired_order = [
         'jersey_number',
         'name',
@@ -223,6 +223,7 @@ async def get_column_metadata():
         'playoff_goals',
         'playoff_assists',
         'playoff_points',
+        'games_played',
         'goals',
         'assists',
         'points',
@@ -233,9 +234,22 @@ async def get_column_metadata():
         'handedness',
         'active_status',
     ]
+
+    # Define default visible columns (in selection order for initial load)
+    default_visible_columns = [
+        'name',
+        'jersey_number',
+        'position',
+        'team',
+        'games_played',
+        'goals',
+        'assists',
+        'points',
+        'active_status',
+    ]
     
     # Get all fields from PlayerResponse model, excluding nested objects and metadata
-    player_fields = PlayerResponse.__fields__
+    player_fields = PlayerResponse.model_fields
     excluded_fields = {"id", "team"}  # Exclude ID (not user-manageable) and team (nested object)
     
     # Build column metadata dynamically from PlayerResponse schema
@@ -271,8 +285,9 @@ async def get_column_metadata():
             return len(desired_order)
     
     columns_metadata.sort(key=get_order_index)
-    
+
     return {
         "columns": columns_metadata,
-        "count": len(columns_metadata)
+        "count": len(columns_metadata),
+        "default_visible_columns": default_visible_columns
     }

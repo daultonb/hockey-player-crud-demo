@@ -9,7 +9,8 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
+  /* Disable animations to prevent flashing on re-render */
+  will-change: opacity;
 }
 
 .modal-content {
@@ -20,7 +21,8 @@
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  animation: slideIn 0.2s ease-out;
+  /* Disable animations to prevent flashing on re-render */
+  will-change: transform, opacity;
 }
 
 .modal-header {

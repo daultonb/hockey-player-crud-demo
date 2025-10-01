@@ -67,16 +67,16 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
               </span>
             </div>
             <div className="info-item">
+              <span className="info-label">Handedness:</span>
+              <span className="info-value">{player.handedness}</span>
+            </div>
+            <div className="info-item">
               <span className="info-label">Height:</span>
               <span className="info-value">{player.height}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Weight:</span>
               <span className="info-value">{player.weight} lbs</span>
-            </div>
-            <div className="info-item">
-              <span className="info-label">Handedness:</span>
-              <span className="info-value">{player.handedness}</span>
             </div>
             <div className="info-item">
               <span className="info-label">Status:</span>
@@ -93,18 +93,86 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
 
         <div className="player-section">
           <h3 className="section-title">Statistics</h3>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-label">Goals</span>
-              <span className="stat-value">{player.goals}</span>
+
+          {/* Regular Season Stats */}
+          <div className="stats-row">
+            <h4 className="stats-row-title">Regular Season</h4>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-label">Games Played</span>
+                <span className="stat-value">
+                  {player.regular_season_games_played}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Goals</span>
+                <span className="stat-value">
+                  {player.regular_season_goals}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Assists</span>
+                <span className="stat-value">
+                  {player.regular_season_assists}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Points</span>
+                <span className="stat-value">
+                  {player.regular_season_points}
+                </span>
+              </div>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">Assists</span>
-              <span className="stat-value">{player.assists}</span>
+          </div>
+
+          {/* Playoff Stats */}
+          <div className="stats-row">
+            <h4 className="stats-row-title">Playoffs</h4>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-label">Games Played</span>
+                <span className="stat-value">
+                  {player.playoff_games_played}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Goals</span>
+                <span className="stat-value">{player.playoff_goals}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Assists</span>
+                <span className="stat-value">{player.playoff_assists}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Points</span>
+                <span className="stat-value">{player.playoff_points}</span>
+              </div>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">Points</span>
-              <span className="stat-value">{player.points}</span>
+          </div>
+
+          {/* Total Stats (Calculated) */}
+          <div className="stats-row total-stats">
+            <h4 className="stats-row-title">Totals</h4>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <span className="stat-label">Games Played</span>
+                <span className="stat-value">
+                  {player.regular_season_games_played +
+                    player.playoff_games_played}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Goals</span>
+                <span className="stat-value">{player.goals}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Assists</span>
+                <span className="stat-value">{player.assists}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Points</span>
+                <span className="stat-value">{player.points}</span>
+              </div>
             </div>
           </div>
         </div>

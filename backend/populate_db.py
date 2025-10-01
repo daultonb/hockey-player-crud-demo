@@ -115,12 +115,7 @@ def populate_players(db: Session, players_data: list, team_info: dict):
             handedness=player_data["handedness"],
             active_status=player_data["active_status"],
             team_id=player_data["team_id"],
-            
-            # Legacy combined stats (for backward compatibility)
-            goals=player_data.get("goals", 0),
-            assists=player_data.get("assists", 0),
-            points=player_data.get("points", 0),
-            
+    
             # Regular season statistics
             regular_season_goals=regular_stats.get("goals", player_data.get("goals", 0)),
             regular_season_assists=regular_stats.get("assists", player_data.get("assists", 0)),
@@ -132,6 +127,12 @@ def populate_players(db: Session, players_data: list, team_info: dict):
             playoff_assists=playoff_stats.get("assists", 0),
             playoff_points=playoff_stats.get("points", 0),
             playoff_games_played=playoff_stats.get("games_played", 0),
+
+            # Combined statistics
+            games_played=regular_stats.get("games_played", 0) + playoff_stats.get("games_played", 0),
+            goals=regular_stats.get("goals", player_data.get("goals", 0)) + playoff_stats.get("goals", 0),
+            assists=regular_stats.get("assists", player_data.get("assists", 0)) + playoff_stats.get("assists", 0),
+            points=regular_stats.get("points", player_data.get("points", 0)) + playoff_stats.get("points", 0),
         )
         
         db.add(player)

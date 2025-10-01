@@ -201,9 +201,6 @@ def _get_sort_column(sort_field: SortFieldType):
         "position": Player.position,
         "team": Team.name,
         "jersey_number": Player.jersey_number,
-        "goals": Player.goals,
-        "assists": Player.assists,
-        "points": Player.points,
         "active_status": Player.active_status,
         # Regular season stats
         "regular_season_goals": Player.regular_season_goals,
@@ -215,6 +212,11 @@ def _get_sort_column(sort_field: SortFieldType):
         "playoff_assists": Player.playoff_assists,
         "playoff_points": Player.playoff_points,
         "playoff_games_played": Player.playoff_games_played,
+        # Combined stats
+        "games_played": Player.games_played,
+        "goals": Player.goals,
+        "assists": Player.assists,
+        "points": Player.points,
     }
 
     return sort_mapping.get(sort_field, Player.name)  # Default to name if invalid field

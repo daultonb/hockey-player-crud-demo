@@ -20,11 +20,6 @@ class Player(Base):
     height = Column(String, nullable=False)
     weight = Column(Integer, nullable=False)
     handedness = Column(String, nullable=False)
-    
-    # Legacy combined stats (for backward compatibility)
-    goals = Column(Integer, default=0)
-    assists = Column(Integer, default=0)
-    points = Column(Integer, default=0)
     active_status = Column(Boolean, default=True)
 
     # Regular season statistics
@@ -38,6 +33,12 @@ class Player(Base):
     playoff_assists = Column(Integer, default=0)
     playoff_points = Column(Integer, default=0)
     playoff_games_played = Column(Integer, default=0)
+
+    # Combined statistics
+    games_played = Column(Integer, default=0)
+    goals = Column(Integer, default=0)
+    assists = Column(Integer, default=0)
+    points = Column(Integer, default=0)
 
     # Foreign key relationship to team
     team_id = Column(Integer, ForeignKey("teams.id"), nullable=False)
