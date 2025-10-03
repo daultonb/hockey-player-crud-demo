@@ -14,10 +14,10 @@
 .section-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text-primary);
   margin: 0 0 16px 0;
   padding-bottom: 8px;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .player-info-grid {
@@ -34,13 +34,13 @@
 .info-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #666;
+  color: var(--color-gray-dark);
   margin-bottom: 4px;
 }
 
 .info-value {
   font-size: 1rem;
-  color: #333;
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -54,15 +54,15 @@
 }
 
 .status.active {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success-border);
 }
 
 .status.retired {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: 1px solid var(--color-danger-border);
 }
 
 .stats-row {
@@ -76,7 +76,7 @@
 .stats-row-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #495057;
+  color: var(--color-text-secondary);
   margin: 0 0 12px 0;
 }
 
@@ -89,21 +89,21 @@
 .total-stats {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 2px solid #dee2e6;
+  border-top: 2px solid var(--color-gray-400);
 }
 
 .total-stats .stats-row-title {
-  color: #007bff;
+  color: var(--color-primary);
 }
 
 .total-stats .stat-value {
-  color: #28a745;
+  color: var(--color-success);
   font-weight: 800;
 }
 
 .stat-item {
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
+  background-color: var(--color-gray-100);
+  border: 1px solid var(--color-gray-300);
   border-radius: 8px;
   padding: 8px;
   text-align: center;
@@ -113,7 +113,7 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #666;
+  color: var(--color-gray-dark);
   margin-bottom: 8px;
 }
 
@@ -121,7 +121,7 @@
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #007bff;
+  color: var(--color-primary);
 }
 
 /* Responsive design */
