@@ -322,7 +322,7 @@ describe('Player Types and Constants', () => {
    */
   describe('@constants SORTABLE_FIELDS', () => {
     it('should have correct number of sortable fields', () => {
-      expect(SORTABLE_FIELDS).toHaveLength(8);
+      expect(SORTABLE_FIELDS).toHaveLength(17);
     });
 
     it('should have all required sortable field configurations', () => {
@@ -331,10 +331,19 @@ describe('Player Types and Constants', () => {
         'position',
         'team',
         'jersey_number',
+        'active_status',
+        'regular_season_goals',
+        'regular_season_assists',
+        'regular_season_points',
+        'regular_season_games_played',
+        'playoff_goals',
+        'playoff_assists',
+        'playoff_points',
+        'playoff_games_played',
+        'games_played',
         'goals',
         'assists',
         'points',
-        'active_status',
       ];
       const actualFields = SORTABLE_FIELDS.map(field => field.field);
 

@@ -42,16 +42,12 @@ const Modal: React.FC<ModalProps> = React.memo(
       onClose();
     };
 
+    if (!isOpen) {
+      return null;
+    }
+
     const modalContent = (
-      <div
-        className="modal-backdrop"
-        onClick={handleBackdropClick}
-        style={{
-          display: isOpen ? 'flex' : 'none',
-          visibility: isOpen ? 'visible' : 'hidden',
-          pointerEvents: isOpen ? 'auto' : 'none',
-        }}
-      >
+      <div className="modal-backdrop" onClick={handleBackdropClick}>
         <div className="modal-content">
           <div className="modal-header">
             {title && <h2 className="modal-title">{title}</h2>}

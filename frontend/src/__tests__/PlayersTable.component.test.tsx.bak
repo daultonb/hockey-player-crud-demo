@@ -273,25 +273,7 @@ const mockSearchResponse: PlayersApiResponse = {
 };
 
 const mockColumnMetadata = {
-  default_visible_columns: [
-    'name',
-    'position',
-    'team',
-    'jersey_number',
-    'active_status',
-    'regular_season_goals',
-    'regular_season_assists',
-    'regular_season_points',
-    'regular_season_games_played',
-    'playoff_goals',
-    'playoff_assists',
-    'playoff_points',
-    'playoff_games_played',
-    'games_played',
-    'goals',
-    'assists',
-    'points',
-  ]
+  default_visible_columns: ['name', 'jersey_number', 'position', 'team', 'goals', 'assists', 'points', 'active_status']
 };
 
 describe('PlayersTable Component', () => {
@@ -349,20 +331,20 @@ describe('PlayersTable Component', () => {
       expect(screen.getByText(/^Name/)).toBeInTheDocument();
       expect(screen.getByText(/^Position/)).toBeInTheDocument();
       expect(screen.getByText(/^Team/)).toBeInTheDocument();
-      expect(screen.getAllByText(/^#/).length).toBeGreaterThan(0); // Jersey number column (appears multiple times with player data)
+      expect(screen.getByText(/^Jersey #/)).toBeInTheDocument();
+      expect(screen.getByText(/^Goals/)).toBeInTheDocument();
+      expect(screen.getByText(/^Assists/)).toBeInTheDocument();
+      expect(screen.getByText(/^Points/)).toBeInTheDocument();
       expect(screen.getByText(/^Status/)).toBeInTheDocument();
-      // With new split stats, check for at least one of the stat columns - now multiple "Goals" columns exist
-      expect(screen.getAllByText(/Goals/).length).toBeGreaterThan(0);
 
       // Check player data
       expect(screen.getByText('Test Player')).toBeInTheDocument();
       expect(screen.getByText('Center')).toBeInTheDocument();
       expect(screen.getByText('Test Team')).toBeInTheDocument();
       expect(screen.getByText('#87')).toBeInTheDocument();
-      // Numbers may appear in pagination dropdown and stats
-      expect(screen.getAllByText('50').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('60').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('110').length).toBeGreaterThan(0);
+      expect(screen.getByText('50')).toBeInTheDocument();
+      expect(screen.getByText('60')).toBeInTheDocument();
+      expect(screen.getByText('110')).toBeInTheDocument();
       expect(screen.getByText('Active')).toBeInTheDocument();
 
       // Check retired player
@@ -371,7 +353,7 @@ describe('PlayersTable Component', () => {
 
       // Check footer info
       expect(screen.getByText(/Showing 2 of 2 players/)).toBeInTheDocument();
-      expect(screen.getByText(/Sorted by.*name/i)).toBeInTheDocument();
+      expect(screen.getByText(/Sorted by Name \(A-Z\)/)).toBeInTheDocument();
     });
 
     /*
@@ -397,7 +379,6 @@ describe('PlayersTable Component', () => {
      * Expected: Shows "no players" message in table
      */
     test('renders empty state when no players are returned', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockEmptyApiResponse });
 
       render(<PlayersTable />);
@@ -416,14 +397,13 @@ describe('PlayersTable Component', () => {
      * Expected: Calls API with default parameters (name ascending sort)
      */
     test('makes initial API call with default sort parameters', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
 
       await waitFor(() => {
         expect(mockedAxios.get).toHaveBeenCalledWith(
-          'http://localhost:8000/players?page=1&limit=10&sort_by=name&sort_order=asc'
+          'http://localhost:8000/players?page=1&limit=20&sort_by=name&sort_order=asc'
         );
       });
     });
@@ -434,14 +414,13 @@ describe('PlayersTable Component', () => {
      */
     test('uses default API URL when environment variable is not set', async () => {
       delete process.env.REACT_APP_API_BASE_URL;
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
 
       await waitFor(() => {
         expect(mockedAxios.get).toHaveBeenCalledWith(
-          'http://127.0.0.1:8000/players?page=1&limit=10&sort_by=name&sort_order=asc'
+          'http://127.0.0.1:8000/players?page=1&limit=20&sort_by=name&sort_order=asc'
         );
       });
     });
@@ -454,7 +433,6 @@ describe('PlayersTable Component', () => {
      */
     test('handles search through PlayerSearch component', async () => {
       // Setup initial successful response
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -463,11 +441,11 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText('Test Player')).toBeInTheDocument();
       });
 
-      // Clear mocks and setup search response (no need for column-metadata again)
+      // Clear all mocks and setup search response
       jest.clearAllMocks();
       mockedAxios.get.mockResolvedValueOnce({ data: mockSearchResponse });
 
-      // Trigger search by typing
+      // Trigger search by typing - use a single type action to minimize calls
       const searchInput = screen.getByTestId('search-input');
       await userEvent.clear(searchInput);
       await userEvent.type(searchInput, 'test search');
@@ -480,7 +458,7 @@ describe('PlayersTable Component', () => {
         { timeout: 2000 }
       );
 
-      // Should have made exactly 1 API call (for search results)
+      // Should have made exactly 1 API call
       expect(mockedAxios.get).toHaveBeenCalledTimes(1);
 
       // Verify the search URL parameters
@@ -501,7 +479,6 @@ describe('PlayersTable Component', () => {
      * Expected: Clears search and reloads data with current sort/filters
      */
     test('handles clear search functionality', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -512,7 +489,6 @@ describe('PlayersTable Component', () => {
 
       // Setup clear response and click clear button
       mockedAxios.get.mockClear();
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       const clearButton = screen.getByTestId('clear-button');
@@ -535,7 +511,6 @@ describe('PlayersTable Component', () => {
      * Expected: Updates sort parameters and makes API call
      */
     test('handles sorting by different fields', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -545,7 +520,6 @@ describe('PlayersTable Component', () => {
       });
 
       // Setup sort response and click position header to sort
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       const positionHeader = screen.getByText(/^Position/);
@@ -563,7 +537,6 @@ describe('PlayersTable Component', () => {
      * Expected: Toggles between ascending and descending
      */
     test('toggles sort direction when clicking same field', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -572,7 +545,7 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText('Test Player')).toBeInTheDocument();
       });
 
-      // Setup sort responses (only players data, not column metadata)
+      // Setup sort responses
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
@@ -601,7 +574,6 @@ describe('PlayersTable Component', () => {
      * Expected: Shows up arrow for ascending, down arrow for descending
      */
     test('displays sort arrows correctly', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -619,7 +591,6 @@ describe('PlayersTable Component', () => {
      * Expected: Each header responds to clicks and shows proper styling
      */
     test('all sortable headers are clickable with proper classes', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -643,7 +614,6 @@ describe('PlayersTable Component', () => {
      * Expected: Opens FilterModal component
      */
     test('opens filter modal when filters button is clicked', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -653,8 +623,8 @@ describe('PlayersTable Component', () => {
       });
 
       // Click filters button
-      const filtersButtons = screen.getAllByTestId('filters-button');
-      await userEvent.click(filtersButtons[0]);
+      const filtersButton = screen.getByTestId('filters-button');
+      await userEvent.click(filtersButton);
 
       expect(screen.getByTestId('mock-filter-modal')).toBeInTheDocument();
     });
@@ -664,7 +634,6 @@ describe('PlayersTable Component', () => {
      * Expected: Modal disappears when close button is clicked
      */
     test('closes filter modal when close button is clicked', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -674,7 +643,7 @@ describe('PlayersTable Component', () => {
       });
 
       // Open modal
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
       expect(screen.getByTestId('mock-filter-modal')).toBeInTheDocument();
 
@@ -690,7 +659,6 @@ describe('PlayersTable Component', () => {
      * Expected: Makes API call with filter parameters and updates display
      */
     test('applies filters and makes API call with filter parameters', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -699,15 +667,11 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText('Test Player')).toBeInTheDocument();
       });
 
-      // Setup filter response - when filter is applied, API returns response with filters included
-      const filteredResponse = {
-        ...mockApiResponse,
-        filters: [{ field: 'team', operator: '=', value: 'Test Team' }],
-      };
-      mockedAxios.get.mockResolvedValueOnce({ data: filteredResponse });
+      // Setup filter response
+      mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       // Open filter modal and apply filters
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       const applyButton = screen.getByTestId('apply-filters-button');
@@ -719,12 +683,10 @@ describe('PlayersTable Component', () => {
         );
       });
 
-      // Check that filter info appears in footer (component shows "field operator value")
-      await waitFor(() => {
-        expect(
-          screen.getByText(/Filtered by:.*team.*=.*Test Team/)
-        ).toBeInTheDocument();
-      });
+      // Check that filter info appears in footer
+      expect(
+        screen.getByText(/Filtered by: Team equals Test Team/)
+      ).toBeInTheDocument();
     });
 
     /*
@@ -732,7 +694,6 @@ describe('PlayersTable Component', () => {
      * Expected: Shows correct number of active filters
      */
     test('displays active filters count in PlayerSearch component', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -745,10 +706,9 @@ describe('PlayersTable Component', () => {
       expect(screen.getByText('Filters (0)')).toBeInTheDocument();
 
       // Setup filter response and apply filters
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       const applyButton = screen.getByTestId('apply-filters-button');
@@ -766,7 +726,6 @@ describe('PlayersTable Component', () => {
      * Expected: Opens PlayerDetailsModal with correct player data
      */
     test('opens player details modal when player name is clicked', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -794,7 +753,6 @@ describe('PlayersTable Component', () => {
      * Expected: Modal disappears and selected player is cleared
      */
     test('closes player details modal when close button is clicked', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -834,7 +792,6 @@ describe('PlayersTable Component', () => {
         total_pages: 5,
       };
 
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: paginatedResponse });
 
       render(<PlayersTable />);
@@ -843,13 +800,13 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText('Test Player')).toBeInTheDocument();
       });
 
-      // Check pagination info (component doesn't show page numbers, just counts)
+      // Check pagination info
       expect(
-        screen.getByText(/Showing 2 of 100 players/)
+        screen.getByText(/Showing 2 of 100 players \(Page 1 of 5\)/)
       ).toBeInTheDocument();
 
       // Check sort info
-      expect(screen.getByText(/Sorted by.*name/i)).toBeInTheDocument();
+      expect(screen.getByText(/Sorted by Name \(A-Z\)/)).toBeInTheDocument();
     });
 
     /*
@@ -857,7 +814,6 @@ describe('PlayersTable Component', () => {
      * Expected: Shows "matching players" instead of just "players"
      */
     test('displays matching players count when search is active', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -884,9 +840,8 @@ describe('PlayersTable Component', () => {
       // Wait for search to complete with longer timeout
       await waitFor(
         () => {
-          // Component shows "players" not "matching players"
           expect(
-            screen.getByText(/Showing 2 of 2 players/)
+            screen.getByText(/Showing 2 of 2 matching players/)
           ).toBeInTheDocument();
         },
         { timeout: 2000 }
@@ -900,7 +855,6 @@ describe('PlayersTable Component', () => {
      * Expected: Active and retired players have appropriate classes and display
      */
     test('renders player rows with correct styling and data', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -913,10 +867,9 @@ describe('PlayersTable Component', () => {
       expect(screen.getByText('Center')).toBeInTheDocument();
       expect(screen.getByText('Test Team')).toBeInTheDocument();
       expect(screen.getByText('#87')).toBeInTheDocument();
-      // With split stats, numbers may appear multiple times (e.g., 50 appears in both goals and assists)
-      expect(screen.getAllByText('50').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('60').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('110').length).toBeGreaterThan(0);
+      expect(screen.getByText('50')).toBeInTheDocument();
+      expect(screen.getByText('60')).toBeInTheDocument();
+      expect(screen.getByText('110')).toBeInTheDocument();
       expect(screen.getByText('Active')).toBeInTheDocument();
 
       // Check retired player data
@@ -924,10 +877,9 @@ describe('PlayersTable Component', () => {
       expect(screen.getByText('Winger')).toBeInTheDocument();
       expect(screen.getByText('Old Team')).toBeInTheDocument();
       expect(screen.getByText('#99')).toBeInTheDocument();
-      // With split stats, numbers may appear multiple times
-      expect(screen.getAllByText('30').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('40').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('70').length).toBeGreaterThan(0);
+      expect(screen.getByText('30')).toBeInTheDocument();
+      expect(screen.getByText('40')).toBeInTheDocument();
+      expect(screen.getByText('70')).toBeInTheDocument();
       expect(screen.getByText('Retired')).toBeInTheDocument();
 
       // Check CSS classes
@@ -967,7 +919,6 @@ describe('PlayersTable Component', () => {
         total: 1,
       };
 
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: retiredOnlyResponse });
 
       render(<PlayersTable />);
@@ -989,7 +940,6 @@ describe('PlayersTable Component', () => {
      * Expected: Proper ARIA labels and semantic markup
      */
     test('provides proper accessibility attributes', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1000,7 +950,7 @@ describe('PlayersTable Component', () => {
 
       // Check table structure
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.getAllByRole('columnheader')).toHaveLength(17); // Updated for split stats
+      expect(screen.getAllByRole('columnheader')).toHaveLength(8);
       expect(screen.getAllByRole('row')).toHaveLength(3); // Header + 2 data rows
 
       // Check player link accessibility
@@ -1009,9 +959,9 @@ describe('PlayersTable Component', () => {
       });
       expect(playerButton).toBeInTheDocument();
 
-      // Check sort tooltips (component shows detailed tooltip text)
+      // Check sort tooltips
       const nameHeader = screen.getByRole('columnheader', { name: /name/i });
-      expect(nameHeader).toHaveAttribute('title', 'Currently sorted by name asc, click for descending');
+      expect(nameHeader).toHaveAttribute('title', 'Sort by Name descending');
     });
 
     /*
@@ -1019,7 +969,6 @@ describe('PlayersTable Component', () => {
      * Expected: Headers are focusable and have proper tooltips
      */
     test('supports keyboard navigation for sortable headers', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1044,7 +993,6 @@ describe('PlayersTable Component', () => {
      * Expected: Graceful error handling without crashes
      */
     test('handles malformed API response gracefully', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: null });
 
       render(<PlayersTable />);
@@ -1061,7 +1009,6 @@ describe('PlayersTable Component', () => {
      * Expected: Disables controls and shows loading indicator
      */
     test('shows search loading state and disables controls', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1085,29 +1032,29 @@ describe('PlayersTable Component', () => {
       await userEvent.clear(searchInput);
       await userEvent.type(searchInput, 'test');
 
-      // Component doesn't show "Searching..." text, just disables controls during search
+      // Should show searching state
       await waitFor(
         () => {
-          expect(screen.getByTestId('search-input')).toBeDisabled();
+          expect(screen.getByText('Searching...')).toBeInTheDocument();
         },
         { timeout: 2000 }
       );
 
+      expect(screen.getByTestId('search-input')).toBeDisabled();
       expect(screen.getByTestId('clear-button')).toBeDisabled();
-      expect(screen.getAllByTestId('filters-button')[0]).toBeDisabled();
+      expect(screen.getByTestId('filters-button')).toBeDisabled();
 
       // Complete the search
       resolveSearch!({ data: mockApiResponse });
 
-      // Wait for controls to be enabled again
       await waitFor(() => {
-        expect(screen.getByTestId('search-input')).not.toBeDisabled();
+        expect(screen.queryByText('Searching...')).not.toBeInTheDocument();
       });
 
       // Controls should be enabled again
       expect(screen.getByTestId('search-input')).not.toBeDisabled();
       expect(screen.getByTestId('clear-button')).not.toBeDisabled();
-      expect(screen.getAllByTestId('filters-button')[0]).not.toBeDisabled();
+      expect(screen.getByTestId('filters-button')).not.toBeDisabled();
     });
 
     /*
@@ -1116,14 +1063,13 @@ describe('PlayersTable Component', () => {
      */
     test('logs errors to console when API calls fail', async () => {
       const mockError = new Error('Network error');
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockRejectedValueOnce(mockError);
 
       render(<PlayersTable />);
 
       await waitFor(() => {
         expect(console.error).toHaveBeenCalledWith(
-          'Error fetching players:',
+          'PlayersTable: Error fetching players:',
           mockError
         );
       });
@@ -1134,7 +1080,6 @@ describe('PlayersTable Component', () => {
      * Expected: Filter and sort states persist correctly across operations
      */
     test('maintains filter and sort state across operations', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValue({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1143,11 +1088,11 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText('Test Player')).toBeInTheDocument();
       });
 
-      // Verify initial calls (column-metadata + players)
-      expect(mockedAxios.get).toHaveBeenCalledTimes(2);
+      // Verify initial call
+      expect(mockedAxios.get).toHaveBeenCalledTimes(1);
 
       // First, apply a filter
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       const applyButton = screen.getByTestId('apply-filters-button');
@@ -1155,15 +1100,15 @@ describe('PlayersTable Component', () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Filtered by:.*team.*=.*Test Team/)
+          screen.getByText(/Filtered by: Team equals Test Team/)
         ).toBeInTheDocument();
       });
 
-      // Verify filter API call was made (column-metadata=0, initial=1, filter=2)
-      expect(mockedAxios.get).toHaveBeenCalledTimes(3);
+      // Verify filter API call was made
+      expect(mockedAxios.get).toHaveBeenCalledTimes(2);
 
       // Verify filter is in the API call
-      const filterCall = mockedAxios.get.mock.calls[2][0];
+      const filterCall = mockedAxios.get.mock.calls[1][0];
       expect(filterCall).toContain('filters=');
 
       // Then sort - should maintain filters
@@ -1172,17 +1117,17 @@ describe('PlayersTable Component', () => {
 
       // Wait for the sort API call
       await waitFor(() => {
-        expect(mockedAxios.get).toHaveBeenCalledTimes(4);
+        expect(mockedAxios.get).toHaveBeenCalledTimes(3);
       });
 
-      // Verify filters are maintained in the sort call (call index 3, since 0=column-metadata, 1=initial, 2=filter, 3=sort)
-      const sortCall = mockedAxios.get.mock.calls[3][0];
+      // Verify filters are maintained in the sort call
+      const sortCall = mockedAxios.get.mock.calls[2][0];
       expect(sortCall).toContain('filters=');
       expect(sortCall).toContain('sort_by=position');
 
       // UI should still show the filter
       expect(
-        screen.getByText(/Filtered by:.*team.*=.*Test Team/)
+        screen.getByText(/Filtered by: Team equals Test Team/)
       ).toBeInTheDocument();
     });
 
@@ -1199,7 +1144,6 @@ describe('PlayersTable Component', () => {
 
       setMockFilterToApply(multipleFilters);
 
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       render(<PlayersTable />);
 
@@ -1209,7 +1153,7 @@ describe('PlayersTable Component', () => {
 
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
@@ -1219,10 +1163,11 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText(/Filtered by:/)).toBeInTheDocument();
       });
 
-      // Check each filter is displayed (component shows "field operator value")
-      expect(screen.getByText(/goals > 30/)).toBeInTheDocument();
-      expect(screen.getByText(/active_status = true/)).toBeInTheDocument();
-      expect(screen.getByText(/team contains Maple/)).toBeInTheDocument();
+      // Check each filter is displayed (outside of waitFor to avoid multiple assertions)
+      // The filters should be displayed as a comma-separated list in the footer
+      expect(screen.getByText(/Goals greater than 30/)).toBeInTheDocument();
+      expect(screen.getByText(/Status equals Active/)).toBeInTheDocument();
+      expect(screen.getByText(/Team contains Maple/)).toBeInTheDocument();
 
       // Should show 3 filters in the count
       expect(screen.getByText('Filters (3)')).toBeInTheDocument();
@@ -1235,7 +1180,6 @@ describe('PlayersTable Component', () => {
      * Expected: Returns correct tooltip text based on current sort state
      */
     test('displays correct sort tooltips for different states', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1246,13 +1190,13 @@ describe('PlayersTable Component', () => {
 
       // Check tooltip for currently sorted field (name, ascending)
       const nameHeader = screen.getByRole('columnheader', { name: /name/i });
-      expect(nameHeader).toHaveAttribute('title', 'Currently sorted by name asc, click for descending');
+      expect(nameHeader).toHaveAttribute('title', 'Sort by Name descending');
 
       // Check tooltip for non-sorted field
       const positionHeader = screen.getByRole('columnheader', {
         name: /position/i,
       });
-      expect(positionHeader).toHaveAttribute('title', 'Click to sort by position');
+      expect(positionHeader).toHaveAttribute('title', 'Sort by Position');
     });
 
     /*
@@ -1260,7 +1204,6 @@ describe('PlayersTable Component', () => {
      * Expected: Returns correct arrow characters based on sort state
      */
     test('getSortArrow returns correct arrows for different sort states', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1270,7 +1213,6 @@ describe('PlayersTable Component', () => {
       });
 
       // Setup sort response
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       // Click to sort descending
@@ -1290,7 +1232,6 @@ describe('PlayersTable Component', () => {
      * Expected: Shows appropriate message for no search matches
      */
     test('handles empty search results correctly', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1299,7 +1240,7 @@ describe('PlayersTable Component', () => {
         expect(screen.getByText('Test Player')).toBeInTheDocument();
       });
 
-      // Clear previous calls and setup empty search response (no column-metadata needed)
+      // Clear previous calls and setup empty search response
       jest.clearAllMocks();
       mockedAxios.get.mockResolvedValueOnce({ data: mockSearchResponse });
 
@@ -1326,7 +1267,6 @@ describe('PlayersTable Component', () => {
      * Expected: Shows error state when search fails
      */
     test('handles search network errors gracefully', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1362,7 +1302,6 @@ describe('PlayersTable Component', () => {
       // Remove environment variable
       delete process.env.REACT_APP_API_BASE_URL;
 
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1379,7 +1318,6 @@ describe('PlayersTable Component', () => {
     });
 
     test('PlayerDetailsModal does not render when selectedPlayer is null', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1399,7 +1337,6 @@ describe('PlayersTable Component', () => {
      * Expected: FilterModal should receive and display current filters count
      */
     test('FilterModal receives currentFilters prop correctly', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1409,7 +1346,7 @@ describe('PlayersTable Component', () => {
       });
 
       // Open filter modal - initially with 0 filters
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       // Check that the modal shows 0 current filters
@@ -1418,7 +1355,6 @@ describe('PlayersTable Component', () => {
       );
 
       // Apply a filter
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
@@ -1439,7 +1375,6 @@ describe('PlayersTable Component', () => {
      * Expected: Modals should manage their own state correctly
      */
     test('manages multiple modal states independently', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1468,7 +1403,7 @@ describe('PlayersTable Component', () => {
       ).not.toBeInTheDocument();
 
       // Open filter modal
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       expect(screen.getByTestId('mock-filter-modal')).toBeInTheDocument();
@@ -1493,7 +1428,6 @@ describe('PlayersTable Component', () => {
      */
     test('displays filters with various operators correctly', async () => {
       // Test != operator
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       render(<PlayersTable />);
 
@@ -1511,7 +1445,7 @@ describe('PlayersTable Component', () => {
 
       // Since our mock always applies the same filter, we need to work around this
       // by checking what the component would display if it received these filters
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
@@ -1527,7 +1461,6 @@ describe('PlayersTable Component', () => {
      * Expected: Boolean values are converted to Active/Retired
      */
     test('formats active_status filters with readable text', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       render(<PlayersTable />);
 
@@ -1545,7 +1478,7 @@ describe('PlayersTable Component', () => {
       mockedAxios.get.mockResolvedValueOnce({ data: retiredFilterResponse });
 
       // The actual filter application happens through our mock
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
@@ -1563,7 +1496,6 @@ describe('PlayersTable Component', () => {
      * Expected: Modal should not render when player is null
      */
     test('PlayerDetailsModal does not render when selectedPlayer is null', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1583,7 +1515,6 @@ describe('PlayersTable Component', () => {
      * Expected: FilterModal should receive and display current filters count
      */
     test('FilterModal receives currentFilters prop correctly', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1593,7 +1524,7 @@ describe('PlayersTable Component', () => {
       });
 
       // Open filter modal - initially with 0 filters
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       // Check that the modal shows 0 current filters
@@ -1602,7 +1533,6 @@ describe('PlayersTable Component', () => {
       );
 
       // Apply a filter
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
@@ -1623,7 +1553,6 @@ describe('PlayersTable Component', () => {
      * Expected: Modals should manage their own state correctly
      */
     test('manages multiple modal states independently', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1652,7 +1581,7 @@ describe('PlayersTable Component', () => {
       ).not.toBeInTheDocument();
 
       // Open filter modal
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       expect(screen.getByTestId('mock-filter-modal')).toBeInTheDocument();
@@ -1677,7 +1606,6 @@ describe('PlayersTable Component', () => {
      * Expected: Filter count and display text are correct
      */
     test('handles multiple filters in UI display', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1687,17 +1615,17 @@ describe('PlayersTable Component', () => {
       });
 
       // Apply filter through modal
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
 
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
 
-      // Check filter is displayed (component shows "field operator value")
+      // Check filter is displayed
       await waitFor(() => {
         expect(
-          screen.getByText(/Filtered by:.*team.*=.*Test Team/)
+          screen.getByText(/Filtered by: Team equals Test Team/)
         ).toBeInTheDocument();
       });
 
@@ -1710,7 +1638,6 @@ describe('PlayersTable Component', () => {
      * Expected: Filters remain active through searches and sorts
      */
     test('maintains filters through search and sort operations', async () => {
-      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
       render(<PlayersTable />);
@@ -1722,20 +1649,20 @@ describe('PlayersTable Component', () => {
       // Apply a filter
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      const filtersButton = screen.getAllByTestId('filters-button')[0];
+      const filtersButton = screen.getByTestId('filters-button');
       await userEvent.click(filtersButton);
       const applyButton = screen.getByTestId('apply-filters-button');
       await userEvent.click(applyButton);
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Filtered by:.*team.*=.*Test Team/)
+          screen.getByText(/Filtered by: Team equals Test Team/)
         ).toBeInTheDocument();
       });
 
-      // Verify filter was applied in API call (column-metadata=0, initial=1, filter=2)
-      expect(mockedAxios.get).toHaveBeenCalledTimes(3);
-      const filterCall = mockedAxios.get.mock.calls[2][0];
+      // Verify filter was applied in API call
+      expect(mockedAxios.get).toHaveBeenCalledTimes(2); // Initial load + filter
+      const filterCall = mockedAxios.get.mock.calls[1][0];
       expect(filterCall).toContain('filters=');
 
       // Now test sorting with filter maintained
@@ -1745,17 +1672,17 @@ describe('PlayersTable Component', () => {
       await userEvent.click(positionHeader);
 
       await waitFor(() => {
-        expect(mockedAxios.get).toHaveBeenCalledTimes(4);
+        expect(mockedAxios.get).toHaveBeenCalledTimes(3);
       });
 
       // Verify the sort call includes the filter
-      const sortCall = mockedAxios.get.mock.calls[3][0];
+      const sortCall = mockedAxios.get.mock.calls[2][0];
       expect(sortCall).toContain('filters=');
       expect(sortCall).toContain('sort_by=position');
 
       // Filter should still be displayed
       expect(
-        screen.getByText(/Filtered by:.*team.*=.*Test Team/)
+        screen.getByText(/Filtered by: Team equals Test Team/)
       ).toBeInTheDocument();
     });
 
@@ -1765,7 +1692,6 @@ describe('PlayersTable Component', () => {
        * Expected: Shows Active/Retired text in status column
        */
       test('displays active and retired status correctly', async () => {
-        mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
         render(<PlayersTable />);
@@ -1795,7 +1721,6 @@ describe('PlayersTable Component', () => {
        */
       test('handles all filter operator types in formatting', async () => {
         // This test ensures formatFilterText is exercised through the component
-        mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
         render(<PlayersTable />);
 
@@ -1806,7 +1731,7 @@ describe('PlayersTable Component', () => {
         // Apply a filter to trigger formatFilterText
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-        const filtersButton = screen.getAllByTestId('filters-button')[0];
+        const filtersButton = screen.getByTestId('filters-button');
         await userEvent.click(filtersButton);
         const applyButton = screen.getByTestId('apply-filters-button');
         await userEvent.click(applyButton);
@@ -1823,7 +1748,6 @@ describe('PlayersTable Component', () => {
        * Expected: Uses raw field name when not in FILTERABLE_FIELDS
        */
       test('handles unknown field names gracefully', async () => {
-        mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
         render(<PlayersTable />);
 
@@ -1835,7 +1759,7 @@ describe('PlayersTable Component', () => {
         // This is covered by the default case in formatFilterText
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-        const filtersButton = screen.getAllByTestId('filters-button')[0];
+        const filtersButton = screen.getByTestId('filters-button');
         await userEvent.click(filtersButton);
         const applyButton = screen.getByTestId('apply-filters-button');
         await userEvent.click(applyButton);

@@ -13,6 +13,8 @@ API_PORT=8000
 
 # Database Configuration
 DATABASE_URL=sqlite:///./hockey_players.db
+DATABASE_URL=postgresql://hockey_app:password_here@localhost:5432/hockey_crud_db
+
 
 # CORS Settings (comma-separated list)
 ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000

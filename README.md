@@ -49,7 +49,7 @@ A full-stack web application for managing hockey players and teams, built to sho
 
    ```bash
    python -m venv venv
-   venv\Scripts\activate  # Windows
+   source venv/Scripts/activate # Windows
    # source venv/bin/activate  # macOS/Linux
    ```
 

@@ -10,7 +10,7 @@
   },
   "players": [
     {
-      "id": 99,
+      "id": 800099,
       "name": "Wayne Gretzky",
       "position": "Center",
       "nationality": "CAN",
@@ -19,9 +19,6 @@
       "height": "6'0",
       "weight": 185,
       "handedness": "R",
-      "goals": 52,
-      "assists": 163,
-      "points": 215,
       "active_status": false,
       "team_id": 11,
       "playoff_stats": {
@@ -35,7 +32,11 @@
         "assists": 163,
         "points": 215,
         "games_played": 80
-      }
+      },
+      "games_played": 90,
+      "goals": 60,
+      "assists": 174,
+      "points": 254
     },
     {
       "id": 8478042,
@@ -45,25 +46,26 @@
       "jersey_number": 33,
       "birth_date": "1993-04-08",
       "height": "5'10\"",
-      "weight": 185,
+      "weight": 181,
       "handedness": "R",
-      "goals": 15,
-      "assists": 12,
-      "points": 27,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 15,
+        "assists": 12,
+        "points": 27,
+        "games_played": 67
+      },
       "playoff_stats": {
         "goals": 2,
         "assists": 5,
         "points": 7,
         "games_played": 15
       },
-      "regular_season_stats": {
-        "goals": 15,
-        "assists": 12,
-        "points": 27,
-        "games_played": 67
-      }
+      "games_played": 82,
+      "goals": 17,
+      "assists": 17,
+      "points": 34
     },
     {
       "id": 8477015,
@@ -75,23 +77,24 @@
       "height": "6'0\"",
       "weight": 184,
       "handedness": "R",
-      "goals": 13,
-      "assists": 17,
-      "points": 30,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 13,
+        "assists": 17,
+        "points": 30,
+        "games_played": 82
+      },
       "playoff_stats": {
         "goals": 5,
         "assists": 4,
         "points": 9,
         "games_played": 20
       },
-      "regular_season_stats": {
-        "goals": 13,
-        "assists": 17,
-        "points": 30,
-        "games_played": 82
-      }
+      "games_played": 102,
+      "goals": 18,
+      "assists": 21,
+      "points": 39
     },
     {
       "id": 8477934,
@@ -103,23 +106,24 @@
       "height": "6'2\"",
       "weight": 209,
       "handedness": "L",
-      "goals": 52,
-      "assists": 54,
-      "points": 106,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 52,
+        "assists": 54,
+        "points": 106,
+        "games_played": 71
+      },
       "playoff_stats": {
         "goals": 11,
         "assists": 22,
         "points": 33,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 52,
-        "assists": 54,
-        "points": 106,
-        "games_played": 71
-      }
+      "games_played": 93,
+      "goals": 63,
+      "assists": 76,
+      "points": 139
     },
     {
       "id": 8479365,
@@ -131,23 +135,24 @@
       "height": "6'3\"",
       "weight": 221,
       "handedness": "L",
-      "goals": 8,
-      "assists": 7,
-      "points": 15,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 8,
+        "assists": 7,
+        "points": 15,
+        "games_played": 58
+      },
       "playoff_stats": {
         "goals": 1,
         "assists": 3,
         "points": 4,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 8,
-        "assists": 7,
-        "points": 15,
-        "games_played": 58
-      }
+      "games_played": 80,
+      "goals": 9,
+      "assists": 10,
+      "points": 19
     },
     {
       "id": 8480468,
@@ -159,23 +164,24 @@
       "height": "5'10\"",
       "weight": 185,
       "handedness": "L",
-      "goals": 0,
-      "assists": 0,
-      "points": 0,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 0
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 0,
-        "points": 0,
-        "games_played": 0
-      }
+      "games_played": 0,
+      "goals": 0,
+      "assists": 0,
+      "points": 0
     },
     {
       "id": 8474641,
@@ -187,23 +193,24 @@
       "height": "6'0\"",
       "weight": 195,
       "handedness": "L",
-      "goals": 12,
-      "assists": 15,
-      "points": 27,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 12,
+        "assists": 15,
+        "points": 27,
+        "games_played": 81
+      },
       "playoff_stats": {
         "goals": 4,
         "assists": 3,
         "points": 7,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 12,
-        "assists": 15,
-        "points": 27,
-        "games_played": 81
-      }
+      "games_played": 103,
+      "goals": 16,
+      "assists": 18,
+      "points": 34
     },
     {
       "id": 8475786,
@@ -215,23 +222,24 @@
       "height": "6'1\"",
       "weight": 206,
       "handedness": "R",
-      "goals": 27,
-      "assists": 17,
-      "points": 44,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 27,
+        "assists": 17,
+        "points": 44,
+        "games_played": 73
+      },
       "playoff_stats": {
         "goals": 5,
         "assists": 6,
         "points": 11,
         "games_played": 15
       },
-      "regular_season_stats": {
-        "goals": 27,
-        "assists": 17,
-        "points": 44,
-        "games_played": 73
-      }
+      "games_played": 88,
+      "goals": 32,
+      "assists": 23,
+      "points": 55
     },
     {
       "id": 8477406,
@@ -243,23 +251,24 @@
       "height": "6'2\"",
       "weight": 205,
       "handedness": "L",
-      "goals": 2,
-      "assists": 16,
-      "points": 18,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 2,
+        "assists": 16,
+        "points": 18,
+        "games_played": 80
+      },
       "playoff_stats": {
         "goals": 3,
         "assists": 1,
         "points": 4,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 2,
-        "assists": 16,
-        "points": 18,
-        "games_played": 80
-      }
+      "games_played": 102,
+      "goals": 5,
+      "assists": 17,
+      "points": 22
     },
     {
       "id": 8479368,
@@ -271,23 +280,24 @@
       "height": "6'3\"",
       "weight": 216,
       "handedness": "L",
-      "goals": 1,
-      "assists": 1,
-      "points": 2,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 1,
+        "assists": 1,
+        "points": 2,
+        "games_played": 26
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 1,
-        "assists": 1,
-        "points": 2,
-        "games_played": 26
-      }
+      "games_played": 26,
+      "goals": 1,
+      "assists": 1,
+      "points": 2
     },
     {
       "id": 8477953,
@@ -299,23 +309,24 @@
       "height": "6'1\"",
       "weight": 194,
       "handedness": "R",
-      "goals": 6,
-      "assists": 8,
-      "points": 14,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 6,
+        "assists": 8,
+        "points": 14,
+        "games_played": 67
+      },
       "playoff_stats": {
         "goals": 3,
         "assists": 3,
         "points": 6,
         "games_played": 12
       },
-      "regular_season_stats": {
-        "goals": 6,
-        "assists": 8,
-        "points": 14,
-        "games_played": 67
-      }
+      "games_played": 79,
+      "goals": 9,
+      "assists": 11,
+      "points": 20
     },
     {
       "id": 8478402,
@@ -327,23 +338,24 @@
       "height": "6'1\"",
       "weight": 194,
       "handedness": "L",
-      "goals": 26,
-      "assists": 74,
-      "points": 100,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 26,
+        "assists": 74,
+        "points": 100,
+        "games_played": 67
+      },
       "playoff_stats": {
         "goals": 7,
         "assists": 26,
         "points": 33,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 26,
-        "assists": 74,
-        "points": 100,
-        "games_played": 67
-      }
+      "games_played": 89,
+      "goals": 33,
+      "assists": 100,
+      "points": 133
     },
     {
       "id": 8476454,
@@ -355,23 +367,24 @@
       "height": "6'1\"",
       "weight": 192,
       "handedness": "L",
-      "goals": 20,
-      "assists": 29,
-      "points": 49,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 20,
+        "assists": 29,
+        "points": 49,
+        "games_played": 78
+      },
       "playoff_stats": {
         "goals": 6,
         "assists": 14,
         "points": 20,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 20,
-        "assists": 29,
-        "points": 49,
-        "games_played": 78
-      }
+      "games_played": 100,
+      "goals": 26,
+      "assists": 43,
+      "points": 69
     },
     {
       "id": 8470621,
@@ -383,51 +396,53 @@
       "height": "6'3\"",
       "weight": 208,
       "handedness": "R",
-      "goals": 19,
-      "assists": 11,
-      "points": 30,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 19,
+        "assists": 11,
+        "points": 30,
+        "games_played": 81
+      },
       "playoff_stats": {
         "goals": 10,
         "assists": 4,
         "points": 14,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 19,
-        "assists": 11,
-        "points": 30,
-        "games_played": 81
-      }
+      "games_played": 103,
+      "goals": 29,
+      "assists": 15,
+      "points": 44
     },
     {
       "id": 8481491,
       "name": "Noah Philp",
       "position": "Center",
-      "nationality": "Unknown",
+      "nationality": "CAN",
       "jersey_number": 48,
-      "birth_date": "1990-01-01",
-      "height": "6'0\"",
-      "weight": 180,
-      "handedness": "Right",
-      "goals": 0,
-      "assists": 2,
-      "points": 2,
+      "birth_date": "1998-08-31",
+      "height": "6'3\"",
+      "weight": 198,
+      "handedness": "R",
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 2,
+        "points": 2,
+        "games_played": 15
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 2,
-        "points": 2,
-        "games_played": 15
-      }
+      "games_played": 15,
+      "goals": 0,
+      "assists": 2,
+      "points": 2
     },
     {
       "id": 8481617,
@@ -439,23 +454,24 @@
       "height": "6'1\"",
       "weight": 190,
       "handedness": "L",
-      "goals": 8,
-      "assists": 16,
-      "points": 24,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 8,
+        "assists": 16,
+        "points": 24,
+        "games_played": 82
+      },
       "playoff_stats": {
         "goals": 3,
         "assists": 7,
         "points": 10,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 8,
-        "assists": 16,
-        "points": 24,
-        "games_played": 82
-      }
+      "games_played": 104,
+      "goals": 11,
+      "assists": 23,
+      "points": 34
     },
     {
       "id": 8478585,
@@ -467,23 +483,24 @@
       "height": "5'10\"",
       "weight": 185,
       "handedness": "R",
-      "goals": 1,
-      "assists": 5,
-      "points": 6,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 1,
+        "assists": 5,
+        "points": 6,
+        "games_played": 36
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 1,
-        "assists": 5,
-        "points": 6,
-        "games_played": 36
-      }
+      "games_played": 36,
+      "goals": 1,
+      "assists": 5,
+      "points": 6
     },
     {
       "id": 8483512,
@@ -492,26 +509,27 @@
       "nationality": "CAN",
       "jersey_number": 22,
       "birth_date": "2004-01-01",
-      "height": "5'9\"",
+      "height": "5'10\"",
       "weight": 179,
       "handedness": "R",
-      "goals": 0,
-      "assists": 1,
-      "points": 1,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 1,
+        "points": 1,
+        "games_played": 4
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 1,
-        "points": 1,
-        "games_played": 4
-      }
+      "games_played": 4,
+      "goals": 0,
+      "assists": 1,
+      "points": 1
     },
     {
       "id": 8475784,
@@ -523,23 +541,24 @@
       "height": "5'11\"",
       "weight": 200,
       "handedness": "L",
-      "goals": 16,
-      "assists": 13,
-      "points": 29,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 16,
+        "assists": 13,
+        "points": 29,
+        "games_played": 72
+      },
       "playoff_stats": {
         "goals": 1,
         "assists": 1,
         "points": 2,
         "games_played": 5
       },
-      "regular_season_stats": {
-        "goals": 16,
-        "assists": 13,
-        "points": 29,
-        "games_played": 72
-      }
+      "games_played": 77,
+      "goals": 17,
+      "assists": 14,
+      "points": 31
     },
     {
       "id": 8480803,
@@ -551,23 +570,24 @@
       "height": "6'3\"",
       "weight": 192,
       "handedness": "R",
-      "goals": 14,
-      "assists": 53,
-      "points": 67,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 14,
+        "assists": 53,
+        "points": 67,
+        "games_played": 82
+      },
       "playoff_stats": {
         "goals": 7,
         "assists": 16,
         "points": 23,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 14,
-        "assists": 53,
-        "points": 67,
-        "games_played": 82
-      }
+      "games_played": 104,
+      "goals": 21,
+      "assists": 69,
+      "points": 90
     },
     {
       "id": 8477384,
@@ -579,23 +599,24 @@
       "height": "6'5\"",
       "weight": 220,
       "handedness": "R",
-      "goals": 0,
-      "assists": 1,
-      "points": 1,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 1,
+        "points": 1,
+        "games_played": 10
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 1
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 1,
-        "points": 1,
-        "games_played": 10
-      }
+      "games_played": 11,
+      "goals": 0,
+      "assists": 1,
+      "points": 1
     },
     {
       "id": 8479341,
@@ -607,23 +628,24 @@
       "height": "5'11\"",
       "weight": 188,
       "handedness": "L",
-      "goals": 0,
-      "assists": 0,
-      "points": 0,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 4
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 0,
-        "points": 0,
-        "games_played": 4
-      }
+      "games_played": 4,
+      "goals": 0,
+      "assists": 0,
+      "points": 0
     },
     {
       "id": 8475218,
@@ -635,23 +657,24 @@
       "height": "6'5\"",
       "weight": 225,
       "handedness": "L",
-      "goals": 9,
-      "assists": 24,
-      "points": 33,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 9,
+        "assists": 24,
+        "points": 33,
+        "games_played": 65
+      },
       "playoff_stats": {
         "goals": 1,
         "assists": 5,
         "points": 6,
         "games_played": 7
       },
-      "regular_season_stats": {
-        "goals": 9,
-        "assists": 24,
-        "points": 33,
-        "games_played": 65
-      }
+      "games_played": 72,
+      "goals": 10,
+      "assists": 29,
+      "points": 39
     },
     {
       "id": 8480834,
@@ -660,26 +683,27 @@
       "nationality": "USA",
       "jersey_number": 49,
       "birth_date": "2000-05-23",
-      "height": "6'2\"",
+      "height": "6'0\"",
       "weight": 193,
       "handedness": "R",
-      "goals": 2,
-      "assists": 11,
-      "points": 13,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 2,
+        "assists": 11,
+        "points": 13,
+        "games_played": 76
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 9
       },
-      "regular_season_stats": {
-        "goals": 2,
-        "assists": 11,
-        "points": 13,
-        "games_played": 76
-      }
+      "games_played": 85,
+      "goals": 2,
+      "assists": 11,
+      "points": 13
     },
     {
       "id": 8475906,
@@ -691,23 +715,24 @@
       "height": "6'2\"",
       "weight": 185,
       "handedness": "R",
-      "goals": 1,
-      "assists": 3,
-      "points": 4,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 1,
+        "assists": 3,
+        "points": 4,
+        "games_played": 11
+      },
       "playoff_stats": {
         "goals": 1,
         "assists": 3,
         "points": 4,
         "games_played": 19
       },
-      "regular_season_stats": {
-        "goals": 1,
-        "assists": 3,
-        "points": 4,
-        "games_played": 11
-      }
+      "games_played": 30,
+      "goals": 2,
+      "assists": 6,
+      "points": 8
     },
     {
       "id": 8476967,
@@ -719,23 +744,24 @@
       "height": "6'2\"",
       "weight": 192,
       "handedness": "L",
-      "goals": 7,
-      "assists": 18,
-      "points": 25,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 7,
+        "assists": 18,
+        "points": 25,
+        "games_played": 82
+      },
       "playoff_stats": {
         "goals": 1,
         "assists": 4,
         "points": 5,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 7,
-        "assists": 18,
-        "points": 25,
-        "games_played": 82
-      }
+      "games_played": 104,
+      "goals": 8,
+      "assists": 22,
+      "points": 30
     },
     {
       "id": 8477498,
@@ -747,23 +773,24 @@
       "height": "6'4\"",
       "weight": 215,
       "handedness": "L",
-      "goals": 5,
-      "assists": 28,
-      "points": 33,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 5,
+        "assists": 28,
+        "points": 33,
+        "games_played": 76
+      },
       "playoff_stats": {
         "goals": 3,
         "assists": 5,
         "points": 8,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 5,
-        "assists": 28,
-        "points": 33,
-        "games_played": 76
-      }
+      "games_played": 98,
+      "goals": 8,
+      "assists": 33,
+      "points": 41
     },
     {
       "id": 8479442,
@@ -775,23 +802,24 @@
       "height": "5'10\"",
       "weight": 184,
       "handedness": "R",
-      "goals": 3,
-      "assists": 4,
-      "points": 7,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 3,
+        "assists": 4,
+        "points": 7,
+        "games_played": 66
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 8
       },
-      "regular_season_stats": {
-        "goals": 3,
-        "assists": 4,
-        "points": 7,
-        "games_played": 66
-      }
+      "games_played": 74,
+      "goals": 3,
+      "assists": 4,
+      "points": 7
     },
     {
       "id": 8478013,
@@ -803,23 +831,24 @@
       "height": "6'1\"",
       "weight": 218,
       "handedness": "L",
-      "goals": 7,
-      "assists": 33,
-      "points": 40,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 7,
+        "assists": 33,
+        "points": 40,
+        "games_played": 65
+      },
       "playoff_stats": {
         "goals": 2,
         "assists": 8,
         "points": 10,
         "games_played": 22
       },
-      "regular_season_stats": {
-        "goals": 7,
-        "assists": 33,
-        "points": 40,
-        "games_played": 65
-      }
+      "games_played": 87,
+      "goals": 9,
+      "assists": 41,
+      "points": 50
     },
     {
       "id": 8475717,
@@ -831,23 +860,24 @@
       "height": "6'1\"",
       "weight": 206,
       "handedness": "L",
-      "goals": 0,
-      "assists": 1,
-      "points": 1,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 1,
+        "points": 1,
+        "games_played": 36
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 10
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 1,
-        "points": 1,
-        "games_played": 36
-      }
+      "games_played": 46,
+      "goals": 0,
+      "assists": 1,
+      "points": 1
     },
     {
       "id": 8480885,
@@ -859,23 +889,24 @@
       "height": "6'1\"",
       "weight": 158,
       "handedness": "L",
-      "goals": 0,
-      "assists": 0,
-      "points": 0,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 2
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 0
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 0,
-        "points": 0,
-        "games_played": 2
-      }
+      "games_played": 2,
+      "goals": 0,
+      "assists": 0,
+      "points": 0
     },
     {
       "id": 8479973,
@@ -885,29 +916,30 @@
       "jersey_number": 74,
       "birth_date": "1998-11-01",
       "height": "6'4\"",
-      "weight": 230,
+      "weight": 215,
       "handedness": "L",
-      "goals": 0,
-      "assists": 0,
-      "points": 0,
       "active_status": true,
       "team_id": 11,
+      "regular_season_stats": {
+        "goals": 0,
+        "assists": 0,
+        "points": 0,
+        "games_played": 51
+      },
       "playoff_stats": {
         "goals": 0,
         "assists": 0,
         "points": 0,
         "games_played": 15
       },
-      "regular_season_stats": {
-        "goals": 0,
-        "assists": 0,
-        "points": 0,
-        "games_played": 51
-      }
+      "games_played": 66,
+      "goals": 0,
+      "assists": 0,
+      "points": 0
     }
   ],
   "season": "2024-25",
   "team_code": "EDM",
-  "generated_at": "2025-08-31T22:58:59.798971",
+  "generated_at": "2025-10-02T20:23:37.732036",
   "data_source": "NHL Official APIs - 2024-25 Historical Roster"
 }

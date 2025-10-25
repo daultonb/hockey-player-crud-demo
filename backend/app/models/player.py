@@ -23,16 +23,16 @@ class Player(Base):
     active_status = Column(Boolean, default=True)
 
     # Regular season statistics
+    regular_season_games_played = Column(Integer, default=0)
     regular_season_goals = Column(Integer, default=0)
     regular_season_assists = Column(Integer, default=0)
     regular_season_points = Column(Integer, default=0)
-    regular_season_games_played = Column(Integer, default=0)
 
     # Playoff statistics
+    playoff_games_played = Column(Integer, default=0)
     playoff_goals = Column(Integer, default=0)
     playoff_assists = Column(Integer, default=0)
     playoff_points = Column(Integer, default=0)
-    playoff_games_played = Column(Integer, default=0)
 
     # Combined statistics
     games_played = Column(Integer, default=0)
