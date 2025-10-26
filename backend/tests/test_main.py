@@ -16,31 +16,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import settings
-from app.database import get_db
-from app.main import app, format_player_response
+from app.main import format_player_response
 from app.models.player import Player
-
-
-@pytest.fixture
-def client(test_engine):
-    """
-    Create FastAPI test client for endpoint testing.
-    Overrides the database dependency to use the test database.
-    """
-    from sqlalchemy.orm import sessionmaker
-
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
-
-    def override_get_db():
-        db = TestingSessionLocal()
-        try:
-            yield db
-        finally:
-            db.close()
-
-    app.dependency_overrides[get_db] = override_get_db
-    yield TestClient(app)
-    app.dependency_overrides.clear()
 
 
 class TestRootEndpoints:

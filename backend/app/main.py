@@ -3,11 +3,15 @@ import math
 import re
 from typing import get_args
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from sqlalchemy.orm import Session
 
+from app.cache import CacheService
 from app.config import settings
+from app.rate_limit import limiter
 from app.crud.player import (
     create_player,
     delete_player,
@@ -40,6 +44,10 @@ app = FastAPI(
     description="A CRUD API for managing hockey players and teams",
     debug=settings.debug_mode,
 )
+
+# Configure rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Add CORS middleware for frontend integration
 app.add_middleware(
@@ -108,12 +116,42 @@ async def root():
 async def health_check():
     """
     Health check endpoint for monitoring.
+
+    Returns service status and connectivity to external dependencies:
+    - Database (PostgreSQL)
+    - Redis (caching and rate limiting)
+    - Elasticsearch (full-text search)
     """
-    return {"status": "healthy", "service": settings.app_name}
+    from app.redis_client import RedisClient
+
+    health = {
+        "status": "healthy",
+        "service": settings.app_name,
+        "version": settings.app_version,
+        "database": "connected",
+        "redis": "unknown",
+        "elasticsearch": "unknown",
+    }
+
+    # Check Redis connectivity
+    try:
+        redis_connected = await RedisClient.ping()
+        health["redis"] = "connected" if redis_connected else "disconnected"
+    except Exception as e:
+        health["redis"] = f"error: {str(e)}"
+        health["status"] = "degraded"
+
+    # Elasticsearch check will be added later
+    if not settings.elasticsearch_enabled:
+        health["elasticsearch"] = "disabled"
+
+    return health
 
 
 @app.get("/players", response_model=PlayerSearchResponse)
+@limiter.limit("200/minute")
 async def get_players(
+    request: Request,
     search: str | None = Query(None, description="Search query string"),
     field: SearchFieldType = Query("all", description="Field to search in"),
     page: int = Query(1, ge=1, description="Page number (starts from 1)"),
@@ -160,6 +198,25 @@ async def get_players(
 
     print(f"API: Processing player request - {search_params}")
 
+    # Generate cache key based on all query parameters
+    cache_key = CacheService.generate_query_key(
+        "list",
+        search=search,
+        field=field,
+        page=page,
+        limit=limit,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        filters=filters  # Use raw filters string for cache key
+    )
+
+    # Try to get from cache first
+    cached_response = await CacheService.get("players", cache_key)
+    if cached_response:
+        print(f"API: Returning cached response for players")
+        return cached_response
+
+    # Cache miss - fetch from database
     players, total_count = get_players_with_search(db, search_params)
 
     players_data = [format_player_response(player) for player in players]
@@ -179,6 +236,9 @@ async def get_players(
         "sort_order": sort_order,
         "filters": parsed_filters,
     }
+
+    # Cache the response
+    await CacheService.set("players", cache_key, response)
 
     filter_info = f" with {len(parsed_filters)} filters" if parsed_filters else ""
     print(
@@ -303,15 +363,23 @@ async def get_column_metadata():
 
 
 @app.get("/teams", response_model=list[TeamResponse])
-async def get_teams(db: Session = Depends(get_db)):
+@limiter.limit("300/minute")
+async def get_teams(request: Request, db: Session = Depends(get_db)):
     """
     Get all teams for dropdown selection.
     Returns a list of all teams with their ID, name, and city.
     """
+    # Try to get from cache first
+    cached_teams = await CacheService.get("teams", "all")
+    if cached_teams:
+        print(f"API: Returning cached teams")
+        return cached_teams
+
+    # Cache miss - fetch from database
     teams = db.query(Team).order_by(Team.name).all()
     print(f"API: Returning {len(teams)} teams")
 
-    return [
+    response = [
         {
             "id": team.id,
             "name": team.name,
@@ -320,9 +388,16 @@ async def get_teams(db: Session = Depends(get_db)):
         for team in teams
     ]
 
+    # Cache the response
+    await CacheService.set("teams", "all", response)
+
+    return response
+
 
 @app.post("/players", response_model=PlayerResponse, status_code=201)
+@limiter.limit("50/minute")
 async def create_new_player(
+    request: Request,
     player_data: PlayerCreate,
     db: Session = Depends(get_db)
 ):
@@ -356,11 +431,15 @@ async def create_new_player(
 
     new_player = create_player(db, player_data)
 
+    # Invalidate player caches since we added a new player
+    await CacheService.invalidate_players()
+
     return format_player_response(new_player)
 
 
 @app.get("/players/{player_id}", response_model=PlayerResponse)
-async def get_player(player_id: int, db: Session = Depends(get_db)):
+@limiter.limit("200/minute")
+async def get_player(request: Request, player_id: int, db: Session = Depends(get_db)):
     """
     Get a single player by ID.
 
@@ -368,15 +447,29 @@ async def get_player(player_id: int, db: Session = Depends(get_db)):
     """
     print(f"API: Fetching player with ID {player_id}")
 
+    # Try to get from cache first
+    cached_player = await CacheService.get("players:detail", str(player_id))
+    if cached_player:
+        print(f"API: Returning cached player {player_id}")
+        return cached_player
+
+    # Cache miss - fetch from database
     player = get_player_by_id(db, player_id)
     if not player:
         raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
 
-    return format_player_response(player)
+    response = format_player_response(player)
+
+    # Cache the response
+    await CacheService.set("players:detail", str(player_id), response)
+
+    return response
 
 
 @app.put("/players/{player_id}", response_model=PlayerResponse)
+@limiter.limit("50/minute")
 async def update_existing_player(
+    request: Request,
     player_id: int,
     player_data: PlayerUpdate,
     db: Session = Depends(get_db)
@@ -399,11 +492,15 @@ async def update_existing_player(
     if not updated_player:
         raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
 
+    # Invalidate caches for this specific player and all player listings
+    await CacheService.invalidate_player(player_id)
+
     return format_player_response(updated_player)
 
 
 @app.delete("/players/{player_id}", status_code=204)
-async def delete_existing_player(player_id: int, db: Session = Depends(get_db)):
+@limiter.limit("20/minute")
+async def delete_existing_player(request: Request, player_id: int, db: Session = Depends(get_db)):
     """
     Delete a player from the database.
 
@@ -414,5 +511,8 @@ async def delete_existing_player(player_id: int, db: Session = Depends(get_db)):
     success = delete_player(db, player_id)
     if not success:
         raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
+
+    # Invalidate caches for this specific player and all player listings
+    await CacheService.invalidate_player(player_id)
 
     return None

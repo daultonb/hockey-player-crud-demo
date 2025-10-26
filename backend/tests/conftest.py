@@ -6,6 +6,8 @@ This file provides:
 - Reusable test data generators
 - Shared fixtures for teams and players
 - In-memory SQLite database for isolated testing
+- FastAPI TestClient with database dependency override
+- Redis client management for tests
 """
 
 import random
@@ -13,12 +15,14 @@ from datetime import date
 from typing import Any
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.database import Base
+from app.database import Base, get_db
+from app.main import app
 from app.models.player import Player
 from app.models.team import Team
 
@@ -321,3 +325,68 @@ def specific_test_players(test_db: Session, sample_teams: list[Team]) -> list[Pl
         test_db.refresh(player)
 
     return players
+
+
+@pytest.fixture(scope="function")
+def client(test_engine):
+    """
+    Create FastAPI test client for endpoint testing.
+    Overrides the database dependency to use the test database.
+    """
+    TestingSessionLocal = sessionmaker(
+        autocommit=False, autoflush=False, bind=test_engine
+    )
+
+    def override_get_db():
+        db = TestingSessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+    yield TestClient(app)
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def reset_redis_client():
+    """
+    Reset Redis client between tests to avoid event loop conflicts.
+    This runs automatically before each test function.
+    """
+    # Reset the singleton instance before each test
+    from app.redis_client import RedisClient
+
+    # Simply reset the class variables - don't try to close connections
+    # as that causes "Event loop is closed" errors
+    RedisClient._client = None
+    RedisClient._pool = None
+    yield
+    # Clean up after test
+    RedisClient._client = None
+    RedisClient._pool = None
+
+
+@pytest.fixture(scope="function", autouse=False)  # Disabled for now - causing test issues
+async def clear_redis_rate_limits():
+    """
+    Clear rate limit keys from Redis before each test.
+    This ensures tests don't interfere with each other.
+
+    NOTE: Currently disabled (autouse=False) due to interaction with TestClient.
+    slowapi may use in-memory storage during tests instead of Redis.
+    """
+    try:
+        from app.redis_client import RedisClient
+
+        client = await RedisClient.get_client()
+        # slowapi stores rate limit keys with pattern: LIMITER/<ip>:<endpoint>/<window>
+        # Clear all rate limit keys
+        keys = await client.keys("LIMITER*")
+        if keys:
+            await client.delete(*keys)
+    except Exception:
+        # If Redis is not available, skip cleanup
+        pass
+    yield

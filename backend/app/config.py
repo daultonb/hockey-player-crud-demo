@@ -29,6 +29,22 @@ class Settings:
         "ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
     )
 
+    # Redis settings
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379")
+    redis_cache_ttl: int = int(os.getenv("REDIS_CACHE_TTL", "300"))
+    redis_rate_limit_enabled: bool = (
+        os.getenv("REDIS_RATE_LIMIT_ENABLED", "true").lower() == "true"
+    )
+
+    # Elasticsearch settings
+    elasticsearch_url: str = os.getenv("ELASTICSEARCH_URL", "http://localhost:9200")
+    elasticsearch_index_name: str = os.getenv(
+        "ELASTICSEARCH_INDEX_NAME", "hockey_players"
+    )
+    elasticsearch_enabled: bool = (
+        os.getenv("ELASTICSEARCH_ENABLED", "true").lower() == "true"
+    )
+
     def get_allowed_origins_list(self) -> list[str]:
         """Parse allowed origins from comma-separated string to list."""
         if self.allowed_origins:
