@@ -562,3 +562,422 @@ class TestAdvancedFiltering:
 
         assert data["filters"] == []
         assert data["count"] >= 0
+
+
+class TestTeamsEndpoint:
+    """Test teams endpoint for retrieving team data."""
+
+    @pytest.mark.integration
+    def test_get_teams(self, client: TestClient, sample_teams: list):
+        """
+        Test teams endpoint returns all teams ordered by name.
+        Used for populating team dropdown in player forms.
+        """
+        response = client.get("/teams")
+
+        assert response.status_code == 200
+        data = response.json()
+
+        assert isinstance(data, list)
+        assert len(data) > 0
+
+        for team in data:
+            assert "id" in team
+            assert "name" in team
+            assert "city" in team
+
+        # Verify teams are sorted alphabetically by name
+        team_names = [team["name"] for team in data]
+        assert team_names == sorted(team_names)
+
+
+class TestCreatePlayerEndpoint:
+    """Test player creation endpoint."""
+
+    @pytest.mark.integration
+    def test_create_player_success(self, client: TestClient, sample_teams: list):
+        """
+        Test creating a new player with valid data.
+        Should return 201 status with complete player data.
+        """
+        new_player_data = {
+            "name": "Test Player",
+            "jersey_number": 99,
+            "position": "C",
+            "team_id": sample_teams[0].id,
+            "nationality": "Canada",
+            "birth_date": "1995-05-15",
+            "height": "6'1\"",
+            "weight": 195,
+            "handedness": "R",
+            "active_status": True,
+            "regular_season_games_played": 50,
+            "regular_season_goals": 20,
+            "regular_season_assists": 30,
+            "playoff_games_played": 10,
+            "playoff_goals": 5,
+            "playoff_assists": 8,
+        }
+
+        response = client.post("/players", json=new_player_data)
+
+        assert response.status_code == 201
+        data = response.json()
+
+        assert data["name"] == "Test Player"
+        assert data["jersey_number"] == 99
+        assert data["position"] == "C"
+        assert data["team"]["id"] == sample_teams[0].id
+        assert data["nationality"] == "Canada"
+        assert data["height"] == "6'1\""
+        assert data["weight"] == 195
+        assert data["handedness"] == "R"
+        assert data["active_status"] is True
+
+        # Verify calculated stats
+        assert data["regular_season_points"] == 50
+        assert data["playoff_points"] == 13
+        assert data["games_played"] == 60
+        assert data["goals"] == 25
+        assert data["assists"] == 38
+        assert data["points"] == 63
+
+    @pytest.mark.integration
+    def test_create_player_with_defaults(self, client: TestClient, sample_teams: list):
+        """
+        Test creating a player with minimal data using default values.
+        Playoff and regular season stats should default to 0.
+        """
+        new_player_data = {
+            "name": "Rookie Player",
+            "jersey_number": 77,
+            "position": "LW",
+            "team_id": sample_teams[0].id,
+            "nationality": "USA",
+            "birth_date": "2000-01-01",
+            "height": "5'11\"",
+            "weight": 180,
+            "handedness": "L",
+        }
+
+        response = client.post("/players", json=new_player_data)
+
+        assert response.status_code == 201
+        data = response.json()
+
+        assert data["regular_season_games_played"] == 0
+        assert data["regular_season_goals"] == 0
+        assert data["regular_season_assists"] == 0
+        assert data["regular_season_points"] == 0
+        assert data["playoff_games_played"] == 0
+        assert data["playoff_goals"] == 0
+        assert data["playoff_assists"] == 0
+        assert data["playoff_points"] == 0
+        assert data["games_played"] == 0
+        assert data["goals"] == 0
+        assert data["assists"] == 0
+        assert data["points"] == 0
+        assert data["active_status"] is True
+
+    @pytest.mark.integration
+    def test_create_player_invalid_team(self, client: TestClient):
+        """
+        Test creating a player with non-existent team ID.
+        Should return 404 error.
+        """
+        new_player_data = {
+            "name": "Test Player",
+            "jersey_number": 99,
+            "position": "C",
+            "team_id": 99999,
+            "nationality": "Canada",
+            "birth_date": "1995-05-15",
+            "height": "6'1\"",
+            "weight": 195,
+            "handedness": "R",
+            "active_status": True,
+        }
+
+        response = client.post("/players", json=new_player_data)
+
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()
+
+    @pytest.mark.integration
+    def test_create_player_invalid_position(self, client: TestClient, sample_teams: list):
+        """
+        Test creating a player with invalid position.
+        Should return 422 validation error.
+        """
+        new_player_data = {
+            "name": "Test Player",
+            "jersey_number": 99,
+            "position": "INVALID",
+            "team_id": sample_teams[0].id,
+            "nationality": "Canada",
+            "birth_date": "1995-05-15",
+            "height": "6'1\"",
+            "weight": 195,
+            "handedness": "R",
+        }
+
+        response = client.post("/players", json=new_player_data)
+
+        assert response.status_code == 422
+
+    @pytest.mark.integration
+    def test_create_player_invalid_handedness(
+        self, client: TestClient, sample_teams: list
+    ):
+        """
+        Test creating a player with invalid handedness.
+        Should return 422 validation error.
+        """
+        new_player_data = {
+            "name": "Test Player",
+            "jersey_number": 99,
+            "position": "C",
+            "team_id": sample_teams[0].id,
+            "nationality": "Canada",
+            "birth_date": "1995-05-15",
+            "height": "6'1\"",
+            "weight": 195,
+            "handedness": "BOTH",
+        }
+
+        response = client.post("/players", json=new_player_data)
+
+        assert response.status_code == 422
+
+    @pytest.mark.integration
+    def test_create_player_negative_stats(
+        self, client: TestClient, sample_teams: list
+    ):
+        """
+        Test creating a player with negative stats.
+        Should return 422 validation error.
+        """
+        new_player_data = {
+            "name": "Test Player",
+            "jersey_number": 99,
+            "position": "C",
+            "team_id": sample_teams[0].id,
+            "nationality": "Canada",
+            "birth_date": "1995-05-15",
+            "height": "6'1\"",
+            "weight": 195,
+            "handedness": "R",
+            "regular_season_goals": -5,
+        }
+
+        response = client.post("/players", json=new_player_data)
+
+        assert response.status_code == 422
+
+
+class TestGetPlayerByIdEndpoint:
+    """Test individual player retrieval endpoint."""
+
+    @pytest.mark.integration
+    def test_get_player_by_id_success(
+        self, client: TestClient, sample_players: list[Player]
+    ):
+        """
+        Test retrieving a single player by ID.
+        Should return complete player data with team information.
+        """
+        player = sample_players[0]
+        response = client.get(f"/players/{player.id}")
+
+        assert response.status_code == 200
+        data = response.json()
+
+        assert data["id"] == player.id
+        assert data["name"] == player.name
+        assert data["position"] == player.position
+        assert data["jersey_number"] == player.jersey_number
+        assert "team" in data
+        assert data["team"]["id"] == player.team_id
+
+    @pytest.mark.integration
+    def test_get_player_by_id_not_found(self, client: TestClient):
+        """
+        Test retrieving a player with non-existent ID.
+        Should return 404 error.
+        """
+        response = client.get("/players/99999")
+
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()
+
+
+class TestUpdatePlayerEndpoint:
+    """Test player update endpoint."""
+
+    @pytest.mark.integration
+    def test_update_player_success(
+        self, client: TestClient, sample_players: list[Player]
+    ):
+        """
+        Test updating a player with valid data.
+        Should return updated player data with recalculated stats.
+        """
+        player = sample_players[0]
+        update_data = {
+            "name": "Updated Name",
+            "jersey_number": 88,
+            "position": "RW",
+            "team_id": player.team_id,
+            "nationality": "Finland",
+            "birth_date": "1993-03-20",
+            "height": "6'3\"",
+            "weight": 210,
+            "handedness": "L",
+            "active_status": False,
+            "regular_season_games_played": 100,
+            "regular_season_goals": 40,
+            "regular_season_assists": 60,
+            "playoff_games_played": 20,
+            "playoff_goals": 10,
+            "playoff_assists": 15,
+        }
+
+        response = client.put(f"/players/{player.id}", json=update_data)
+
+        assert response.status_code == 200
+        data = response.json()
+
+        assert data["name"] == "Updated Name"
+        assert data["jersey_number"] == 88
+        assert data["position"] == "RW"
+        assert data["nationality"] == "Finland"
+        assert data["height"] == "6'3\""
+        assert data["weight"] == 210
+        assert data["handedness"] == "L"
+        assert data["active_status"] is False
+
+        # Verify recalculated stats
+        assert data["regular_season_points"] == 100
+        assert data["playoff_points"] == 25
+        assert data["games_played"] == 120
+        assert data["goals"] == 50
+        assert data["assists"] == 75
+        assert data["points"] == 125
+
+    @pytest.mark.integration
+    def test_update_player_not_found(self, client: TestClient, sample_teams: list):
+        """
+        Test updating a player with non-existent ID.
+        Should return 404 error.
+        """
+        update_data = {
+            "name": "Test",
+            "jersey_number": 1,
+            "position": "C",
+            "team_id": sample_teams[0].id,
+            "nationality": "Canada",
+            "birth_date": "1995-01-01",
+            "height": "6'0\"",
+            "weight": 180,
+            "handedness": "R",
+            "active_status": True,
+            "regular_season_games_played": 0,
+            "regular_season_goals": 0,
+            "regular_season_assists": 0,
+            "playoff_games_played": 0,
+            "playoff_goals": 0,
+            "playoff_assists": 0,
+        }
+
+        response = client.put("/players/99999", json=update_data)
+
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()
+
+    @pytest.mark.integration
+    def test_update_player_invalid_team(
+        self, client: TestClient, sample_players: list[Player]
+    ):
+        """
+        Test updating a player with non-existent team ID.
+        Should return 404 error.
+        """
+        player = sample_players[0]
+        update_data = {
+            "name": player.name,
+            "jersey_number": player.jersey_number,
+            "position": player.position,
+            "team_id": 99999,
+            "nationality": player.nationality,
+            "birth_date": player.birth_date.isoformat(),
+            "height": player.height,
+            "weight": player.weight,
+            "handedness": player.handedness,
+            "active_status": player.active_status,
+            "regular_season_games_played": player.regular_season_games_played,
+            "regular_season_goals": player.regular_season_goals,
+            "regular_season_assists": player.regular_season_assists,
+            "playoff_games_played": player.playoff_games_played,
+            "playoff_goals": player.playoff_goals,
+            "playoff_assists": player.playoff_assists,
+        }
+
+        response = client.put(f"/players/{player.id}", json=update_data)
+
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()
+
+
+class TestDeletePlayerEndpoint:
+    """Test player deletion endpoint."""
+
+    @pytest.mark.integration
+    def test_delete_player_success(
+        self, client: TestClient, sample_players: list[Player]
+    ):
+        """
+        Test deleting a player by ID.
+        Should return 204 status and player should no longer exist.
+        """
+        player = sample_players[0]
+        player_id = player.id
+
+        response = client.delete(f"/players/{player_id}")
+
+        assert response.status_code == 204
+
+        # Verify player is deleted
+        get_response = client.get(f"/players/{player_id}")
+        assert get_response.status_code == 404
+
+    @pytest.mark.integration
+    def test_delete_player_not_found(self, client: TestClient):
+        """
+        Test deleting a player with non-existent ID.
+        Should return 404 error.
+        """
+        response = client.delete("/players/99999")
+
+        assert response.status_code == 404
+        assert "not found" in response.json()["detail"].lower()
+
+    @pytest.mark.integration
+    def test_delete_player_verify_cascading(
+        self, client: TestClient, sample_players: list[Player]
+    ):
+        """
+        Test deleting a player doesn't affect team.
+        Team should still exist after player deletion.
+        """
+        player = sample_players[0]
+        team_id = player.team_id
+
+        response = client.delete(f"/players/{player.id}")
+
+        assert response.status_code == 204
+
+        # Verify team still exists
+        teams_response = client.get("/teams")
+        assert teams_response.status_code == 200
+        teams = teams_response.json()
+        assert any(team["id"] == team_id for team in teams)

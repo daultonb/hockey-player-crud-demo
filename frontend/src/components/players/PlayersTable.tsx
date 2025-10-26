@@ -1,6 +1,6 @@
-import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import axios from "axios";
+import React, { useCallback, useEffect, useState } from "react";
+import { JSX } from "react/jsx-runtime";
 import {
   Player,
   PlayerFilter,
@@ -8,16 +8,20 @@ import {
   SearchField,
   SortDirection,
   SortField,
-} from '../../types/Player';
-import ColumnToggleModal from '../modals/ColumnToggleModal';
-import FilterModal from '../modals/FilterModal';
-import PaginationControls from './PaginationControls';
-import './PaginationControls.css';
-import PlayerDetailsModal from './PlayerDetailsModal';
-import PlayerSearch from './PlayerSearch';
-import './PlayersTable.css';
+} from "../../types/Player";
+import ColumnToggleModal from "../modals/ColumnToggleModal";
+import DeleteConfirmationModal from "../modals/DeleteConfirmationModal";
+import FilterModal from "../modals/FilterModal";
+import PlayerFormModal from "../modals/PlayerFormModal";
+import { useToast } from "../ToastContainer";
+import PaginationControls from "./PaginationControls";
+import "./PaginationControls.css";
+import PlayerDetailsModal from "./PlayerDetailsModal";
+import PlayerSearch from "./PlayerSearch";
+import "./PlayersTable.css";
 
 const PlayersTable: React.FC = () => {
+  const { showToast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
@@ -26,18 +30,18 @@ const PlayersTable: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // Search and pagination state
-  const [currentSearch, setCurrentSearch] = useState<string>('');
+  const [currentSearch, setCurrentSearch] = useState<string>("");
   const [currentSearchField, setCurrentSearchField] =
-    useState<SearchField>('all');
+    useState<SearchField>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
 
   // Sort state - default to name ascending
-  const [currentSortField, setCurrentSortField] = useState<SortField>('name');
+  const [currentSortField, setCurrentSortField] = useState<SortField>("name");
   const [currentSortDirection, setCurrentSortDirection] =
-    useState<SortDirection>('asc');
+    useState<SortDirection>("asc");
 
   // Filter state
   const [currentFilters, setCurrentFilters] = useState<PlayerFilter[]>([]);
@@ -47,8 +51,22 @@ const PlayersTable: React.FC = () => {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState<boolean>(false);
   const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
 
+  // Add player modal state
+  const [isAddPlayerModalOpen, setIsAddPlayerModalOpen] =
+    useState<boolean>(false);
+
+  // Edit player modal state
+  const [isEditPlayerModalOpen, setIsEditPlayerModalOpen] =
+    useState<boolean>(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+
+  // Delete confirmation modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  const [deletingPlayer, setDeletingPlayer] = useState<Player | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
   const apiBaseUrl =
-    process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
+    process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8000";
 
   const fetchPlayers = useCallback(
     async (
@@ -77,15 +95,15 @@ const PlayersTable: React.FC = () => {
         });
 
         if (search !== undefined && search.trim()) {
-          params.append('search', search.trim());
+          params.append("search", search.trim());
         }
 
         if (searchField !== undefined) {
-          params.append('field', searchField);
+          params.append("field", searchField);
         }
 
         if (filters && filters.length > 0) {
-          params.append('filters', JSON.stringify(filters));
+          params.append("filters", JSON.stringify(filters));
         }
 
         const response = await axios.get<PlayersApiResponse>(
@@ -96,8 +114,8 @@ const PlayersTable: React.FC = () => {
         setTotalCount(response.data.total);
         setTotalPages(response.data.total_pages);
       } catch (err) {
-        console.error('Error fetching players:', err);
-        setError('Failed to fetch players. Please try again later.');
+        console.error("Error fetching players:", err);
+        setError("Failed to fetch players. Please try again later.");
         setPlayers([]);
         setTotalCount(0);
         setTotalPages(0);
@@ -124,17 +142,17 @@ const PlayersTable: React.FC = () => {
           setVisibleColumns(response.data.default_visible_columns);
         }
       } catch (error) {
-        console.warn('Failed to fetch default columns, using fallback:', error);
+        console.warn("Failed to fetch default columns, using fallback:", error);
         // Fallback to hardcoded defaults if API fails
         setVisibleColumns([
-          'name',
-          'jersey_number',
-          'position',
-          'team',
-          'goals',
-          'assists',
-          'points',
-          'active_status',
+          "name",
+          "jersey_number",
+          "position",
+          "team",
+          "goals",
+          "assists",
+          "points",
+          "active_status",
         ]);
       }
     };
@@ -177,10 +195,10 @@ const PlayersTable: React.FC = () => {
 
   const handleSort = useCallback(
     (field: SortField) => {
-      let newDirection: SortDirection = 'asc';
+      let newDirection: SortDirection = "asc";
 
       if (currentSortField === field) {
-        newDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+        newDirection = currentSortDirection === "asc" ? "desc" : "asc";
       }
 
       setCurrentSortField(field);
@@ -317,9 +335,129 @@ const PlayersTable: React.FC = () => {
     setSelectedPlayer(null);
   };
 
+  const handleOpenAddPlayer = useCallback(() => {
+    setIsAddPlayerModalOpen(true);
+  }, []);
+
+  const handleCloseAddPlayer = useCallback(() => {
+    setIsAddPlayerModalOpen(false);
+  }, []);
+
+  const handleAddPlayerSuccess = useCallback(() => {
+    fetchPlayers(
+      currentSearch,
+      currentSearchField,
+      currentPage,
+      itemsPerPage,
+      currentSortField,
+      currentSortDirection,
+      currentFilters,
+      true
+    );
+  }, [
+    fetchPlayers,
+    currentSearch,
+    currentSearchField,
+    currentPage,
+    itemsPerPage,
+    currentSortField,
+    currentSortDirection,
+    currentFilters,
+  ]);
+
+  const handleEditPlayer = useCallback((player: Player) => {
+    setEditingPlayer(player);
+    setIsEditPlayerModalOpen(true);
+    setIsModalOpen(false);
+  }, []);
+
+  const handleCloseEditPlayer = useCallback(() => {
+    setIsEditPlayerModalOpen(false);
+    setEditingPlayer(null);
+  }, []);
+
+  const handleEditPlayerSuccess = useCallback(() => {
+    fetchPlayers(
+      currentSearch,
+      currentSearchField,
+      currentPage,
+      itemsPerPage,
+      currentSortField,
+      currentSortDirection,
+      currentFilters,
+      true
+    );
+  }, [
+    fetchPlayers,
+    currentSearch,
+    currentSearchField,
+    currentPage,
+    itemsPerPage,
+    currentSortField,
+    currentSortDirection,
+    currentFilters,
+  ]);
+
+  const handleDeletePlayer = useCallback((player: Player) => {
+    setDeletingPlayer(player);
+    setIsDeleteModalOpen(true);
+    setIsModalOpen(false);
+  }, []);
+
+  const handleCloseDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+    setDeletingPlayer(null);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deletingPlayer) return;
+
+    setIsDeleting(true);
+    try {
+      await axios.delete(`${apiBaseUrl}/players/${deletingPlayer.id}`);
+      showToast(
+        `Player ${deletingPlayer.name} deleted successfully`,
+        "success"
+      );
+
+      setIsDeleteModalOpen(false);
+      setDeletingPlayer(null);
+
+      fetchPlayers(
+        currentSearch,
+        currentSearchField,
+        currentPage,
+        itemsPerPage,
+        currentSortField,
+        currentSortDirection,
+        currentFilters,
+        true
+      );
+    } catch (error: any) {
+      console.error("Error deleting player:", error);
+      const errorMessage =
+        error.response?.data?.detail || "Failed to delete player";
+      showToast(errorMessage, "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [
+    deletingPlayer,
+    apiBaseUrl,
+    showToast,
+    fetchPlayers,
+    currentSearch,
+    currentSearchField,
+    currentPage,
+    itemsPerPage,
+    currentSortField,
+    currentSortDirection,
+    currentFilters,
+  ]);
+
   const getSortArrow = (field: SortField): string => {
-    if (currentSortField !== field) return '';
-    return currentSortDirection === 'asc' ? ' ↑' : ' ↓';
+    if (currentSortField !== field) return "";
+    return currentSortDirection === "asc" ? " ↑" : " ↓";
   };
 
   const getSortTooltip = (field: SortField): string => {
@@ -327,34 +465,34 @@ const PlayersTable: React.FC = () => {
       return `Click to sort by ${field}`;
     }
     const nextDirection =
-      currentSortDirection === 'asc' ? 'descending' : 'ascending';
+      currentSortDirection === "asc" ? "descending" : "ascending";
     return `Currently sorted by ${field} ${currentSortDirection}, click for ${nextDirection}`;
   };
   const getColumnHeader = (columnKey: string): JSX.Element | null => {
     const headerMap: Record<string, { label: string; sortable: boolean }> = {
-      name: { label: 'Name', sortable: true },
-      jersey_number: { label: '#', sortable: true },
-      position: { label: 'Position', sortable: true },
-      team: { label: 'Team', sortable: true },
-      active_status: { label: 'Status', sortable: true },
+      name: { label: "Name", sortable: true },
+      jersey_number: { label: "#", sortable: true },
+      position: { label: "Position", sortable: true },
+      team: { label: "Team", sortable: true },
+      active_status: { label: "Status", sortable: true },
       regular_season_games_played: {
-        label: 'Regular Season GP',
+        label: "Regular Season GP",
         sortable: true,
       },
-      regular_season_goals: { label: 'Regular Season Goals', sortable: true },
+      regular_season_goals: { label: "Regular Season Goals", sortable: true },
       regular_season_assists: {
-        label: 'Regular Season Assists',
+        label: "Regular Season Assists",
         sortable: true,
       },
-      regular_season_points: { label: 'Regular Season Points', sortable: true },
-      playoff_games_played: { label: 'Playoff GP', sortable: true },
-      playoff_goals: { label: 'Playoff Goals', sortable: true },
-      playoff_assists: { label: 'Playoff Assists', sortable: true },
-      playoff_points: { label: 'Playoff Points', sortable: true },
-      games_played: { label: 'Games Played', sortable: true },
-      goals: { label: 'Goals', sortable: true },
-      assists: { label: 'Assists', sortable: true },
-      points: { label: 'Points', sortable: true },
+      regular_season_points: { label: "Regular Season Points", sortable: true },
+      playoff_games_played: { label: "Playoff GP", sortable: true },
+      playoff_goals: { label: "Playoff Goals", sortable: true },
+      playoff_assists: { label: "Playoff Assists", sortable: true },
+      playoff_points: { label: "Playoff Points", sortable: true },
+      games_played: { label: "Games Played", sortable: true },
+      goals: { label: "Goals", sortable: true },
+      assists: { label: "Assists", sortable: true },
+      points: { label: "Points", sortable: true },
     };
 
     const config = headerMap[columnKey];
@@ -364,7 +502,7 @@ const PlayersTable: React.FC = () => {
       return (
         <th
           className={`sortable-header ${
-            currentSortField === columnKey ? 'sorted' : ''
+            currentSortField === columnKey ? "sorted" : ""
           }`}
           onClick={() => handleSort(columnKey as SortField)}
           title={getSortTooltip(columnKey as SortField)}
@@ -383,7 +521,7 @@ const PlayersTable: React.FC = () => {
     columnKey: string
   ): JSX.Element | null => {
     switch (columnKey) {
-      case 'name':
+      case "name":
         return (
           <button
             className="player-name-link"
@@ -393,46 +531,46 @@ const PlayersTable: React.FC = () => {
             <span className="player-name">{player.name}</span>
           </button>
         );
-      case 'jersey_number':
+      case "jersey_number":
         return <span className="jersey-number">#{player.jersey_number}</span>;
-      case 'position':
+      case "position":
         return <>{player.position}</>;
-      case 'team':
+      case "team":
         return <>{player.team.name}</>;
-      case 'goals':
+      case "goals":
         return <span className="stat">{player.goals}</span>;
-      case 'assists':
+      case "assists":
         return <span className="stat">{player.assists}</span>;
-      case 'points':
+      case "points":
         return <span className="stat points">{player.points}</span>;
-      case 'active_status':
+      case "active_status":
         return (
           <span
-            className={`status ${player.active_status ? 'active' : 'retired'}`}
+            className={`status ${player.active_status ? "active" : "retired"}`}
           >
-            {player.active_status ? 'Active' : 'Retired'}
+            {player.active_status ? "Active" : "Retired"}
           </span>
         );
-      case 'regular_season_goals':
+      case "regular_season_goals":
         return <span className="stat">{player.regular_season_goals}</span>;
-      case 'regular_season_assists':
+      case "regular_season_assists":
         return <span className="stat">{player.regular_season_assists}</span>;
-      case 'regular_season_points':
+      case "regular_season_points":
         return <span className="stat">{player.regular_season_points}</span>;
-      case 'regular_season_games_played':
+      case "regular_season_games_played":
         return (
           <span className="stat">{player.regular_season_games_played}</span>
         );
-      case 'playoff_goals':
+      case "playoff_goals":
         return <span className="stat">{player.playoff_goals}</span>;
-      case 'playoff_assists':
+      case "playoff_assists":
         return <span className="stat">{player.playoff_assists}</span>;
-      case 'playoff_points':
+      case "playoff_points":
         return <span className="stat">{player.playoff_points}</span>;
-      case 'playoff_games_played':
+      case "playoff_games_played":
         return <span className="stat">{player.playoff_games_played}</span>;
       default:
-        return <>{player[columnKey as keyof Player]?.toString() || '-'}</>;
+        return <>{player[columnKey as keyof Player]?.toString() || "-"}</>;
     }
   };
 
@@ -462,7 +600,7 @@ const PlayersTable: React.FC = () => {
 
       <PlayerSearch
         onSearch={handleSearch}
-        onClear={() => handleSearch('', 'all')}
+        onClear={() => handleSearch("", "all")}
         onOpenFilters={handleOpenFilters}
         disabled={searchLoading}
         activeFiltersCount={currentFilters.length}
@@ -470,6 +608,15 @@ const PlayersTable: React.FC = () => {
 
       <div className="table-top-bar">
         <div className="top-bar-left">
+          <button
+            type="button"
+            className="add-player-button"
+            onClick={handleOpenAddPlayer}
+            aria-label="Add new player"
+            title="Add a new player"
+          >
+            + Add Player
+          </button>
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
@@ -489,22 +636,22 @@ const PlayersTable: React.FC = () => {
         <div className="top-bar-right">
           <div className="sort-filter-info">
             <div className="sort-info">
-              Sorted by{' '}
+              Sorted by{" "}
               {getSortTooltip(currentSortField)
-                .replace('Click to sort by ', '')
-                .replace('Currently sorted by ', '')}{' '}
+                .replace("Click to sort by ", "")
+                .replace("Currently sorted by ", "")}{" "}
               ({currentSortDirection})
             </div>
 
             {currentFilters.length > 0 && (
               <div className="filter-info">
-                Filtered by:{' '}
+                Filtered by:{" "}
                 {currentFilters
                   .map(
-                    filter =>
+                    (filter) =>
                       `${filter.field} ${filter.operator} ${filter.value}`
                   )
-                  .join(', ')}
+                  .join(", ")}
               </div>
             )}
 
@@ -527,7 +674,7 @@ const PlayersTable: React.FC = () => {
                 aria-label={`Filters (${currentFilters.length} active)`}
                 title={`${currentFilters.length} filters applied`}
               >
-                🔽 Filters{' '}
+                🔽 Filters{" "}
                 {currentFilters.length > 0 && `(${currentFilters.length})`}
               </button>
             </div>
@@ -539,7 +686,7 @@ const PlayersTable: React.FC = () => {
         <table className="players-table">
           <thead>
             <tr>
-              {visibleColumns.map(columnKey => (
+              {visibleColumns.map((columnKey) => (
                 <React.Fragment key={columnKey}>
                   {getColumnHeader(columnKey)}
                 </React.Fragment>
@@ -551,17 +698,17 @@ const PlayersTable: React.FC = () => {
               <tr>
                 <td colSpan={visibleColumns.length} className="no-results">
                   {isSearchActive
-                    ? 'No players match your search criteria.'
-                    : 'No players to display.'}
+                    ? "No players match your search criteria."
+                    : "No players to display."}
                 </td>
               </tr>
             ) : (
-              players.map(player => (
+              players.map((player) => (
                 <tr
                   key={player.id}
-                  className={!player.active_status ? 'retired-player' : ''}
+                  className={!player.active_status ? "retired-player" : ""}
                 >
-                  {visibleColumns.map(columnKey => (
+                  {visibleColumns.map((columnKey) => (
                     <td key={columnKey}>{getCellValue(player, columnKey)}</td>
                   ))}
                 </tr>
@@ -575,6 +722,8 @@ const PlayersTable: React.FC = () => {
         player={selectedPlayer}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        onEdit={handleEditPlayer}
+        onDelete={handleDeletePlayer}
       />
 
       <FilterModal
@@ -589,6 +738,29 @@ const PlayersTable: React.FC = () => {
         onClose={handleCloseColumnModal}
         initialVisibleColumns={visibleColumns}
         onColumnsChange={handleColumnsChange}
+      />
+
+      <PlayerFormModal
+        isOpen={isAddPlayerModalOpen}
+        onClose={handleCloseAddPlayer}
+        onSuccess={handleAddPlayerSuccess}
+        mode="add"
+      />
+
+      <PlayerFormModal
+        isOpen={isEditPlayerModalOpen}
+        onClose={handleCloseEditPlayer}
+        onSuccess={handleEditPlayerSuccess}
+        mode="edit"
+        player={editingPlayer || undefined}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        player={deletingPlayer}
+        isDeleting={isDeleting}
       />
     </div>
   );

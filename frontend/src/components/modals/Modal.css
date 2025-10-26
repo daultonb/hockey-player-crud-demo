@@ -39,6 +39,14 @@
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--color-text-primary);
+  flex: 1;
+}
+
+.modal-header-actions {
+  display: flex;
+  gap: 12px;
+  margin-left: 16px;
+  margin-right: 12px;
 }
 
 .modal-close-button {

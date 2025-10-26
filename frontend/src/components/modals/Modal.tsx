@@ -1,34 +1,35 @@
-import React, { useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import './Modal.css';
+import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
+import "./Modal.css";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
   title?: string;
+  headerActions?: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = React.memo(
-  ({ isOpen, onClose, children, title }) => {
+  ({ isOpen, onClose, children, title, headerActions }) => {
     useEffect(() => {
       const handleEscape = (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
+        if (event.key === "Escape") {
           onClose();
         }
       };
 
       if (isOpen) {
-        document.addEventListener('keydown', handleEscape);
+        document.addEventListener("keydown", handleEscape);
         // Prevent body scroll when modal is open
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'unset';
+        document.body.style.overflow = "unset";
       }
 
       return () => {
-        document.removeEventListener('keydown', handleEscape);
-        document.body.style.overflow = 'unset';
+        document.removeEventListener("keydown", handleEscape);
+        document.body.style.overflow = "unset";
       };
     }, [isOpen, onClose]);
 
@@ -51,6 +52,9 @@ const Modal: React.FC<ModalProps> = React.memo(
         <div className="modal-content">
           <div className="modal-header">
             {title && <h2 className="modal-title">{title}</h2>}
+            {headerActions && (
+              <div className="modal-header-actions">{headerActions}</div>
+            )}
             <button
               className="modal-close-button"
               onClick={handleCloseClick}
@@ -69,6 +73,6 @@ const Modal: React.FC<ModalProps> = React.memo(
   }
 );
 
-Modal.displayName = 'Modal';
+Modal.displayName = "Modal";
 
 export default Modal;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -63,12 +63,12 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         endPage = 5;
         pages.push(2, 3, 4, 5);
         if (totalPages > 5) {
-          pages.push('...');
+          pages.push("...");
         }
       } else if (currentPage >= totalPages - 3) {
         // Near the end
         if (totalPages > 5) {
-          pages.push('...');
+          pages.push("...");
         }
         startPage = totalPages - 3;
         endPage = totalPages - 1;
@@ -77,13 +77,13 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         }
       } else {
         // In the middle
-        pages.push('...');
+        pages.push("...");
         startPage = currentPage - 1;
         endPage = currentPage + 1;
         for (let i = startPage; i <= endPage; i++) {
           pages.push(i);
         }
-        pages.push('...');
+        pages.push("...");
       }
 
       // Always show last page
@@ -125,7 +125,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
             <div className="page-numbers">
               {generatePageNumbers().map((page, index) => {
-                if (page === '...') {
+                if (page === "...") {
                   return (
                     <span
                       key={`ellipsis-${index}`}
@@ -141,13 +141,13 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
                   <button
                     key={pageNumber}
                     className={`pagination-button page-number ${
-                      currentPage === pageNumber ? 'active' : ''
+                      currentPage === pageNumber ? "active" : ""
                     }`}
                     onClick={() => handlePageClick(pageNumber)}
                     disabled={disabled}
                     aria-label={`Go to page ${pageNumber}`}
                     aria-current={
-                      currentPage === pageNumber ? 'page' : undefined
+                      currentPage === pageNumber ? "page" : undefined
                     }
                   >
                     {pageNumber}

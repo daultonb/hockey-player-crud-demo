@@ -1,11 +1,11 @@
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import PlayerDetailsModal from '../components/players/PlayerDetailsModal';
-import { Player } from '../types/Player';
+import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import PlayerDetailsModal from "../components/players/PlayerDetailsModal";
+import { Player } from "../types/Player";
 
 // Mock the Modal component since it's already tested separately
-jest.mock('../components/modals/Modal', () => {
+jest.mock("../components/modals/Modal", () => {
   return function MockModal({
     isOpen,
     onClose,
@@ -33,14 +33,14 @@ jest.mock('../components/modals/Modal', () => {
 // Mock player data
 const mockActivePlayer: Player = {
   id: 1,
-  name: 'Connor McDavid',
-  position: 'Center',
-  nationality: 'Canadian',
+  name: "Connor McDavid",
+  position: "Center",
+  nationality: "Canadian",
   jersey_number: 97,
-  birth_date: '1997-01-13',
-  height: '6\'1"',
+  birth_date: "1997-01-13",
+  height: "6'1\"",
   weight: 193,
-  handedness: 'Left',
+  handedness: "Left",
   regular_season_goals: 30,
   regular_season_assists: 55,
   regular_season_points: 85,
@@ -56,21 +56,21 @@ const mockActivePlayer: Player = {
   active_status: true,
   team: {
     id: 1,
-    name: 'Oilers',
-    city: 'Edmonton',
+    name: "Oilers",
+    city: "Edmonton",
   },
 };
 
 const mockRetiredPlayer: Player = {
   id: 2,
-  name: 'Wayne Gretzky',
-  position: 'Center',
-  nationality: 'Canadian',
+  name: "Wayne Gretzky",
+  position: "Center",
+  nationality: "Canadian",
   jersey_number: 99,
-  birth_date: '1961-01-26',
-  height: '6\'0"',
+  birth_date: "1961-01-26",
+  height: "6'0\"",
   weight: 185,
-  handedness: 'Left',
+  handedness: "Left",
   regular_season_goals: 694,
   regular_season_assists: 1500,
   regular_season_points: 2194,
@@ -86,46 +86,46 @@ const mockRetiredPlayer: Player = {
   active_status: false,
   team: {
     id: 2,
-    name: 'Rangers',
-    city: 'New York',
+    name: "Rangers",
+    city: "New York",
   },
 };
 
 const mockPlayerWithInvalidDate: Player = {
   ...mockActivePlayer,
-  birth_date: 'invalid-date',
+  birth_date: "invalid-date",
 };
 
-describe('PlayerDetailsModal Component', () => {
+describe("PlayerDetailsModal Component", () => {
   const mockOnClose = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe('@component Basic Rendering', () => {
+  describe("@component Basic Rendering", () => {
     /*
      * Tests that the modal returns null when player is null
      * Expected: No modal elements are rendered
      */
-    test('returns null when player is null', () => {
+    test("returns null when player is null", () => {
       render(
         <PlayerDetailsModal player={null} isOpen={true} onClose={mockOnClose} />
       );
 
-      expect(screen.queryByTestId('mock-modal')).not.toBeInTheDocument();
+      expect(screen.queryByTestId("mock-modal")).not.toBeInTheDocument();
     });
 
     /*
      * Tests that the modal is not visible when isOpen is false
      * Expected: Modal is not in the document
      */
-    test('does not render when isOpen is false', () => {
+    test("does not render when isOpen is false", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -134,14 +134,14 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.queryByTestId('mock-modal')).not.toBeInTheDocument();
+      expect(screen.queryByTestId("mock-modal")).not.toBeInTheDocument();
     });
 
     /*
      * Tests that the modal renders with player data when open
      * Expected: Modal displays with correct title
      */
-    test('renders modal when isOpen is true and player is provided', () => {
+    test("renders modal when isOpen is true and player is provided", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -150,19 +150,19 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByTestId('mock-modal')).toBeInTheDocument();
-      expect(screen.getByTestId('modal-title')).toHaveTextContent(
-        'Connor McDavid - #97'
+      expect(screen.getByTestId("mock-modal")).toBeInTheDocument();
+      expect(screen.getByTestId("modal-title")).toHaveTextContent(
+        "Connor McDavid - #97"
       );
     });
   });
 
-  describe('@component Player Information Display', () => {
+  describe("@component Player Information Display", () => {
     /*
      * Tests that all player details are displayed correctly
      * Expected: All player information fields are shown with correct values
      */
-    test('displays all player details correctly', () => {
+    test("displays all player details correctly", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -172,37 +172,37 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // Check section headers
-      expect(screen.getByText('Player Details')).toBeInTheDocument();
-      expect(screen.getByText('Statistics')).toBeInTheDocument();
+      expect(screen.getByText("Player Details")).toBeInTheDocument();
+      expect(screen.getByText("Statistics")).toBeInTheDocument();
 
       // Check player info
-      expect(screen.getByText('Position:')).toBeInTheDocument();
-      expect(screen.getByText('Center')).toBeInTheDocument();
+      expect(screen.getByText("Position:")).toBeInTheDocument();
+      expect(screen.getByText("Center")).toBeInTheDocument();
 
-      expect(screen.getByText('Team:')).toBeInTheDocument();
-      expect(screen.getByText('Edmonton Oilers')).toBeInTheDocument();
+      expect(screen.getByText("Team:")).toBeInTheDocument();
+      expect(screen.getByText("Edmonton Oilers")).toBeInTheDocument();
 
-      expect(screen.getByText('Nationality:')).toBeInTheDocument();
-      expect(screen.getByText('Canadian')).toBeInTheDocument();
+      expect(screen.getByText("Nationality:")).toBeInTheDocument();
+      expect(screen.getByText("Canadian")).toBeInTheDocument();
 
-      expect(screen.getByText('Jersey Number:')).toBeInTheDocument();
-      expect(screen.getByText('#97')).toBeInTheDocument();
+      expect(screen.getByText("Jersey Number:")).toBeInTheDocument();
+      expect(screen.getByText("#97")).toBeInTheDocument();
 
-      expect(screen.getByText('Height:')).toBeInTheDocument();
-      expect(screen.getByText('6\'1"')).toBeInTheDocument();
+      expect(screen.getByText("Height:")).toBeInTheDocument();
+      expect(screen.getByText("6'1\"")).toBeInTheDocument();
 
-      expect(screen.getByText('Weight:')).toBeInTheDocument();
-      expect(screen.getByText('193 lbs')).toBeInTheDocument();
+      expect(screen.getByText("Weight:")).toBeInTheDocument();
+      expect(screen.getByText("193 lbs")).toBeInTheDocument();
 
-      expect(screen.getByText('Handedness:')).toBeInTheDocument();
-      expect(screen.getByText('Left')).toBeInTheDocument();
+      expect(screen.getByText("Handedness:")).toBeInTheDocument();
+      expect(screen.getByText("Left")).toBeInTheDocument();
     });
 
     /*
      * Tests that statistics are displayed correctly
      * Expected: Goals, assists, and points are shown with correct values
      */
-    test('displays player statistics correctly', () => {
+    test("displays player statistics correctly", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -212,21 +212,21 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // Check statistics - now appear multiple times (Regular Season, Playoffs, Totals)
-      expect(screen.getAllByText('Goals').length).toBeGreaterThan(0);
-      expect(screen.getByText('42')).toBeInTheDocument(); // Total goals
+      expect(screen.getAllByText("Goals").length).toBeGreaterThan(0);
+      expect(screen.getByText("42")).toBeInTheDocument(); // Total goals
 
-      expect(screen.getAllByText('Assists').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('75').length).toBeGreaterThan(0); // Total assists and games played
+      expect(screen.getAllByText("Assists").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("75").length).toBeGreaterThan(0); // Total assists and games played
 
-      expect(screen.getAllByText('Points').length).toBeGreaterThan(0);
-      expect(screen.getByText('117')).toBeInTheDocument(); // Total points
+      expect(screen.getAllByText("Points").length).toBeGreaterThan(0);
+      expect(screen.getByText("117")).toBeInTheDocument(); // Total points
     });
 
     /*
      * Tests that birth date is formatted correctly
      * Expected: Date is displayed in formatted manner
      */
-    test('formats birth date correctly', () => {
+    test("formats birth date correctly", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -235,11 +235,11 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByText('Birth Date:')).toBeInTheDocument();
+      expect(screen.getByText("Birth Date:")).toBeInTheDocument();
       // The date format may vary by timezone, so we verify the structure exists
       // rather than the exact date string
-      const modalContent = screen.getByTestId('modal-content');
-      expect(modalContent.textContent).toContain('Birth Date:');
+      const modalContent = screen.getByTestId("modal-content");
+      expect(modalContent.textContent).toContain("Birth Date:");
       expect(modalContent.textContent).toMatch(/1997/); // Year should be present
     });
 
@@ -247,7 +247,7 @@ describe('PlayerDetailsModal Component', () => {
      * Tests active player status display
      * Expected: Shows "Active" with active styling class
      */
-    test('displays active status correctly', () => {
+    test("displays active status correctly", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -256,17 +256,17 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByText('Status:')).toBeInTheDocument();
-      const statusElement = screen.getByText('Active');
+      expect(screen.getByText("Status:")).toBeInTheDocument();
+      const statusElement = screen.getByText("Active");
       expect(statusElement).toBeInTheDocument();
-      expect(statusElement).toHaveClass('info-value', 'status', 'active');
+      expect(statusElement).toHaveClass("info-value", "status", "active");
     });
 
     /*
      * Tests retired player status display
      * Expected: Shows "Retired" with retired styling class
      */
-    test('displays retired status correctly', () => {
+    test("displays retired status correctly", () => {
       render(
         <PlayerDetailsModal
           player={mockRetiredPlayer}
@@ -275,18 +275,18 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      const statusElement = screen.getByText('Retired');
+      const statusElement = screen.getByText("Retired");
       expect(statusElement).toBeInTheDocument();
-      expect(statusElement).toHaveClass('info-value', 'status', 'retired');
+      expect(statusElement).toHaveClass("info-value", "status", "retired");
     });
   });
 
-  describe('@component Date Formatting', () => {
+  describe("@component Date Formatting", () => {
     /*
      * Tests date formatting with valid date string
      * Expected: Formats date to locale string format
      */
-    test('formats valid date correctly', () => {
+    test("formats valid date correctly", () => {
       render(
         <PlayerDetailsModal
           player={mockRetiredPlayer}
@@ -296,10 +296,10 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // Verify that Birth Date label exists and a formatted date is shown
-      expect(screen.getByText('Birth Date:')).toBeInTheDocument();
+      expect(screen.getByText("Birth Date:")).toBeInTheDocument();
 
       // The actual date shown may vary by timezone, so just verify it contains year 1961
-      const allText = screen.getByTestId('modal-content').textContent;
+      const allText = screen.getByTestId("modal-content").textContent;
       expect(allText).toMatch(/1961/);
     });
 
@@ -307,7 +307,7 @@ describe('PlayerDetailsModal Component', () => {
      * Tests handling of invalid date format
      * Expected: Shows "Invalid Date" when date parsing fails
      */
-    test('handles invalid date format gracefully', () => {
+    test("handles invalid date format gracefully", () => {
       render(
         <PlayerDetailsModal
           player={mockPlayerWithInvalidDate}
@@ -317,17 +317,17 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // When date is invalid, JavaScript's Date constructor returns "Invalid Date"
-      expect(screen.getByText('Invalid Date')).toBeInTheDocument();
+      expect(screen.getByText("Invalid Date")).toBeInTheDocument();
     });
 
     /*
      * Tests date formatting with different date formats
      * Expected: Correctly formats various ISO date strings
      */
-    test('formats different date formats correctly', () => {
+    test("formats different date formats correctly", () => {
       const playerWithDifferentDate: Player = {
         ...mockActivePlayer,
-        birth_date: '2000-12-25',
+        birth_date: "2000-12-25",
       };
 
       render(
@@ -339,17 +339,17 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // Verify the year 2000 appears in the formatted date
-      const allText = screen.getByTestId('modal-content').textContent;
+      const allText = screen.getByTestId("modal-content").textContent;
       expect(allText).toMatch(/2000/);
     });
   });
 
-  describe('@integration Modal Integration', () => {
+  describe("@integration Modal Integration", () => {
     /*
      * Tests that modal receives correct props
      * Expected: Modal component receives isOpen, onClose, and title props
      */
-    test('passes correct props to Modal component', () => {
+    test("passes correct props to Modal component", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -358,9 +358,9 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByTestId('mock-modal')).toBeInTheDocument();
-      expect(screen.getByTestId('modal-title')).toHaveTextContent(
-        'Connor McDavid - #97'
+      expect(screen.getByTestId("mock-modal")).toBeInTheDocument();
+      expect(screen.getByTestId("modal-title")).toHaveTextContent(
+        "Connor McDavid - #97"
       );
     });
 
@@ -368,7 +368,7 @@ describe('PlayerDetailsModal Component', () => {
      * Tests that onClose is called when modal close button is clicked
      * Expected: onClose callback is triggered
      */
-    test('calls onClose when modal close button is clicked', async () => {
+    test("calls onClose when modal close button is clicked", async () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -377,19 +377,19 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      const closeButton = screen.getByTestId('modal-close');
+      const closeButton = screen.getByTestId("modal-close");
       await userEvent.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('@component Content Structure', () => {
+  describe("@component Content Structure", () => {
     /*
      * Tests that content is organized in correct sections
      * Expected: Player details and statistics sections are present
      */
-    test('organizes content in proper sections', () => {
+    test("organizes content in proper sections", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -399,17 +399,17 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // Check for section structure
-      const sections = screen.getAllByRole('heading', { level: 3 });
+      const sections = screen.getAllByRole("heading", { level: 3 });
       expect(sections).toHaveLength(2);
-      expect(sections[0]).toHaveTextContent('Player Details');
-      expect(sections[1]).toHaveTextContent('Statistics');
+      expect(sections[0]).toHaveTextContent("Player Details");
+      expect(sections[1]).toHaveTextContent("Statistics");
     });
 
     /*
      * Tests that all required info items are present
      * Expected: All 9 info items are displayed
      */
-    test('displays all required info items', () => {
+    test("displays all required info items", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -419,18 +419,18 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       const infoLabels = [
-        'Position:',
-        'Team:',
-        'Nationality:',
-        'Jersey Number:',
-        'Birth Date:',
-        'Height:',
-        'Weight:',
-        'Handedness:',
-        'Status:',
+        "Position:",
+        "Team:",
+        "Nationality:",
+        "Jersey Number:",
+        "Birth Date:",
+        "Height:",
+        "Weight:",
+        "Handedness:",
+        "Status:",
       ];
 
-      infoLabels.forEach(label => {
+      infoLabels.forEach((label) => {
         expect(screen.getByText(label)).toBeInTheDocument();
       });
     });
@@ -439,7 +439,7 @@ describe('PlayerDetailsModal Component', () => {
      * Tests that all statistics items are present
      * Expected: Goals, Assists, and Points are displayed
      */
-    test('displays all statistics items', () => {
+    test("displays all statistics items", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -448,21 +448,21 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      const statLabels = ['Goals', 'Assists', 'Points', 'Games Played'];
+      const statLabels = ["Goals", "Assists", "Points", "Games Played"];
 
-      statLabels.forEach(label => {
+      statLabels.forEach((label) => {
         const elements = screen.getAllByText(label);
         expect(elements.length).toBeGreaterThan(0);
       });
     });
   });
 
-  describe('@accessibility Accessibility Features', () => {
+  describe("@accessibility Accessibility Features", () => {
     /*
      * Tests that modal has proper semantic structure
      * Expected: Headings and sections provide proper document structure
      */
-    test('has proper semantic structure with headings', () => {
+    test("has proper semantic structure with headings", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -471,20 +471,20 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      const headings = screen.getAllByRole('heading');
+      const headings = screen.getAllByRole("heading");
       expect(headings.length).toBeGreaterThan(0);
 
       // Check that headings have appropriate text
-      const headingTexts = headings.map(h => h.textContent);
-      expect(headingTexts).toContain('Player Details');
-      expect(headingTexts).toContain('Statistics');
+      const headingTexts = headings.map((h) => h.textContent);
+      expect(headingTexts).toContain("Player Details");
+      expect(headingTexts).toContain("Statistics");
     });
 
     /*
      * Tests that content uses proper labeling for accessibility
      * Expected: All information is properly labeled and readable
      */
-    test('provides clear labels for all information', () => {
+    test("provides clear labels for all information", () => {
       render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -495,34 +495,34 @@ describe('PlayerDetailsModal Component', () => {
 
       // Verify all labels are present and associated with values
       const labels = [
-        'Position:',
-        'Team:',
-        'Nationality:',
-        'Jersey Number:',
-        'Birth Date:',
-        'Height:',
-        'Weight:',
-        'Handedness:',
-        'Status:',
+        "Position:",
+        "Team:",
+        "Nationality:",
+        "Jersey Number:",
+        "Birth Date:",
+        "Height:",
+        "Weight:",
+        "Handedness:",
+        "Status:",
       ];
 
-      labels.forEach(label => {
+      labels.forEach((label) => {
         expect(screen.getByText(label)).toBeInTheDocument();
       });
 
       // Verify statistics labels - these appear multiple times now
-      expect(screen.getAllByText('Goals').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('Assists').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('Points').length).toBeGreaterThan(0);
+      expect(screen.getAllByText("Goals").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("Assists").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("Points").length).toBeGreaterThan(0);
     });
   });
 
-  describe('@edge-cases Edge Cases', () => {
+  describe("@edge-cases Edge Cases", () => {
     /*
      * Tests handling of player with zero statistics
      * Expected: Displays "0" for all statistics
      */
-    test('handles player with zero statistics', () => {
+    test("handles player with zero statistics", () => {
       const playerWithZeroStats: Player = {
         ...mockActivePlayer,
         regular_season_goals: 0,
@@ -548,7 +548,7 @@ describe('PlayerDetailsModal Component', () => {
       );
 
       // Find all elements with "0" text - should have multiple (all zero stats)
-      const zeroElements = screen.getAllByText('0');
+      const zeroElements = screen.getAllByText("0");
       expect(zeroElements.length).toBeGreaterThan(0);
     });
 
@@ -556,10 +556,10 @@ describe('PlayerDetailsModal Component', () => {
      * Tests handling of player with very long name
      * Expected: Long name is displayed in title
      */
-    test('handles player with very long name', () => {
+    test("handles player with very long name", () => {
       const playerWithLongName: Player = {
         ...mockActivePlayer,
-        name: 'Jean-Baptiste Extraordinaire De La Rochefoucauld-Liancourt III',
+        name: "Jean-Baptiste Extraordinaire De La Rochefoucauld-Liancourt III",
       };
 
       render(
@@ -570,8 +570,8 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByTestId('modal-title')).toHaveTextContent(
-        'Jean-Baptiste Extraordinaire De La Rochefoucauld-Liancourt III - #97'
+      expect(screen.getByTestId("modal-title")).toHaveTextContent(
+        "Jean-Baptiste Extraordinaire De La Rochefoucauld-Liancourt III - #97"
       );
     });
 
@@ -579,13 +579,13 @@ describe('PlayerDetailsModal Component', () => {
      * Tests handling of player with special characters in data
      * Expected: Special characters are displayed correctly
      */
-    test('handles special characters in player data', () => {
+    test("handles special characters in player data", () => {
       const playerWithSpecialChars: Player = {
         ...mockActivePlayer,
         team: {
           id: 3,
-          name: 'Canadiens',
-          city: 'Montréal',
+          name: "Canadiens",
+          city: "Montréal",
         },
         nationality: "Côte d'Ivoire",
       };
@@ -598,7 +598,7 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByText('Montréal Canadiens')).toBeInTheDocument();
+      expect(screen.getByText("Montréal Canadiens")).toBeInTheDocument();
       expect(screen.getByText("Côte d'Ivoire")).toBeInTheDocument();
     });
 
@@ -606,7 +606,7 @@ describe('PlayerDetailsModal Component', () => {
      * Tests rapid open/close state changes
      * Expected: Modal responds correctly to prop changes
      */
-    test('handles rapid open/close state changes', () => {
+    test("handles rapid open/close state changes", () => {
       const { rerender } = render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -615,7 +615,7 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.queryByTestId('mock-modal')).not.toBeInTheDocument();
+      expect(screen.queryByTestId("mock-modal")).not.toBeInTheDocument();
 
       rerender(
         <PlayerDetailsModal
@@ -625,7 +625,7 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByTestId('mock-modal')).toBeInTheDocument();
+      expect(screen.getByTestId("mock-modal")).toBeInTheDocument();
 
       rerender(
         <PlayerDetailsModal
@@ -635,14 +635,14 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.queryByTestId('mock-modal')).not.toBeInTheDocument();
+      expect(screen.queryByTestId("mock-modal")).not.toBeInTheDocument();
     });
 
     /*
      * Tests changing player while modal is open
      * Expected: Modal updates to show new player data
      */
-    test('updates content when player prop changes', () => {
+    test("updates content when player prop changes", () => {
       const { rerender } = render(
         <PlayerDetailsModal
           player={mockActivePlayer}
@@ -651,8 +651,8 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByTestId('modal-title')).toHaveTextContent(
-        'Connor McDavid - #97'
+      expect(screen.getByTestId("modal-title")).toHaveTextContent(
+        "Connor McDavid - #97"
       );
 
       rerender(
@@ -663,8 +663,8 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByTestId('modal-title')).toHaveTextContent(
-        'Wayne Gretzky - #99'
+      expect(screen.getByTestId("modal-title")).toHaveTextContent(
+        "Wayne Gretzky - #99"
       );
     });
 
@@ -672,7 +672,7 @@ describe('PlayerDetailsModal Component', () => {
      * Tests handling of very large statistics numbers
      * Expected: Large numbers are displayed correctly
      */
-    test('handles large statistics numbers', () => {
+    test("handles large statistics numbers", () => {
       const playerWithLargeStats: Player = {
         ...mockActivePlayer,
         goals: 99999,
@@ -688,9 +688,9 @@ describe('PlayerDetailsModal Component', () => {
         />
       );
 
-      expect(screen.getByText('99999')).toBeInTheDocument();
-      expect(screen.getByText('88888')).toBeInTheDocument();
-      expect(screen.getByText('188887')).toBeInTheDocument();
+      expect(screen.getByText("99999")).toBeInTheDocument();
+      expect(screen.getByText("88888")).toBeInTheDocument();
+      expect(screen.getByText("188887")).toBeInTheDocument();
     });
   });
 });

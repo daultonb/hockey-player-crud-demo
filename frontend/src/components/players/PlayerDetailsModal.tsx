@@ -1,18 +1,22 @@
-import React from 'react';
-import { Player } from '../../types/Player';
-import Modal from '../modals/Modal';
-import './PlayerDetailsModal.css';
+import React from "react";
+import { Player } from "../../types/Player";
+import Modal from "../modals/Modal";
+import "./PlayerDetailsModal.css";
 
 interface PlayerDetailsModalProps {
   player: Player | null;
   isOpen: boolean;
   onClose: () => void;
+  onEdit?: (player: Player) => void;
+  onDelete?: (player: Player) => void;
 }
 
 const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
   player,
   isOpen,
   onClose,
+  onEdit,
+  onDelete,
 }) => {
   if (!player) {
     return null;
@@ -21,22 +25,48 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     } catch (error) {
-      console.warn('PlayerDetailsModal: Invalid date format:', dateString);
+      console.warn("PlayerDetailsModal: Invalid date format:", dateString);
       return dateString;
     }
   };
+
+  const headerActions = (onEdit || onDelete) && (
+    <>
+      {onEdit && (
+        <button
+          type="button"
+          className="action-button edit-button"
+          onClick={() => onEdit(player)}
+          aria-label="Edit player"
+        >
+          Edit
+        </button>
+      )}
+      {onDelete && (
+        <button
+          type="button"
+          className="action-button delete-button"
+          onClick={() => onDelete(player)}
+          aria-label="Delete player"
+        >
+          Delete
+        </button>
+      )}
+    </>
+  );
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       title={`${player.name} - #${player.jersey_number}`}
+      headerActions={headerActions}
     >
       <div className="player-details">
         <div className="player-section">
@@ -82,10 +112,10 @@ const PlayerDetailsModal: React.FC<PlayerDetailsModalProps> = ({
               <span className="info-label">Status:</span>
               <span
                 className={`info-value status ${
-                  player.active_status ? 'active' : 'retired'
+                  player.active_status ? "active" : "retired"
                 }`}
               >
-                {player.active_status ? 'Active' : 'Retired'}
+                {player.active_status ? "Active" : "Retired"}
               </span>
             </div>
           </div>

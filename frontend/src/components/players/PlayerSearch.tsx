@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
-import { SEARCHABLE_FIELDS, SearchField } from '../../types/Player';
-import './PlayerSearch.css';
+import React, { useCallback, useState } from "react";
+import { SEARCHABLE_FIELDS, SearchField } from "../../types/Player";
+import "./PlayerSearch.css";
 
 interface PlayerSearchProps {
   onSearch: (query: string, field: SearchField) => void;
@@ -17,8 +17,8 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   disabled = false,
   activeFiltersCount = 0,
 }) => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchField, setSearchField] = useState<SearchField>('all');
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchField, setSearchField] = useState<SearchField>("all");
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -37,7 +37,7 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
       clearTimeout(debounceTimer);
     }
 
-    if (value.trim() === '') {
+    if (value.trim() === "") {
       onClear();
       return;
     }
@@ -53,7 +53,7 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   const handleFieldChange = (field: SearchField) => {
     setSearchField(field);
 
-    if (searchQuery.trim() !== '') {
+    if (searchQuery.trim() !== "") {
       performSearch(searchQuery, field);
     }
   };
@@ -66,7 +66,7 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
       setDebounceTimer(null);
     }
 
-    if (searchQuery.trim() === '') {
+    if (searchQuery.trim() === "") {
       onClear();
     } else {
       performSearch(searchQuery, searchField);
@@ -74,14 +74,14 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit(e as any);
     }
   };
 
   const handleClearClick = () => {
-    setSearchQuery('');
+    setSearchQuery("");
     onClear();
 
     if (debounceTimer) {
@@ -100,12 +100,12 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
         <div className="search-input-group">
           <select
             value={searchField}
-            onChange={e => handleFieldChange(e.target.value as SearchField)}
+            onChange={(e) => handleFieldChange(e.target.value as SearchField)}
             className="search-field-selector"
             disabled={disabled}
             aria-label="Select search field"
           >
-            {SEARCHABLE_FIELDS.map(field => (
+            {SEARCHABLE_FIELDS.map((field) => (
               <option key={field.value} value={field.value}>
                 {field.label}
               </option>
@@ -116,13 +116,13 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
             <input
               type="text"
               value={searchQuery}
-              onChange={e => handleSearchChange(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={`Search ${
-                searchField === 'all'
-                  ? 'all fields'
+                searchField === "all"
+                  ? "all fields"
                   : SEARCHABLE_FIELDS.find(
-                      f => f.value === searchField
+                      (f) => f.value === searchField
                     )?.label.toLowerCase()
               }...`}
               className="search-input"
@@ -166,15 +166,15 @@ const PlayerSearch: React.FC<PlayerSearchProps> = ({
           <button
             type="button"
             className={`filter-button ${
-              activeFiltersCount > 0 ? 'has-filters' : ''
+              activeFiltersCount > 0 ? "has-filters" : ""
             }`}
             onClick={handleFilterClick}
             disabled={disabled}
             aria-label={`Open filters${
-              activeFiltersCount > 0 ? ` (${activeFiltersCount} active)` : ''
+              activeFiltersCount > 0 ? ` (${activeFiltersCount} active)` : ""
             }`}
             title={`Filter players${
-              activeFiltersCount > 0 ? ` (${activeFiltersCount} active)` : ''
+              activeFiltersCount > 0 ? ` (${activeFiltersCount} active)` : ""
             }`}
           >
             <svg

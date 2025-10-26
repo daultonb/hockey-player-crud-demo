@@ -18,11 +18,11 @@
  * - @edge-case: Edge case scenarios and cleanup
  */
 
-import '@testing-library/jest-dom';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import Modal from '../components/modals/Modal';
+import "@testing-library/jest-dom";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import Modal from "../components/modals/Modal";
 
-describe('Modal Component', () => {
+describe("Modal Component", () => {
   const mockOnClose = jest.fn();
   const defaultProps = {
     isOpen: true,
@@ -32,12 +32,12 @@ describe('Modal Component', () => {
 
   beforeEach(() => {
     mockOnClose.mockClear();
-    document.body.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
   });
 
   afterEach(() => {
     cleanup();
-    document.body.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
   });
 
   /**
@@ -46,14 +46,14 @@ describe('Modal Component', () => {
    *
    * @component @rendering
    */
-  test('renders modal when isOpen is true', () => {
+  test("renders modal when isOpen is true", () => {
     render(<Modal {...defaultProps} />);
 
     expect(
-      screen.getByRole('button', { name: /close modal/i })
+      screen.getByRole("button", { name: /close modal/i })
     ).toBeInTheDocument();
-    expect(screen.getByText('Test modal content')).toBeInTheDocument();
-    expect(screen.getByText('×')).toBeInTheDocument();
+    expect(screen.getByText("Test modal content")).toBeInTheDocument();
+    expect(screen.getByText("×")).toBeInTheDocument();
   });
 
   /**
@@ -62,14 +62,14 @@ describe('Modal Component', () => {
    *
    * @component @rendering
    */
-  test('does not render modal when isOpen is false', () => {
+  test("does not render modal when isOpen is false", () => {
     render(<Modal {...defaultProps} isOpen={false} />);
 
     expect(
-      screen.queryByRole('button', { name: /close modal/i })
+      screen.queryByRole("button", { name: /close modal/i })
     ).not.toBeInTheDocument();
-    expect(screen.queryByText('Test modal content')).not.toBeInTheDocument();
-    expect(screen.queryByText('×')).not.toBeInTheDocument();
+    expect(screen.queryByText("Test modal content")).not.toBeInTheDocument();
+    expect(screen.queryByText("×")).not.toBeInTheDocument();
   });
 
   /**
@@ -78,12 +78,12 @@ describe('Modal Component', () => {
    *
    * @component @props
    */
-  test('displays title when title prop is provided', () => {
+  test("displays title when title prop is provided", () => {
     render(<Modal {...defaultProps} title="Test Modal Title" />);
 
-    const titleElement = screen.getByRole('heading', { level: 2 });
+    const titleElement = screen.getByRole("heading", { level: 2 });
     expect(titleElement).toBeInTheDocument();
-    expect(titleElement).toHaveTextContent('Test Modal Title');
+    expect(titleElement).toHaveTextContent("Test Modal Title");
   });
 
   /**
@@ -92,10 +92,10 @@ describe('Modal Component', () => {
    *
    * @component @props
    */
-  test('does not display title when title prop is not provided', () => {
+  test("does not display title when title prop is not provided", () => {
     render(<Modal {...defaultProps} />);
 
-    expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument();
   });
 
   /**
@@ -104,7 +104,7 @@ describe('Modal Component', () => {
    *
    * @component @props
    */
-  test('renders children content correctly', () => {
+  test("renders children content correctly", () => {
     const complexChildren = (
       <div>
         <p>Paragraph content</p>
@@ -114,9 +114,9 @@ describe('Modal Component', () => {
 
     render(<Modal {...defaultProps}>{complexChildren}</Modal>);
 
-    expect(screen.getByText('Paragraph content')).toBeInTheDocument();
+    expect(screen.getByText("Paragraph content")).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Action button' })
+      screen.getByRole("button", { name: "Action button" })
     ).toBeInTheDocument();
   });
 
@@ -126,10 +126,10 @@ describe('Modal Component', () => {
    *
    * @component @interaction
    */
-  test('calls onClose when close button is clicked', () => {
+  test("calls onClose when close button is clicked", () => {
     render(<Modal {...defaultProps} />);
 
-    const closeButton = screen.getByRole('button', {
+    const closeButton = screen.getByRole("button", {
       name: /close modal/i,
     });
     fireEvent.click(closeButton);
@@ -144,10 +144,10 @@ describe('Modal Component', () => {
    *
    * @component @interaction
    */
-  test('modal responds to user interactions for closing', () => {
+  test("modal responds to user interactions for closing", () => {
     render(<Modal {...defaultProps} />);
 
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: "Escape" });
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -158,10 +158,10 @@ describe('Modal Component', () => {
    *
    * @component @interaction
    */
-  test('does not call onClose when modal content is clicked', () => {
+  test("does not call onClose when modal content is clicked", () => {
     render(<Modal {...defaultProps} />);
 
-    const modalContent = screen.getByText('Test modal content');
+    const modalContent = screen.getByText("Test modal content");
     fireEvent.click(modalContent);
 
     expect(mockOnClose).not.toHaveBeenCalled();
@@ -173,10 +173,10 @@ describe('Modal Component', () => {
    *
    * @component @accessibility @interaction
    */
-  test('calls onClose when Escape key is pressed', () => {
+  test("calls onClose when Escape key is pressed", () => {
     render(<Modal {...defaultProps} />);
 
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: "Escape" });
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -187,12 +187,12 @@ describe('Modal Component', () => {
    *
    * @component @accessibility @edge-case
    */
-  test('does not call onClose for non-Escape keys', () => {
+  test("does not call onClose for non-Escape keys", () => {
     render(<Modal {...defaultProps} />);
 
-    fireEvent.keyDown(document, { key: 'Enter' });
-    fireEvent.keyDown(document, { key: 'Space' });
-    fireEvent.keyDown(document, { key: 'Tab' });
+    fireEvent.keyDown(document, { key: "Enter" });
+    fireEvent.keyDown(document, { key: "Space" });
+    fireEvent.keyDown(document, { key: "Tab" });
 
     expect(mockOnClose).not.toHaveBeenCalled();
   });
@@ -203,10 +203,10 @@ describe('Modal Component', () => {
    *
    * @component @side-effects
    */
-  test('sets body overflow to hidden when modal opens', () => {
+  test("sets body overflow to hidden when modal opens", () => {
     render(<Modal {...defaultProps} />);
 
-    expect(document.body.style.overflow).toBe('hidden');
+    expect(document.body.style.overflow).toBe("hidden");
   });
 
   /**
@@ -215,14 +215,14 @@ describe('Modal Component', () => {
    *
    * @component @side-effects
    */
-  test('restores body overflow when modal unmounts', () => {
+  test("restores body overflow when modal unmounts", () => {
     const { unmount } = render(<Modal {...defaultProps} />);
 
-    expect(document.body.style.overflow).toBe('hidden');
+    expect(document.body.style.overflow).toBe("hidden");
 
     unmount();
 
-    expect(document.body.style.overflow).toBe('unset');
+    expect(document.body.style.overflow).toBe("unset");
   });
 
   /**
@@ -231,12 +231,12 @@ describe('Modal Component', () => {
    *
    * @component @side-effects @edge-case
    */
-  test('removes event listeners when isOpen changes to false', () => {
+  test("removes event listeners when isOpen changes to false", () => {
     const { rerender } = render(<Modal {...defaultProps} />);
 
     rerender(<Modal {...defaultProps} isOpen={false} />);
 
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: "Escape" });
 
     expect(mockOnClose).not.toHaveBeenCalled();
   });
@@ -247,13 +247,13 @@ describe('Modal Component', () => {
    *
    * @component @accessibility
    */
-  test('close button has proper accessibility attributes', () => {
+  test("close button has proper accessibility attributes", () => {
     render(<Modal {...defaultProps} />);
 
-    const closeButton = screen.getByRole('button', {
+    const closeButton = screen.getByRole("button", {
       name: /close modal/i,
     });
-    expect(closeButton).toHaveAttribute('aria-label', 'Close modal');
+    expect(closeButton).toHaveAttribute("aria-label", "Close modal");
   });
 
   /**
@@ -262,16 +262,16 @@ describe('Modal Component', () => {
    *
    * @component @accessibility
    */
-  test('renders modal with proper structure and accessibility', () => {
+  test("renders modal with proper structure and accessibility", () => {
     render(<Modal {...defaultProps} title="Test Title" />);
 
-    expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /close modal/i })
+      screen.getByRole("button", { name: /close modal/i })
     ).toBeInTheDocument();
-    expect(screen.getByText('Test modal content')).toBeInTheDocument();
-    expect(screen.getByText('Test Title')).toBeInTheDocument();
-    expect(screen.getByText('×')).toBeInTheDocument();
+    expect(screen.getByText("Test modal content")).toBeInTheDocument();
+    expect(screen.getByText("Test Title")).toBeInTheDocument();
+    expect(screen.getByText("×")).toBeInTheDocument();
   });
 
   /**
@@ -280,12 +280,12 @@ describe('Modal Component', () => {
    *
    * @component @edge-case
    */
-  test('handles multiple escape key presses correctly', () => {
+  test("handles multiple escape key presses correctly", () => {
     render(<Modal {...defaultProps} />);
 
-    fireEvent.keyDown(document, { key: 'Escape' });
-    fireEvent.keyDown(document, { key: 'Escape' });
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent.keyDown(document, { key: "Escape" });
 
     expect(mockOnClose).toHaveBeenCalledTimes(3);
   });
@@ -296,12 +296,12 @@ describe('Modal Component', () => {
    *
    * @component @edge-case
    */
-  test('handles empty children gracefully', () => {
+  test("handles empty children gracefully", () => {
     render(<Modal {...defaultProps}>{null}</Modal>);
 
     expect(
-      screen.getByRole('button', { name: /close modal/i })
+      screen.getByRole("button", { name: /close modal/i })
     ).toBeInTheDocument();
-    expect(screen.getByText('×')).toBeInTheDocument();
+    expect(screen.getByText("×")).toBeInTheDocument();
   });
 });

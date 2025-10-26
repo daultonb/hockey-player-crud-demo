@@ -8,19 +8,28 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.crud.player import get_players_with_search
+from app.crud.player import (
+    create_player,
+    delete_player,
+    get_player_by_id,
+    get_players_with_search,
+    update_player,
+)
 from app.database import Base, engine, get_db
 from app.models.player import Player
 from app.models.team import Team
 from app.schemas.player import (
     FilterFieldType,
+    PlayerCreate,
     PlayerFilter,
     PlayerResponse,
     PlayerSearchParams,
     PlayerSearchResponse,
+    PlayerUpdate,
     SearchFieldType,
     SortDirectionType,
     SortFieldType,
+    TeamResponse,
 )
 
 Base.metadata.create_all(bind=engine)
@@ -291,3 +300,119 @@ async def get_column_metadata():
         "count": len(columns_metadata),
         "default_visible_columns": default_visible_columns
     }
+
+
+@app.get("/teams", response_model=list[TeamResponse])
+async def get_teams(db: Session = Depends(get_db)):
+    """
+    Get all teams for dropdown selection.
+    Returns a list of all teams with their ID, name, and city.
+    """
+    teams = db.query(Team).order_by(Team.name).all()
+    print(f"API: Returning {len(teams)} teams")
+
+    return [
+        {
+            "id": team.id,
+            "name": team.name,
+            "city": team.city
+        }
+        for team in teams
+    ]
+
+
+@app.post("/players", response_model=PlayerResponse, status_code=201)
+async def create_new_player(
+    player_data: PlayerCreate,
+    db: Session = Depends(get_db)
+):
+    """
+    Create a new player.
+
+    - **name**: Player's full name (required)
+    - **jersey_number**: Jersey number 0-99 (required)
+    - **position**: Playing position - C, LW, RW, D, or G (required)
+    - **team_id**: ID of the team the player belongs to (required)
+    - **nationality**: Player's nationality (required)
+    - **birth_date**: Date of birth (required)
+    - **height**: Height as a string (e.g., "6'2\"") (required)
+    - **weight**: Weight in lbs (required)
+    - **handedness**: L or R (required)
+    - **active_status**: Whether player is currently active (default: True)
+    - **regular_season_games_played**: Regular season games played (default: 0)
+    - **regular_season_goals**: Regular season goals (default: 0)
+    - **regular_season_assists**: Regular season assists (default: 0)
+    - **playoff_games_played**: Playoff games played (default: 0)
+    - **playoff_goals**: Playoff goals (default: 0)
+    - **playoff_assists**: Playoff assists (default: 0)
+    """
+    # Verify team exists
+    team = db.query(Team).filter(Team.id == player_data.team_id).first()
+    if not team:
+        print(f"API: Team with ID {player_data.team_id} not found")
+        raise HTTPException(status_code=404, detail=f"Team with ID {player_data.team_id} not found")
+
+    print(f"API: Creating player {player_data.name} for team {team.name}")
+
+    new_player = create_player(db, player_data)
+
+    return format_player_response(new_player)
+
+
+@app.get("/players/{player_id}", response_model=PlayerResponse)
+async def get_player(player_id: int, db: Session = Depends(get_db)):
+    """
+    Get a single player by ID.
+
+    - **player_id**: The ID of the player to retrieve
+    """
+    print(f"API: Fetching player with ID {player_id}")
+
+    player = get_player_by_id(db, player_id)
+    if not player:
+        raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
+
+    return format_player_response(player)
+
+
+@app.put("/players/{player_id}", response_model=PlayerResponse)
+async def update_existing_player(
+    player_id: int,
+    player_data: PlayerUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Update an existing player.
+
+    - **player_id**: The ID of the player to update
+    - All player fields are required in the request body
+    """
+    # Verify team exists
+    team = db.query(Team).filter(Team.id == player_data.team_id).first()
+    if not team:
+        print(f"API: Team with ID {player_data.team_id} not found")
+        raise HTTPException(status_code=404, detail=f"Team with ID {player_data.team_id} not found")
+
+    print(f"API: Updating player ID {player_id}")
+
+    updated_player = update_player(db, player_id, player_data)
+    if not updated_player:
+        raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
+
+    return format_player_response(updated_player)
+
+
+@app.delete("/players/{player_id}", status_code=204)
+async def delete_existing_player(player_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a player from the database.
+
+    - **player_id**: The ID of the player to delete
+    """
+    print(f"API: Deleting player ID {player_id}")
+
+    success = delete_player(db, player_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
+
+    return None

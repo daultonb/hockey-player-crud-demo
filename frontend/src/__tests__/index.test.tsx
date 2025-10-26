@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 // Mock react-dom/client
 let mockRender: jest.Mock;
 
-jest.mock('react-dom/client', () => {
+jest.mock("react-dom/client", () => {
   mockRender = jest.fn();
   return {
     createRoot: jest.fn(() => ({
@@ -13,15 +13,15 @@ jest.mock('react-dom/client', () => {
 });
 
 // Mock CSS
-jest.mock('../index.css', () => ({}));
+jest.mock("../index.css", () => ({}));
 
 // Mock App component
-jest.mock('../App', () => ({
+jest.mock("../App", () => ({
   __esModule: true,
-  default: () => 'App Component',
+  default: () => "App Component",
 }));
 
-describe('Application Entry Point (index.tsx)', () => {
+describe("Application Entry Point (index.tsx)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -30,22 +30,22 @@ describe('Application Entry Point (index.tsx)', () => {
   });
 
   afterEach(() => {
-    document.body.innerHTML = '';
+    document.body.innerHTML = "";
   });
 
   /*
    * Tests that the application renders without crashing
    * Expected: Renders App wrapped in StrictMode
    */
-  test('renders without crashing', () => {
-    require('../index');
+  test("renders without crashing", () => {
+    require("../index");
 
-    const ReactDOM = require('react-dom/client');
+    const ReactDOM = require("react-dom/client");
 
     // Verify createRoot was called
     expect(ReactDOM.createRoot).toHaveBeenCalledTimes(1);
     expect(ReactDOM.createRoot).toHaveBeenCalledWith(
-      document.getElementById('root')
+      document.getElementById("root")
     );
 
     // Verify render was called

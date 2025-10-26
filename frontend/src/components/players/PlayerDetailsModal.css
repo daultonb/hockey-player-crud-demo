@@ -166,3 +166,48 @@
     font-size: 0.9rem;
   }
 }
+
+/* Action buttons in modal header */
+.action-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.delete-button {
+  background-color: #ef4444;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.action-button:active {
+  transform: scale(0.98) translateY(0);
+}
+
+.action-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}

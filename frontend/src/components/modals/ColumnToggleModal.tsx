@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useEffect, useMemo, useState } from 'react';
-import './ColumnToggleModal.css';
-import Modal from './Modal';
+import axios from "axios";
+import React, { useEffect, useMemo, useState } from "react";
+import "./ColumnToggleModal.css";
+import Modal from "./Modal";
 
 // Define column configuration interface - matches backend response
 export interface ColumnConfig {
@@ -15,37 +15,37 @@ export interface ColumnConfig {
 // Fallback columns in case API call fails - minimal set for graceful degradation
 const FALLBACK_COLUMNS: ColumnConfig[] = [
   {
-    key: 'name',
-    label: 'Name',
+    key: "name",
+    label: "Name",
     required: true,
-    capabilities: ['searchable', 'sortable'],
+    capabilities: ["searchable", "sortable"],
   },
   {
-    key: 'jersey_number',
-    label: 'Number',
-    capabilities: ['searchable', 'sortable', 'filterable'],
+    key: "jersey_number",
+    label: "Number",
+    capabilities: ["searchable", "sortable", "filterable"],
   },
   {
-    key: 'position',
-    label: 'Position',
-    capabilities: ['searchable', 'filterable'],
+    key: "position",
+    label: "Position",
+    capabilities: ["searchable", "filterable"],
   },
   {
-    key: 'team',
-    label: 'Team',
-    capabilities: ['searchable', 'sortable', 'filterable'],
+    key: "team",
+    label: "Team",
+    capabilities: ["searchable", "sortable", "filterable"],
   },
-  { key: 'goals', label: 'Goals', capabilities: ['sortable', 'filterable'] },
+  { key: "goals", label: "Goals", capabilities: ["sortable", "filterable"] },
   {
-    key: 'assists',
-    label: 'Assists',
-    capabilities: ['sortable', 'filterable'],
+    key: "assists",
+    label: "Assists",
+    capabilities: ["sortable", "filterable"],
   },
-  { key: 'points', label: 'Points', capabilities: ['sortable', 'filterable'] },
+  { key: "points", label: "Points", capabilities: ["sortable", "filterable"] },
   {
-    key: 'active_status',
-    label: 'Status',
-    capabilities: ['sortable', 'filterable'],
+    key: "active_status",
+    label: "Status",
+    capabilities: ["sortable", "filterable"],
   },
 ];
 
@@ -75,14 +75,14 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
           return (
             <div
               key={column.key}
-              className={`column-item ${isDisabled ? 'required' : ''}`}
+              className={`column-item ${isDisabled ? "required" : ""}`}
             >
               <label className="column-checkbox">
                 <input
                   type="checkbox"
                   checked={true}
                   disabled={isDisabled}
-                  onChange={e => onColumnChange(column.key, e.target.checked)}
+                  onChange={(e) => onColumnChange(column.key, e.target.checked)}
                 />
                 <span className="checkbox-label">
                   <span className="checkbox-label-text">
@@ -94,10 +94,10 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
                   <span className="column-capabilities">
                     {column.capabilities && column.capabilities.length > 0 ? (
                       <>
-                        {column.capabilities.join(', ')}
+                        {column.capabilities.join(", ")}
                         {column.field_type && (
                           <span className="field-type">
-                            {' '}
+                            {" "}
                             • {column.field_type}
                           </span>
                         )}
@@ -107,7 +107,7 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
                         display only
                         {column.field_type && (
                           <span className="field-type">
-                            {' '}
+                            {" "}
                             • {column.field_type}
                           </span>
                         )}
@@ -126,14 +126,14 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
           return (
             <div
               key={column.key}
-              className={`column-item ${isDisabled ? 'required' : ''}`}
+              className={`column-item ${isDisabled ? "required" : ""}`}
             >
               <label className="column-checkbox">
                 <input
                   type="checkbox"
                   checked={false}
                   disabled={isDisabled}
-                  onChange={e => onColumnChange(column.key, e.target.checked)}
+                  onChange={(e) => onColumnChange(column.key, e.target.checked)}
                 />
                 <span className="checkbox-label">
                   <span className="checkbox-label-text">
@@ -145,10 +145,10 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
                   <span className="column-capabilities">
                     {column.capabilities && column.capabilities.length > 0 ? (
                       <>
-                        {column.capabilities.join(', ')}
+                        {column.capabilities.join(", ")}
                         {column.field_type && (
                           <span className="field-type">
-                            {' '}
+                            {" "}
                             • {column.field_type}
                           </span>
                         )}
@@ -158,7 +158,7 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
                         display only
                         {column.field_type && (
                           <span className="field-type">
-                            {' '}
+                            {" "}
                             • {column.field_type}
                           </span>
                         )}
@@ -175,7 +175,7 @@ const ColumnList: React.FC<ColumnListProps> = React.memo(
   }
 );
 
-ColumnList.displayName = 'ColumnList';
+ColumnList.displayName = "ColumnList";
 
 interface ColumnToggleModalProps {
   isOpen: boolean;
@@ -189,8 +189,8 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
     const [availableColumns, setAvailableColumns] =
       useState<ColumnConfig[]>(FALLBACK_COLUMNS);
     const [isLoading, setIsLoading] = useState(false);
-    const [dataSource, setDataSource] = useState<'fallback' | 'backend'>(
-      'fallback'
+    const [dataSource, setDataSource] = useState<"fallback" | "backend">(
+      "fallback"
     );
 
     // Local state for visible columns - this prevents parent re-renders from affecting the modal
@@ -210,7 +210,7 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
       setIsLoading(true);
       try {
         const apiBaseUrl =
-          process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000';
+          process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8000";
         const response = await axios.get(`${apiBaseUrl}/column-metadata`);
 
         if (
@@ -219,44 +219,46 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
           Array.isArray(response.data.columns)
         ) {
           setAvailableColumns(response.data.columns);
-          setDataSource('backend');
+          setDataSource("backend");
         } else {
-          console.warn('Invalid response format from column-metadata endpoint');
-          setDataSource('fallback');
+          console.warn("Invalid response format from column-metadata endpoint");
+          setDataSource("fallback");
         }
       } catch (error) {
         console.warn(
-          'Failed to fetch column metadata from backend, using fallback:',
+          "Failed to fetch column metadata from backend, using fallback:",
           error
         );
-        setDataSource('fallback');
+        setDataSource("fallback");
       } finally {
         setIsLoading(false);
       }
     };
 
     const handleColumnChange = (columnKey: string, isChecked: boolean) => {
-      setLocalVisibleColumns(prev =>
-        isChecked ? [...prev, columnKey] : prev.filter(col => col !== columnKey)
+      setLocalVisibleColumns((prev) =>
+        isChecked
+          ? [...prev, columnKey]
+          : prev.filter((col) => col !== columnKey)
       );
     };
 
     const handleSelectAll = () => {
-      const allColumnKeys = availableColumns.map(col => col.key);
+      const allColumnKeys = availableColumns.map((col) => col.key);
       setLocalVisibleColumns(allColumnKeys);
     };
 
     const handleResetToDefault = () => {
       // Default columns: name, jersey_number, position, team, goals, assists, points, active_status
       const defaultColumns = [
-        'name',
-        'jersey_number',
-        'position',
-        'team',
-        'goals',
-        'assists',
-        'points',
-        'active_status',
+        "name",
+        "jersey_number",
+        "position",
+        "team",
+        "goals",
+        "assists",
+        "points",
+        "active_status",
       ];
       setLocalVisibleColumns(defaultColumns);
     };
@@ -277,7 +279,7 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
     const selectedColumnsList = useMemo(
       () =>
         localVisibleColumns
-          .map(colKey => availableColumns.find(col => col.key === colKey))
+          .map((colKey) => availableColumns.find((col) => col.key === colKey))
           .filter((column): column is ColumnConfig => column !== undefined),
       [localVisibleColumns, availableColumns]
     );
@@ -285,7 +287,9 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
     // Memoize unselected columns list to prevent unnecessary re-renders
     const unselectedColumnsList = useMemo(
       () =>
-        availableColumns.filter(col => !localVisibleColumns.includes(col.key)),
+        availableColumns.filter(
+          (col) => !localVisibleColumns.includes(col.key)
+        ),
       [localVisibleColumns, availableColumns]
     );
 
@@ -302,7 +306,7 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
           <div className="modal-counter">
             <p className="column-count">
               {isLoading
-                ? 'Loading column information...'
+                ? "Loading column information..."
                 : `Showing ${localVisibleColumns.length} of ${availableColumns.length} available columns`}
             </p>
           </div>
@@ -346,7 +350,7 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
               </button>
             </div>
 
-            {!isLoading && dataSource === 'fallback' && (
+            {!isLoading && dataSource === "fallback" && (
               <div className="data-source-indicator">
                 Using cached column definitions
               </div>
@@ -358,6 +362,6 @@ const ColumnToggleModal: React.FC<ColumnToggleModalProps> = React.memo(
   }
 );
 
-ColumnToggleModal.displayName = 'ColumnToggleModal';
+ColumnToggleModal.displayName = "ColumnToggleModal";
 
 export default ColumnToggleModal;

@@ -42,53 +42,53 @@ export interface PlayersResponse {
 }
 
 export type SearchField =
-  | 'all'
-  | 'name'
-  | 'position'
-  | 'team'
-  | 'nationality'
-  | 'jersey_number';
+  | "all"
+  | "name"
+  | "position"
+  | "team"
+  | "nationality"
+  | "jersey_number";
 
 export interface SearchConfig {
   value: SearchField;
   label: string;
-  searchKey?: keyof Player | 'team.name';
+  searchKey?: keyof Player | "team.name";
 }
 
 export const SEARCHABLE_FIELDS: SearchConfig[] = [
-  { value: 'all', label: 'All Fields' },
-  { value: 'name', label: 'Name', searchKey: 'name' },
-  { value: 'position', label: 'Position', searchKey: 'position' },
-  { value: 'team', label: 'Team', searchKey: 'team.name' },
-  { value: 'nationality', label: 'Nationality', searchKey: 'nationality' },
+  { value: "all", label: "All Fields" },
+  { value: "name", label: "Name", searchKey: "name" },
+  { value: "position", label: "Position", searchKey: "position" },
+  { value: "team", label: "Team", searchKey: "team.name" },
+  { value: "nationality", label: "Nationality", searchKey: "nationality" },
   {
-    value: 'jersey_number',
-    label: 'Jersey Number',
-    searchKey: 'jersey_number',
+    value: "jersey_number",
+    label: "Jersey Number",
+    searchKey: "jersey_number",
   },
 ];
 
 // Sort field type - matches backend SortFieldType
 export type SortField =
-  | 'name'
-  | 'position'
-  | 'team'
-  | 'jersey_number'
-  | 'active_status'
-  | 'regular_season_goals'
-  | 'regular_season_assists'
-  | 'regular_season_points'
-  | 'regular_season_games_played'
-  | 'playoff_goals'
-  | 'playoff_assists'
-  | 'playoff_points'
-  | 'playoff_games_played'
-  | 'games_played'
-  | 'goals'
-  | 'assists'
-  | 'points';
+  | "name"
+  | "position"
+  | "team"
+  | "jersey_number"
+  | "active_status"
+  | "regular_season_goals"
+  | "regular_season_assists"
+  | "regular_season_points"
+  | "regular_season_games_played"
+  | "playoff_goals"
+  | "playoff_assists"
+  | "playoff_points"
+  | "playoff_games_played"
+  | "games_played"
+  | "goals"
+  | "assists"
+  | "points";
 
-export type SortDirection = 'asc' | 'desc';
+export type SortDirection = "asc" | "desc";
 
 export interface SortConfig {
   field: SortField;
@@ -97,95 +97,95 @@ export interface SortConfig {
 }
 
 export const SORTABLE_FIELDS: SortConfig[] = [
-  { field: 'name', label: 'Name', displayName: 'Name' },
-  { field: 'position', label: 'Position', displayName: 'Position' },
-  { field: 'team', label: 'Team', displayName: 'Team' },
-  { field: 'jersey_number', label: 'Jersey #', displayName: 'Jersey #' },
-  { field: 'active_status', label: 'Status', displayName: 'Status' },
+  { field: "name", label: "Name", displayName: "Name" },
+  { field: "position", label: "Position", displayName: "Position" },
+  { field: "team", label: "Team", displayName: "Team" },
+  { field: "jersey_number", label: "Jersey #", displayName: "Jersey #" },
+  { field: "active_status", label: "Status", displayName: "Status" },
   {
-    field: 'regular_season_goals',
-    label: 'RS Goals',
-    displayName: 'Regular Season Goals',
+    field: "regular_season_goals",
+    label: "RS Goals",
+    displayName: "Regular Season Goals",
   },
   {
-    field: 'regular_season_assists',
-    label: 'RS Assists',
-    displayName: 'Regular Season Assists',
+    field: "regular_season_assists",
+    label: "RS Assists",
+    displayName: "Regular Season Assists",
   },
   {
-    field: 'regular_season_points',
-    label: 'RS Points',
-    displayName: 'Regular Season Points',
+    field: "regular_season_points",
+    label: "RS Points",
+    displayName: "Regular Season Points",
   },
   {
-    field: 'regular_season_games_played',
-    label: 'RS Games',
-    displayName: 'Regular Season Games',
+    field: "regular_season_games_played",
+    label: "RS Games",
+    displayName: "Regular Season Games",
   },
-  { field: 'playoff_goals', label: 'PO Goals', displayName: 'Playoff Goals' },
+  { field: "playoff_goals", label: "PO Goals", displayName: "Playoff Goals" },
   {
-    field: 'playoff_assists',
-    label: 'PO Assists',
-    displayName: 'Playoff Assists',
-  },
-  {
-    field: 'playoff_points',
-    label: 'PO Points',
-    displayName: 'Playoff Points',
+    field: "playoff_assists",
+    label: "PO Assists",
+    displayName: "Playoff Assists",
   },
   {
-    field: 'playoff_games_played',
-    label: 'PO Games',
-    displayName: 'Playoff Games',
+    field: "playoff_points",
+    label: "PO Points",
+    displayName: "Playoff Points",
   },
   {
-    field: 'games_played',
-    label: 'Games Played (Total)',
-    displayName: 'Games Played (Total)',
+    field: "playoff_games_played",
+    label: "PO Games",
+    displayName: "Playoff Games",
   },
   {
-    field: 'goals',
-    label: 'Goals (Total)',
-    displayName: 'Goals (Total)',
+    field: "games_played",
+    label: "Games Played (Total)",
+    displayName: "Games Played (Total)",
   },
   {
-    field: 'assists',
-    label: 'Assists (Total)',
-    displayName: 'Assists (Total)',
+    field: "goals",
+    label: "Goals (Total)",
+    displayName: "Goals (Total)",
   },
-  { field: 'points', label: 'Points (Total)', displayName: 'Points (Total)' },
+  {
+    field: "assists",
+    label: "Assists (Total)",
+    displayName: "Assists (Total)",
+  },
+  { field: "points", label: "Points (Total)", displayName: "Points (Total)" },
 ];
 
 // Filter types - matches backend FilterFieldType
 export type FilterField =
-  | 'position'
-  | 'team'
-  | 'jersey_number'
-  | 'active_status'
-  | 'regular_season_goals'
-  | 'regular_season_assists'
-  | 'regular_season_points'
-  | 'regular_season_games_played'
-  | 'playoff_goals'
-  | 'playoff_assists'
-  | 'playoff_points'
-  | 'playoff_games_played'
-  | 'games_played'
-  | 'goals'
-  | 'assists'
-  | 'points';
+  | "position"
+  | "team"
+  | "jersey_number"
+  | "active_status"
+  | "regular_season_goals"
+  | "regular_season_assists"
+  | "regular_season_points"
+  | "regular_season_games_played"
+  | "playoff_goals"
+  | "playoff_assists"
+  | "playoff_points"
+  | "playoff_games_played"
+  | "games_played"
+  | "goals"
+  | "assists"
+  | "points";
 
 // Filter operator types
-export type StringFilterOperator = '=' | '!=' | 'contains' | 'not_contains';
-export type NumericFilterOperator = '=' | '!=' | '>' | '<' | '>=' | '<=';
-export type BooleanFilterOperator = '=' | '!=';
+export type StringFilterOperator = "=" | "!=" | "contains" | "not_contains";
+export type NumericFilterOperator = "=" | "!=" | ">" | "<" | ">=" | "<=";
+export type BooleanFilterOperator = "=" | "!=";
 export type FilterOperator =
   | StringFilterOperator
   | NumericFilterOperator
   | BooleanFilterOperator;
 
 // Filter data type classification
-export type FilterDataType = 'string' | 'numeric' | 'boolean';
+export type FilterDataType = "string" | "numeric" | "boolean";
 
 export interface FilterConfig {
   field: FilterField;
@@ -197,53 +197,53 @@ export interface FilterConfig {
 
 export const FILTERABLE_FIELDS: FilterConfig[] = [
   {
-    field: 'position',
-    label: 'Position',
-    displayName: 'Position',
-    dataType: 'string',
-    operators: ['=', '!=', 'contains', 'not_contains'],
+    field: "position",
+    label: "Position",
+    displayName: "Position",
+    dataType: "string",
+    operators: ["=", "!=", "contains", "not_contains"],
   },
   {
-    field: 'team',
-    label: 'Team',
-    displayName: 'Team',
-    dataType: 'string',
-    operators: ['=', '!=', 'contains', 'not_contains'],
+    field: "team",
+    label: "Team",
+    displayName: "Team",
+    dataType: "string",
+    operators: ["=", "!=", "contains", "not_contains"],
   },
   {
-    field: 'jersey_number',
-    label: 'Jersey #',
-    displayName: 'Jersey #',
-    dataType: 'numeric',
-    operators: ['=', '!=', '>', '<', '>=', '<='],
+    field: "jersey_number",
+    label: "Jersey #",
+    displayName: "Jersey #",
+    dataType: "numeric",
+    operators: ["=", "!=", ">", "<", ">=", "<="],
   },
   {
-    field: 'goals',
-    label: 'Goals',
-    displayName: 'Goals',
-    dataType: 'numeric',
-    operators: ['=', '!=', '>', '<', '>=', '<='],
+    field: "goals",
+    label: "Goals",
+    displayName: "Goals",
+    dataType: "numeric",
+    operators: ["=", "!=", ">", "<", ">=", "<="],
   },
   {
-    field: 'assists',
-    label: 'Assists',
-    displayName: 'Assists',
-    dataType: 'numeric',
-    operators: ['=', '!=', '>', '<', '>=', '<='],
+    field: "assists",
+    label: "Assists",
+    displayName: "Assists",
+    dataType: "numeric",
+    operators: ["=", "!=", ">", "<", ">=", "<="],
   },
   {
-    field: 'points',
-    label: 'Points',
-    displayName: 'Points',
-    dataType: 'numeric',
-    operators: ['=', '!=', '>', '<', '>=', '<='],
+    field: "points",
+    label: "Points",
+    displayName: "Points",
+    dataType: "numeric",
+    operators: ["=", "!=", ">", "<", ">=", "<="],
   },
   {
-    field: 'active_status',
-    label: 'Status',
-    displayName: 'Status',
-    dataType: 'boolean',
-    operators: ['=', '!='],
+    field: "active_status",
+    label: "Status",
+    displayName: "Status",
+    dataType: "boolean",
+    operators: ["=", "!="],
   },
 ];
 
@@ -256,20 +256,20 @@ export interface PlayerFilter {
 
 // Operator display labels
 export const OPERATOR_LABELS: Record<FilterOperator, string> = {
-  '=': 'equals',
-  '!=': 'does not equal',
-  contains: 'contains',
-  not_contains: 'does not contain',
-  '>': 'greater than',
-  '<': 'less than',
-  '>=': 'greater than or equal to',
-  '<=': 'less than or equal to',
+  "=": "equals",
+  "!=": "does not equal",
+  contains: "contains",
+  not_contains: "does not contain",
+  ">": "greater than",
+  "<": "less than",
+  ">=": "greater than or equal to",
+  "<=": "less than or equal to",
 };
 
 // Boolean value options for active_status
 export const BOOLEAN_OPTIONS = [
-  { value: true, label: 'Active' },
-  { value: false, label: 'Retired' },
+  { value: true, label: "Active" },
+  { value: false, label: "Retired" },
 ];
 
 // Extended API response including sorting and filtering info
@@ -286,3 +286,64 @@ export interface PlayersApiResponse {
   sort_order: SortDirection;
   filters: PlayerFilter[];
 }
+
+// Player creation payload
+export interface PlayerCreate {
+  name: string;
+  jersey_number: number;
+  position: string;
+  team_id: number;
+  nationality: string;
+  birth_date: string;
+  height: string;
+  weight: number;
+  handedness: string;
+  active_status: boolean;
+  regular_season_games_played: number;
+  regular_season_goals: number;
+  regular_season_assists: number;
+  playoff_games_played: number;
+  playoff_goals: number;
+  playoff_assists: number;
+}
+
+// Player update payload
+export interface PlayerUpdate {
+  name: string;
+  jersey_number: number;
+  position: string;
+  team_id: number;
+  nationality: string;
+  birth_date: string;
+  height: string;
+  weight: number;
+  handedness: string;
+  active_status: boolean;
+  regular_season_games_played: number;
+  regular_season_goals: number;
+  regular_season_assists: number;
+  playoff_games_played: number;
+  playoff_goals: number;
+  playoff_assists: number;
+}
+
+// Position options for dropdown
+export const POSITION_OPTIONS = [
+  { value: "C", label: "Center (C)" },
+  { value: "LW", label: "Left Wing (LW)" },
+  { value: "RW", label: "Right Wing (RW)" },
+  { value: "D", label: "Defense (D)" },
+  { value: "G", label: "Goalie (G)" },
+];
+
+// Handedness options
+export const HANDEDNESS_OPTIONS = [
+  { value: "L", label: "Left" },
+  { value: "R", label: "Right" },
+];
+
+// Active status options
+export const ACTIVE_STATUS_OPTIONS = [
+  { value: true, label: "Active" },
+  { value: false, label: "Retired" },
+];

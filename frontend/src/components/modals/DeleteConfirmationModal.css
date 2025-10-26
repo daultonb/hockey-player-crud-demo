@@ -1,0 +1,71 @@
+.delete-confirmation {
+  padding: 8px 0;
+}
+
+.delete-message {
+  font-size: 16px;
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.delete-message strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.delete-warning {
+  font-size: 14px;
+  color: #ef4444;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background-color: var(--color-gray-400);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.button-secondary:hover:not(:disabled) {
+  background-color: var(--color-gray-300);
+  transform: translateY(-1px);
+}
+
+.button-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.button-danger:hover:not(:disabled) {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}

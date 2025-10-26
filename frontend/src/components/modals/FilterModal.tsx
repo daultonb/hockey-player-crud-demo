@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   BOOLEAN_OPTIONS,
   FILTERABLE_FIELDS,
@@ -7,9 +7,9 @@ import {
   FilterOperator,
   OPERATOR_LABELS,
   PlayerFilter,
-} from '../../types/Player';
-import './FilterModal.css';
-import Modal from './Modal';
+} from "../../types/Player";
+import "./FilterModal.css";
+import Modal from "./Modal";
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -20,8 +20,8 @@ interface FilterModalProps {
 
 interface FilterRow {
   id: string;
-  field: FilterField | '';
-  operator: FilterOperator | '';
+  field: FilterField | "";
+  operator: FilterOperator | "";
   value: string | number | boolean;
 }
 
@@ -53,13 +53,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const createEmptyFilterRow = (): FilterRow => ({
     id: `filter-${Date.now()}-${Math.random()}`,
-    field: '',
-    operator: '',
-    value: '',
+    field: "",
+    operator: "",
+    value: "",
   });
 
   const getFieldConfig = (field: FilterField) => {
-    return FILTERABLE_FIELDS.find(f => f.field === field);
+    return FILTERABLE_FIELDS.find((f) => f.field === field);
   };
 
   const getAvailableOperators = (field: FilterField): FilterOperator[] => {
@@ -69,36 +69,36 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
   const getFieldDataType = (field: FilterField): FilterDataType => {
     const config = getFieldConfig(field);
-    return config ? config.dataType : 'string';
+    return config ? config.dataType : "string";
   };
 
-  const handleFieldChange = (id: string, field: FilterField | '') => {
-    setFilterRows(prev =>
-      prev.map(row =>
-        row.id === id ? { ...row, field, operator: '', value: '' } : row
+  const handleFieldChange = (id: string, field: FilterField | "") => {
+    setFilterRows((prev) =>
+      prev.map((row) =>
+        row.id === id ? { ...row, field, operator: "", value: "" } : row
       )
     );
   };
 
-  const handleOperatorChange = (id: string, operator: FilterOperator | '') => {
-    setFilterRows(prev =>
-      prev.map(row => (row.id === id ? { ...row, operator, value: '' } : row))
+  const handleOperatorChange = (id: string, operator: FilterOperator | "") => {
+    setFilterRows((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, operator, value: "" } : row))
     );
   };
 
   const handleValueChange = (id: string, value: string | number | boolean) => {
-    setFilterRows(prev =>
-      prev.map(row => (row.id === id ? { ...row, value } : row))
+    setFilterRows((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, value } : row))
     );
   };
 
   const addFilterRow = () => {
-    setFilterRows(prev => [...prev, createEmptyFilterRow()]);
+    setFilterRows((prev) => [...prev, createEmptyFilterRow()]);
   };
 
   const removeFilterRow = (id: string) => {
-    setFilterRows(prev => {
-      const filtered = prev.filter(row => row.id !== id);
+    setFilterRows((prev) => {
+      const filtered = prev.filter((row) => row.id !== id);
       // Ensure at least one filter row remains
       return filtered.length === 0 ? [createEmptyFilterRow()] : filtered;
     });
@@ -114,7 +114,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     return !!(
       row.field &&
       row.operator &&
-      row.value !== '' &&
+      row.value !== "" &&
       row.value !== null &&
       row.value !== undefined
     );
@@ -123,7 +123,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
   const applyFilters = () => {
     const validFilters: PlayerFilter[] = filterRows
       .filter(validateFilter)
-      .map(row => ({
+      .map((row) => ({
         field: row.field,
         operator: row.operator,
         value: row.value,
@@ -147,15 +147,15 @@ const FilterModal: React.FC<FilterModalProps> = ({
 
     const dataType = getFieldDataType(row.field);
 
-    if (dataType === 'boolean') {
+    if (dataType === "boolean") {
       return (
         <select
           className="filter-value-select"
           value={row.value.toString()}
-          onChange={e => handleValueChange(row.id, e.target.value === 'true')}
+          onChange={(e) => handleValueChange(row.id, e.target.value === "true")}
         >
           <option value="">Select value...</option>
-          {BOOLEAN_OPTIONS.map(option => (
+          {BOOLEAN_OPTIONS.map((option) => (
             <option
               key={option.value.toString()}
               value={option.value.toString()}
@@ -167,13 +167,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
       );
     }
 
-    if (dataType === 'numeric') {
+    if (dataType === "numeric") {
       return (
         <input
           type="number"
           className="filter-value-input"
           value={row.value.toString()}
-          onChange={e =>
+          onChange={(e) =>
             handleValueChange(row.id, parseInt(e.target.value) || 0)
           }
           placeholder="Enter number..."
@@ -186,7 +186,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         type="text"
         className="filter-value-input"
         value={row.value.toString()}
-        onChange={e => handleValueChange(row.id, e.target.value)}
+        onChange={(e) => handleValueChange(row.id, e.target.value)}
         placeholder="Enter text..."
       />
     );
@@ -205,12 +205,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
               <select
                 className="filter-field-select"
                 value={row.field}
-                onChange={e =>
+                onChange={(e) =>
                   handleFieldChange(row.id, e.target.value as FilterField)
                 }
               >
                 <option value="">Select field...</option>
-                {FILTERABLE_FIELDS.map(field => (
+                {FILTERABLE_FIELDS.map((field) => (
                   <option key={field.field} value={field.field}>
                     {field.displayName}
                   </option>
@@ -220,14 +220,14 @@ const FilterModal: React.FC<FilterModalProps> = ({
               <select
                 className="filter-operator-select"
                 value={row.operator}
-                onChange={e =>
+                onChange={(e) =>
                   handleOperatorChange(row.id, e.target.value as FilterOperator)
                 }
                 disabled={!row.field}
               >
                 <option value="">Select operator...</option>
                 {row.field &&
-                  getAvailableOperators(row.field).map(operator => (
+                  getAvailableOperators(row.field).map((operator) => (
                     <option key={operator} value={operator}>
                       {OPERATOR_LABELS[operator]}
                     </option>
@@ -263,7 +263,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
           {validFilterCount > 0 ? (
             <p>
               {validFilterCount} filter
-              {validFilterCount === 1 ? '' : 's'} ready to apply
+              {validFilterCount === 1 ? "" : "s"} ready to apply
             </p>
           ) : (
             <p className="no-filters">
