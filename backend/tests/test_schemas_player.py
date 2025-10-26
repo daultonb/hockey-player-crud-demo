@@ -471,24 +471,33 @@ class TestResponseModels:
         player_data = {
             "id": 1,
             "name": "Test Player",
-            "position": "Center",
+            "position": "C",
             "nationality": "Canadian",
             "jersey_number": 87,
             "birth_date": "1995-03-15",
             "height": "6'2\"",
             "weight": 195,
-            "handedness": "Left",
+            "handedness": "L",
+            "active_status": True,
+            "regular_season_goals": 20,
+            "regular_season_assists": 25,
+            "regular_season_points": 45,
+            "regular_season_games_played": 82,
+            "playoff_goals": 5,
+            "playoff_assists": 5,
+            "playoff_points": 10,
+            "playoff_games_played": 10,
             "goals": 25,
             "assists": 30,
             "points": 55,
-            "active_status": True,
+            "games_played": 92,
             "team": team_data,
         }
 
         player = PlayerResponse(**player_data)
         assert player.id == 1
         assert player.name == "Test Player"
-        assert player.position == "Center"
+        assert player.position == "C"
         assert player.jersey_number == 87
         assert player.goals == 25
         assert player.active_status is True
@@ -505,17 +514,26 @@ class TestResponseModels:
         player_data = {
             "id": 1,
             "name": "Test Player",
-            "position": "Center",
+            "position": "C",
             "nationality": "Canadian",
             "jersey_number": 87,
             "birth_date": "1995-03-15",
             "height": "6'2\"",
             "weight": 195,
-            "handedness": "Left",
+            "handedness": "L",
+            "active_status": True,
+            "regular_season_goals": 20,
+            "regular_season_assists": 25,
+            "regular_season_points": 45,
+            "regular_season_games_played": 82,
+            "playoff_goals": 5,
+            "playoff_assists": 5,
+            "playoff_points": 10,
+            "playoff_games_played": 10,
             "goals": 25,
             "assists": 30,
             "points": 55,
-            "active_status": True,
+            "games_played": 92,
             "team": team_data,
         }
 
@@ -547,17 +565,26 @@ class TestResponseModels:
         player_data = {
             "id": 1,
             "name": "Test Player",
-            "position": "Center",
+            "position": "C",
             "nationality": "Canadian",
             "jersey_number": 87,
             "birth_date": "1995-03-15",
             "height": "6'2\"",
             "weight": 195,
-            "handedness": "Left",
+            "handedness": "L",
+            "active_status": True,
+            "regular_season_goals": 20,
+            "regular_season_assists": 25,
+            "regular_season_points": 45,
+            "regular_season_games_played": 82,
+            "playoff_goals": 5,
+            "playoff_assists": 5,
+            "playoff_points": 10,
+            "playoff_games_played": 10,
             "goals": 25,
             "assists": 30,
             "points": 55,
-            "active_status": True,
+            "games_played": 92,
             "team": team_data,
         }
 

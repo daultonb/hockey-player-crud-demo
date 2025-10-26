@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axios from "axios";
 import PlayersTable from "../components/players/PlayersTable";
+import { ToastProvider } from "../components/ToastContainer";
 
 import {
   Player,
@@ -294,6 +295,15 @@ const mockColumnMetadata = {
   ],
 };
 
+// Helper function to render PlayersTable with ToastProvider
+const renderPlayersTable = () => {
+  return render(
+    <ToastProvider>
+      <PlayersTable />
+    </ToastProvider>
+  );
+};
+
 describe("PlayersTable Component", () => {
   // Mock console.error to suppress expected error logs
   const originalError = console.error;
@@ -319,7 +329,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       expect(screen.getByText("Hockey Players")).toBeInTheDocument();
       expect(screen.getByText("Loading players...")).toBeInTheDocument();
@@ -339,7 +349,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -381,7 +391,7 @@ describe("PlayersTable Component", () => {
     test("renders error state when API call fails", async () => {
       mockedAxios.get.mockRejectedValueOnce(new Error("Network error"));
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(
@@ -400,7 +410,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockEmptyApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("No players to display.")).toBeInTheDocument();
@@ -419,7 +429,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -437,7 +447,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -457,7 +467,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -504,7 +514,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -538,7 +548,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -566,7 +576,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -604,7 +614,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Name ↑")).toBeInTheDocument();
@@ -622,7 +632,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -646,7 +656,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -667,7 +677,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -693,7 +703,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -735,7 +745,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -769,7 +779,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -797,7 +807,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -837,7 +847,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: paginatedResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -858,7 +868,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -901,7 +911,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -968,7 +978,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: retiredOnlyResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Retired Player")).toBeInTheDocument();
@@ -990,7 +1000,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1023,7 +1033,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1048,7 +1058,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: null });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(
@@ -1065,7 +1075,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1120,7 +1130,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockRejectedValueOnce(mockError);
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(console.error).toHaveBeenCalledWith(
@@ -1138,7 +1148,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValue({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1202,7 +1212,7 @@ describe("PlayersTable Component", () => {
 
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1239,7 +1249,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1270,7 +1280,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Name ↑")).toBeInTheDocument();
@@ -1300,7 +1310,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1336,7 +1346,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1372,7 +1382,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(mockedAxios.get).toHaveBeenCalledWith(
@@ -1389,7 +1399,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1409,7 +1419,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1449,7 +1459,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1502,7 +1512,7 @@ describe("PlayersTable Component", () => {
       // Test != operator
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1536,7 +1546,7 @@ describe("PlayersTable Component", () => {
     test("formats active_status filters with readable text", async () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1573,7 +1583,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1593,7 +1603,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1633,7 +1643,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1687,7 +1697,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1720,7 +1730,7 @@ describe("PlayersTable Component", () => {
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      render(<PlayersTable />);
+      renderPlayersTable();
 
       await waitFor(() => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1775,7 +1785,7 @@ describe("PlayersTable Component", () => {
         mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-        render(<PlayersTable />);
+        renderPlayersTable();
 
         await waitFor(() => {
           expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1804,7 +1814,7 @@ describe("PlayersTable Component", () => {
         // This test ensures formatFilterText is exercised through the component
         mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
-        render(<PlayersTable />);
+        renderPlayersTable();
 
         await waitFor(() => {
           expect(screen.getByText("Test Player")).toBeInTheDocument();
@@ -1832,7 +1842,7 @@ describe("PlayersTable Component", () => {
       test("handles unknown field names gracefully", async () => {
         mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
         mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
-        render(<PlayersTable />);
+        renderPlayersTable();
 
         await waitFor(() => {
           expect(screen.getByText("Test Player")).toBeInTheDocument();

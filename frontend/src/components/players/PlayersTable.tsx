@@ -629,7 +629,7 @@ const PlayersTable: React.FC = () => {
 
         <div className="top-bar-center">
           <div className="results-info">
-            Showing {players.length} of {totalCount} players
+            Showing {players?.length || 0} of {totalCount} players
           </div>
         </div>
 
@@ -694,7 +694,7 @@ const PlayersTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {players.length === 0 ? (
+            {!players || players.length === 0 ? (
               <tr>
                 <td colSpan={visibleColumns.length} className="no-results">
                   {isSearchActive

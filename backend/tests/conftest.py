@@ -16,6 +16,7 @@ import pytest
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.database import Base
 from app.models.player import Player
@@ -40,8 +41,15 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 @pytest.fixture(scope="function")
 def test_engine():
-    """Create a test database engine using in-memory SQLite."""
-    engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+    """
+    Create a test database engine using in-memory SQLite.
+    Uses StaticPool to ensure all connections share the same in-memory database.
+    """
+    engine = create_engine(
+        TEST_DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     Base.metadata.create_all(bind=engine)
     yield engine
     Base.metadata.drop_all(bind=engine)
@@ -63,7 +71,7 @@ def test_db(test_engine):
 class TestDataGenerator:
     """Utility class for generating realistic test data."""
 
-    POSITIONS = ["Center", "Left Wing", "Right Wing", "Defense", "Goalie"]
+    POSITIONS = ["C", "LW", "RW", "D", "G"]
     NATIONALITIES = [
         "Canadian",
         "American",
@@ -74,7 +82,7 @@ class TestDataGenerator:
         "Slovak",
         "German",
     ]
-    HANDEDNESS = ["Left", "Right"]
+    HANDEDNESS = ["L", "R"]
     HEIGHTS = [
         "5'8\"",
         "5'9\"",
@@ -170,13 +178,13 @@ class TestDataGenerator:
             used_jerseys.add(jersey)
 
             position = random.choice(cls.POSITIONS)
-            if position == "Goalie":
+            if position == "G":  # Goalie
                 goals = random.randint(0, 2)
                 assists = random.randint(0, 5)
-            elif position == "Defense":
+            elif position == "D":  # Defense
                 goals = random.randint(5, 20)
                 assists = random.randint(15, 50)
-            else:  # Forwards
+            else:  # Forwards (C, LW, RW)
                 goals = random.randint(10, 50)
                 assists = random.randint(10, 60)
 
@@ -256,13 +264,13 @@ def specific_test_players(test_db: Session, sample_teams: list[Team]) -> list[Pl
     specific_players_data = [
         {
             "name": "Player Alpha",
-            "position": "Center",
+            "position": "C",
             "nationality": "Canadian",
             "jersey_number": 87,
             "birth_date": date(1995, 3, 15),
             "height": "6'2\"",
             "weight": 195,
-            "handedness": "Left",
+            "handedness": "L",
             "goals": 50,
             "assists": 40,
             "points": 90,
@@ -271,13 +279,13 @@ def specific_test_players(test_db: Session, sample_teams: list[Team]) -> list[Pl
         },
         {
             "name": "Player Beta",
-            "position": "Defense",
+            "position": "D",
             "nationality": "American",
             "jersey_number": 44,
             "birth_date": date(1990, 8, 22),
             "height": "6'4\"",
             "weight": 220,
-            "handedness": "Right",
+            "handedness": "R",
             "goals": 10,
             "assists": 30,
             "points": 40,
@@ -286,13 +294,13 @@ def specific_test_players(test_db: Session, sample_teams: list[Team]) -> list[Pl
         },
         {
             "name": "Player Gamma",
-            "position": "Goalie",
+            "position": "G",
             "nationality": "Swedish",
             "jersey_number": 1,
             "birth_date": date(1992, 12, 5),
             "height": "6'0\"",
             "weight": 180,
-            "handedness": "Left",
+            "handedness": "L",
             "goals": 0,
             "assists": 5,
             "points": 5,

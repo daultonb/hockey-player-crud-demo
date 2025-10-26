@@ -173,7 +173,7 @@ class TestPlayerSearch:
         Expected: Returns players with Defense position
         """
         search_params = PlayerSearchParams(
-            search="Defense",
+            search="D",
             field="position",
             page=1,
             limit=20,
@@ -186,8 +186,8 @@ class TestPlayerSearch:
 
         assert total >= 1
         for player in players:
-            position_value = player.position.lower()
-            assert position_value == "defense"
+            position_value = player.position.upper()
+            assert position_value == "D"
 
     @pytest.mark.search
     def test_search_jersey_number_valid(
@@ -297,10 +297,10 @@ class TestPlayerFiltering:
     ):
         """
         Test filtering by position with equals operator.
-        Input: filter position = "Center"
+        Input: filter position = "C"
         Expected: Returns only Center players
         """
-        filters = [PlayerFilter(field="position", operator="=", value="Center")]
+        filters = [PlayerFilter(field="position", operator="=", value="C")]
         search_params = PlayerSearchParams(
             search=None,
             field="all",
@@ -315,7 +315,7 @@ class TestPlayerFiltering:
 
         assert total >= 1
         for player in players:
-            assert_player_fields(player, {"position": "Center"})
+            assert_player_fields(player, {"position": "C"})
 
     @pytest.mark.filter
     def test_filter_position_not_equals(
