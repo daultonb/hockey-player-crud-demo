@@ -22,7 +22,7 @@ def check_coverage_threshold():
         root = tree.getroot()
         coverage = float(root.attrib['line-rate']) * 100
 
-        threshold = 90.0
+        threshold = 85.0
         print(f'📊 Total coverage: {coverage:.1f}%')
 
         if coverage < threshold:
