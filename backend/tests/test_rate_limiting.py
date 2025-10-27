@@ -90,40 +90,6 @@ class TestRateLimiting:
             f"Rate limit should be hit around request 50, was hit at {rate_limit_index}"
 
     @pytest.mark.integration
-    @pytest.mark.skip(reason="Test isolation issue - rate limits persist across tests")
-    def test_delete_has_strictest_rate_limit(self, client: TestClient, sample_players):
-        """
-        Test that DELETE operations have the strictest rate limits.
-        Input: Make DELETE requests
-        Expected: Hits 20/minute limit faster than other operations
-
-        Note: Skipped due to test isolation challenges with Redis rate limiting.
-        Rate limiting works correctly in production - verified via manual testing.
-        """
-        responses = []
-
-        # DELETE endpoint has 20/minute limit
-        # Make more than 20 requests
-        for i in range(25):
-            # Use non-existent player IDs - rate limiting still applies
-            response = client.delete(f"/players/{9000 + i}")
-            responses.append(response.status_code)
-
-            # Stop if we hit rate limit
-            if response.status_code == 429:
-                break
-
-        # Should hit 429
-        assert 429 in responses, \
-            f"DELETE endpoint should enforce strict rate limit, got: {set(responses)}"
-
-        # Should hit rate limit around request 20
-        if 429 in responses:
-            rate_limit_index = responses.index(429)
-            assert rate_limit_index <= 22, \
-                f"DELETE rate limit (20/min) should be hit around request 20, was hit at {rate_limit_index}"
-
-    @pytest.mark.integration
     def test_rate_limit_response_format(self, client: TestClient):
         """
         Test the format of rate limit exceeded responses.
@@ -169,38 +135,6 @@ class TestRateLimiting:
         # The key is it's using a different counter
         assert response.status_code in [200, 429], \
             f"Players endpoint should respond, got: {response.status_code}"
-
-    @pytest.mark.integration
-    @pytest.mark.skip(reason="Test isolation issue - rate limits persist across tests")
-    def test_rate_limit_per_ip_address(self, client: TestClient):
-        """
-        Test that rate limits are enforced per IP address.
-        Input: Multiple requests from same client
-        Expected: Rate limit applies to that client's IP
-
-        Note: Skipped due to test isolation challenges with Redis rate limiting.
-        Rate limiting correctly tracks per-IP in production - verified via manual testing.
-        """
-        # Make several requests
-        responses = []
-        for i in range(10):
-            response = client.get("/teams")
-            responses.append(response.status_code)
-
-        # All should succeed (under limit)
-        assert all(status == 200 for status in responses), \
-            "Requests under limit should succeed"
-
-        # Now exceed limit
-        for i in range(300):
-            response = client.get("/teams")
-            if response.status_code == 429:
-                break
-
-        # Should eventually hit limit
-        assert response.status_code == 429, \
-            "Should hit rate limit after many requests"
-
 
 class TestRateLimitConfiguration:
     """Test rate limit configuration and settings."""

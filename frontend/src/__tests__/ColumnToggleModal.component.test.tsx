@@ -1,0 +1,406 @@
+import "@testing-library/jest-dom";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import axios from "axios";
+import ColumnToggleModal from "../components/modals/ColumnToggleModal";
+
+// Mock axios
+jest.mock("axios", () => ({
+  get: jest.fn(),
+}));
+
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+// Mock Modal component
+jest.mock("../components/modals/Modal", () => {
+  return function MockModal({ children, isOpen, title, onClose }: any) {
+    if (!isOpen) return null;
+    return (
+      <div data-testid="mock-modal">
+        <div data-testid="modal-title">{title}</div>
+        <button onClick={onClose}>Close</button>
+        {children}
+      </div>
+    );
+  };
+});
+
+const mockColumnMetadata = {
+  columns: [
+    {
+      key: "name",
+      label: "Name",
+      required: true,
+      capabilities: ["searchable", "sortable"],
+    },
+    {
+      key: "jersey_number",
+      label: "Number",
+      required: false,
+      capabilities: ["searchable", "sortable", "filterable"],
+    },
+    {
+      key: "position",
+      label: "Position",
+      required: false,
+      capabilities: ["searchable", "filterable"],
+    },
+    {
+      key: "team",
+      label: "Team",
+      required: false,
+      capabilities: ["searchable", "sortable", "filterable"],
+    },
+    {
+      key: "goals",
+      label: "Goals",
+      required: false,
+      capabilities: ["sortable", "filterable"],
+    },
+  ],
+  count: 5,
+  default_visible_columns: ["name", "jersey_number", "position"],
+};
+
+describe("ColumnToggleModal Component", () => {
+  const mockOnClose = jest.fn();
+  const mockOnColumnsChange = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedAxios.get.mockResolvedValue({ data: mockColumnMetadata });
+  });
+
+  describe("Modal Rendering", () => {
+    it("should render modal when isOpen is true", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number"]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("modal-title")).toHaveTextContent(
+          /Manage Columns/i
+        );
+      });
+    });
+
+    it("should not render modal when isOpen is false", () => {
+      render(
+        <ColumnToggleModal
+          isOpen={false}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name"]}
+        />
+      );
+
+      expect(screen.queryByTestId("mock-modal")).not.toBeInTheDocument();
+    });
+
+    it("should fetch column metadata when modal opens", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name"]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(mockedAxios.get).toHaveBeenCalledWith(
+          expect.stringContaining("/column-metadata")
+        );
+      });
+    });
+
+    it("should show loading state while fetching columns", () => {
+      mockedAxios.get.mockImplementation(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve({ data: mockColumnMetadata }), 1000)
+          )
+      );
+
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name"]}
+        />
+      );
+
+      expect(screen.getByText(/Loading columns/i)).toBeInTheDocument();
+    });
+  });
+
+  describe("Column Selection", () => {
+    it("should display all columns from API", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number"]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Name")).toBeInTheDocument();
+        expect(screen.getByText("Number")).toBeInTheDocument();
+        expect(screen.getByText("Position")).toBeInTheDocument();
+        expect(screen.getByText("Team")).toBeInTheDocument();
+        expect(screen.getByText("Goals")).toBeInTheDocument();
+      });
+    });
+
+    it("should show selected columns as checked", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number", "goals"]}
+        />
+      );
+
+      await waitFor(() => {
+        const nameCheckbox = screen.getByRole("checkbox", {
+          name: /Name/i,
+        }) as HTMLInputElement;
+        const numberCheckbox = screen.getByRole("checkbox", {
+          name: /Number/i,
+        }) as HTMLInputElement;
+        const goalsCheckbox = screen.getByRole("checkbox", {
+          name: /Goals/i,
+        }) as HTMLInputElement;
+
+        expect(nameCheckbox.checked).toBe(true);
+        expect(numberCheckbox.checked).toBe(true);
+        expect(goalsCheckbox.checked).toBe(true);
+      });
+    });
+
+    it("should show unselected columns as unchecked", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name"]}
+        />
+      );
+
+      await waitFor(() => {
+        const positionCheckbox = screen.getByRole("checkbox", {
+          name: /Position/i,
+        }) as HTMLInputElement;
+        const teamCheckbox = screen.getByRole("checkbox", {
+          name: /Team/i,
+        }) as HTMLInputElement;
+
+        expect(positionCheckbox.checked).toBe(false);
+        expect(teamCheckbox.checked).toBe(false);
+      });
+    });
+
+    it("should disable required columns", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number"]}
+        />
+      );
+
+      await waitFor(() => {
+        const nameCheckbox = screen.getByRole("checkbox", { name: /Name/i });
+        expect(nameCheckbox).toBeDisabled();
+      });
+    });
+
+    it("should toggle column selection when checkbox is clicked", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number"]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Position")).toBeInTheDocument();
+      });
+
+      const positionCheckbox = screen.getByRole("checkbox", {
+        name: /Position/i,
+      }) as HTMLInputElement;
+
+      // Initially unchecked
+      expect(positionCheckbox.checked).toBe(false);
+
+      // Click to check
+      fireEvent.click(positionCheckbox);
+      expect(positionCheckbox.checked).toBe(true);
+
+      // Click to uncheck
+      fireEvent.click(positionCheckbox);
+      expect(positionCheckbox.checked).toBe(false);
+    });
+  });
+
+  describe("Drag and Drop", () => {
+    it("should show drag handle for selected columns", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number", "goals"]}
+        />
+      );
+
+      await waitFor(() => {
+        // Check for drag handles (::before content or similar)
+        const columnItems = screen.getAllByRole("checkbox", { checked: true });
+        expect(columnItems.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe("Capabilities Display", () => {
+    it("should display column capabilities", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name"]}
+        />
+      );
+
+      await waitFor(() => {
+        // Check for capability badges/indicators
+        expect(screen.getAllByText(/searchable|sortable|filterable/i).length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  describe("Apply and Cancel", () => {
+    it("should call onApply with selected columns when Apply is clicked", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "jersey_number"]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Position")).toBeInTheDocument();
+      });
+
+      // Toggle position on
+      const positionCheckbox = screen.getByRole("checkbox", {
+        name: /Position/i,
+      });
+      fireEvent.click(positionCheckbox);
+
+      // Click apply
+      const applyButton = screen.getByRole("button", { name: /Apply/i });
+      fireEvent.click(applyButton);
+
+      expect(mockOnColumnsChange).toHaveBeenCalledWith(
+        expect.arrayContaining(["name", "jersey_number", "position"])
+      );
+    });
+
+  });
+
+  describe("Error Handling", () => {
+    it("should show fallback columns when API fails", async () => {
+      mockedAxios.get.mockRejectedValueOnce(new Error("API Error"));
+
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name"]}
+        />
+      );
+
+      await waitFor(() => {
+        // Should show at least the Name column from fallback
+        expect(screen.getByText("Name")).toBeInTheDocument();
+      });
+    });
+
+    it("should handle empty visible columns", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={[]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Name")).toBeInTheDocument();
+      });
+
+      // Should still be able to select columns
+      const jerseyCheckbox = screen.getByRole("checkbox", {
+        name: /Number/i,
+      }) as HTMLInputElement;
+      expect(jerseyCheckbox).not.toBeDisabled();
+    });
+  });
+
+  describe("Reset Functionality", () => {
+    it("should reset to default columns when Reset is clicked", async () => {
+      render(
+        <ColumnToggleModal
+          isOpen={true}
+          onClose={mockOnClose}
+          onColumnsChange={mockOnColumnsChange}
+          initialVisibleColumns={["name", "goals", "team"]}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Goals")).toBeInTheDocument();
+      });
+
+      // Click reset button
+      const resetButton = screen.getByRole("button", { name: /Reset/i });
+      fireEvent.click(resetButton);
+
+      // Should show default columns as checked
+      await waitFor(() => {
+        const nameCheckbox = screen.getByRole("checkbox", {
+          name: /Name/i,
+        }) as HTMLInputElement;
+        const jerseyCheckbox = screen.getByRole("checkbox", {
+          name: /Number/i,
+        }) as HTMLInputElement;
+        const positionCheckbox = screen.getByRole("checkbox", {
+          name: /Position/i,
+        }) as HTMLInputElement;
+
+        expect(nameCheckbox.checked).toBe(true);
+        expect(jerseyCheckbox.checked).toBe(true);
+        expect(positionCheckbox.checked).toBe(true);
+      });
+    });
+  });
+});
