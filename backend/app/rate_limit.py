@@ -44,14 +44,37 @@ def get_rate_limit_key(request):
     return f"ip:{client_ip}"
 
 
-# Create limiter instance with Redis backend
-limiter = Limiter(
-    key_func=get_rate_limit_key,
-    storage_uri=settings.redis_url,
-    default_limits=["100/minute", "1000/hour"],  # Conservative defaults
-    strategy="fixed-window",  # Simple and efficient
-    enabled=settings.redis_rate_limit_enabled,
-)
+# Create limiter instance with Redis backend or memory backend
+# If Redis is unavailable or disabled, falls back to in-memory storage
+try:
+    if settings.redis_rate_limit_enabled:
+        limiter = Limiter(
+            key_func=get_rate_limit_key,
+            storage_uri=settings.redis_url,
+            default_limits=["100/minute", "1000/hour"],  # Conservative defaults
+            strategy="fixed-window",  # Simple and efficient
+            enabled=True,
+        )
+        print("Rate Limiting: Using Redis backend")
+    else:
+        # Use memory backend when Redis is disabled
+        limiter = Limiter(
+            key_func=get_rate_limit_key,
+            default_limits=["100/minute", "1000/hour"],
+            strategy="fixed-window",
+            enabled=True,
+        )
+        print("Rate Limiting: Using in-memory backend (Redis disabled)")
+except Exception as e:
+    print(f"Rate Limiting: Failed to connect to Redis - {e}")
+    print("Rate Limiting: Falling back to in-memory backend")
+    # Fallback to memory backend if Redis connection fails
+    limiter = Limiter(
+        key_func=get_rate_limit_key,
+        default_limits=["100/minute", "1000/hour"],
+        strategy="fixed-window",
+        enabled=True,
+    )
 
 
 def get_rate_limit_exceeded_handler():

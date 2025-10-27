@@ -66,7 +66,7 @@
   font-weight: 500;
 }
 
-.column-checkbox input[type='checkbox'] {
+.column-checkbox input[type="checkbox"] {
   margin-right: 0.75rem;
   margin-top: 0.1rem;
   transform: scale(1.1);
@@ -74,7 +74,7 @@
   flex-shrink: 0;
 }
 
-.column-checkbox input[type='checkbox']:disabled {
+.column-checkbox input[type="checkbox"]:disabled {
   cursor: not-allowed;
 }
 

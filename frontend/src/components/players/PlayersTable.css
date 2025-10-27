@@ -12,7 +12,11 @@
 }
 
 .players-container h1 {
-  background: linear-gradient(135deg, var(--color-purple-gradient-start) 0%, var(--color-purple-gradient-end) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-purple-gradient-start) 0%,
+    var(--color-purple-gradient-end) 100%
+  );
   color: var(--color-white);
   padding: 20px;
   margin: 0;
@@ -198,7 +202,7 @@
 }
 
 .sortable-header:after {
-  content: '';
+  content: "";
   display: inline-block;
   width: 12px;
   text-align: center;
@@ -351,7 +355,7 @@
 
 /* Add icon to column button (optional - using CSS) */
 .column-toggle-btn::before {
-  content: '⚙';
+  content: "⚙";
   font-size: 0.875rem;
 }
 

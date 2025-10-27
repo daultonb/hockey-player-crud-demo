@@ -75,8 +75,12 @@ describe("PaginationControls Component", () => {
         />
       );
 
-      expect(screen.queryByLabelText(/Go to previous page/i)).not.toBeInTheDocument();
-      expect(screen.queryByLabelText(/Go to next page/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Go to previous page/i)
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Go to next page/i)
+      ).not.toBeInTheDocument();
     });
 
     it("should not show pagination controls when totalPages is 0", () => {
@@ -91,8 +95,12 @@ describe("PaginationControls Component", () => {
         />
       );
 
-      expect(screen.queryByLabelText(/Go to previous page/i)).not.toBeInTheDocument();
-      expect(screen.queryByLabelText(/Go to next page/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Go to previous page/i)
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Go to next page/i)
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -317,7 +325,9 @@ describe("PaginationControls Component", () => {
 
       // Current page (2) should be marked as active
       const currentPageButtons = screen.getAllByLabelText(/Go to page 2/i);
-      const activeButton = currentPageButtons.find(btn => btn.getAttribute("aria-current") === "page");
+      const activeButton = currentPageButtons.find(
+        (btn) => btn.getAttribute("aria-current") === "page"
+      );
       expect(activeButton).toBeInTheDocument();
     });
   });
@@ -340,7 +350,9 @@ describe("PaginationControls Component", () => {
 
       // Current page (18) should be marked as active
       const currentPageButtons = screen.getAllByLabelText(/Go to page 18/i);
-      const activeButton = currentPageButtons.find(btn => btn.getAttribute("aria-current") === "page");
+      const activeButton = currentPageButtons.find(
+        (btn) => btn.getAttribute("aria-current") === "page"
+      );
       expect(activeButton).toBeInTheDocument();
     });
   });
@@ -364,7 +376,9 @@ describe("PaginationControls Component", () => {
 
       // Current page (10) should be marked as active
       const currentPageButtons = screen.getAllByLabelText(/Go to page 10/i);
-      const activeButton = currentPageButtons.find(btn => btn.getAttribute("aria-current") === "page");
+      const activeButton = currentPageButtons.find(
+        (btn) => btn.getAttribute("aria-current") === "page"
+      );
       expect(activeButton).toBeInTheDocument();
     });
   });

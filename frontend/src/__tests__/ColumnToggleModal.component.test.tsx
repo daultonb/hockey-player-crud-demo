@@ -288,7 +288,9 @@ describe("ColumnToggleModal Component", () => {
 
       await waitFor(() => {
         // Check for capability badges/indicators
-        expect(screen.getAllByText(/searchable|sortable|filterable/i).length).toBeGreaterThan(0);
+        expect(
+          screen.getAllByText(/searchable|sortable|filterable/i).length
+        ).toBeGreaterThan(0);
       });
     });
   });
@@ -322,7 +324,6 @@ describe("ColumnToggleModal Component", () => {
         expect.arrayContaining(["name", "jersey_number", "position"])
       );
     });
-
   });
 
   describe("Error Handling", () => {

@@ -11,6 +11,8 @@ from sqlalchemy.orm import Session
 
 from app.cache import CacheService
 from app.config import settings
+from app.middleware import PerformanceMiddleware
+from app.performance import PerformanceMonitor, RequestTimer
 from app.rate_limit import limiter
 from app.crud.player import (
     create_player,
@@ -48,6 +50,9 @@ app = FastAPI(
 # Configure rate limiting
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Add performance monitoring middleware (only active when DEBUG_MODE=true)
+app.add_middleware(PerformanceMiddleware)
 
 # Add CORS middleware for frontend integration
 app.add_middleware(
@@ -198,47 +203,55 @@ async def get_players(
 
     print(f"API: Processing player request - {search_params}")
 
-    # Generate cache key based on all query parameters
-    cache_key = CacheService.generate_query_key(
-        "list",
-        search=search,
-        field=field,
-        page=page,
-        limit=limit,
-        sort_by=sort_by,
-        sort_order=sort_order,
-        filters=filters  # Use raw filters string for cache key
-    )
+    with RequestTimer("get_players_endpoint") as timer:
+        # Generate cache key based on all query parameters
+        cache_key = CacheService.generate_query_key(
+            "list",
+            search=search,
+            field=field,
+            page=page,
+            limit=limit,
+            sort_by=sort_by,
+            sort_order=sort_order,
+            filters=filters  # Use raw filters string for cache key
+        )
+        timer.checkpoint("cache_key_generated")
 
-    # Try to get from cache first
-    cached_response = await CacheService.get("players", cache_key)
-    if cached_response:
-        print(f"API: Returning cached response for players")
-        return cached_response
+        # Try to get from cache first
+        cached_response = await CacheService.get("players", cache_key)
+        if cached_response:
+            timer.checkpoint("cache_hit")
+            print(f"API: Returning cached response for players")
+            return cached_response
 
-    # Cache miss - fetch from database
-    players, total_count = get_players_with_search(db, search_params)
+        timer.checkpoint("cache_miss")
 
-    players_data = [format_player_response(player) for player in players]
+        # Cache miss - fetch from database
+        players, total_count = get_players_with_search(db, search_params)
+        timer.checkpoint("database_query_complete")
 
-    total_pages = math.ceil(total_count / limit) if total_count > 0 else 0
+        players_data = [format_player_response(player) for player in players]
+        timer.checkpoint("response_formatting_complete")
 
-    response = {
-        "players": players_data,
-        "count": len(players_data),
-        "total": total_count,
-        "page": page,
-        "limit": limit,
-        "total_pages": total_pages,
-        "search_query": search,
-        "search_field": field,
-        "sort_by": sort_by,
-        "sort_order": sort_order,
-        "filters": parsed_filters,
-    }
+        total_pages = math.ceil(total_count / limit) if total_count > 0 else 0
 
-    # Cache the response
-    await CacheService.set("players", cache_key, response)
+        response = {
+            "players": players_data,
+            "count": len(players_data),
+            "total": total_count,
+            "page": page,
+            "limit": limit,
+            "total_pages": total_pages,
+            "search_query": search,
+            "search_field": field,
+            "sort_by": sort_by,
+            "sort_order": sort_order,
+            "filters": parsed_filters,
+        }
+
+        # Cache the response
+        await CacheService.set("players", cache_key, response)
+        timer.checkpoint("response_cached")
 
     filter_info = f" with {len(parsed_filters)} filters" if parsed_filters else ""
     print(

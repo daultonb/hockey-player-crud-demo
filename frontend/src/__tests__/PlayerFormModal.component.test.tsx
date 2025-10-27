@@ -34,7 +34,7 @@ const mockPlayer: Player = {
   team: { id: 1, name: "Team A", city: "City A" },
   nationality: "Canadian",
   birth_date: "1990-01-01",
-  height: '6\'0"',
+  height: "6'0\"",
   weight: 200,
   handedness: "L",
   active_status: true,
@@ -133,19 +133,13 @@ describe("PlayerFormModal", () => {
         ).toBeInTheDocument();
         expect(screen.getByText("Position is required")).toBeInTheDocument();
         expect(screen.getByText("Team is required")).toBeInTheDocument();
-        expect(
-          screen.getByText("Nationality is required")
-        ).toBeInTheDocument();
-        expect(
-          screen.getByText("Birth date is required")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Nationality is required")).toBeInTheDocument();
+        expect(screen.getByText("Birth date is required")).toBeInTheDocument();
         expect(screen.getByText("Height is required")).toBeInTheDocument();
         expect(
           screen.getByText("Weight must be a positive number")
         ).toBeInTheDocument();
-        expect(
-          screen.getByText("Handedness is required")
-        ).toBeInTheDocument();
+        expect(screen.getByText("Handedness is required")).toBeInTheDocument();
       });
     });
 
@@ -218,10 +212,9 @@ describe("PlayerFormModal", () => {
       });
 
       // Set negative stats
-      fireEvent.change(
-        screen.getByLabelText(/Regular Season Games Played/i),
-        { target: { value: "-1" } }
-      );
+      fireEvent.change(screen.getByLabelText(/Regular Season Games Played/i), {
+        target: { value: "-1" },
+      });
 
       const submitButton = screen.getByRole("button", { name: /Add Player/i });
       fireEvent.click(submitButton);
@@ -262,7 +255,7 @@ describe("PlayerFormModal", () => {
         target: { value: "1995-05-15" },
       });
       fireEvent.change(screen.getByLabelText(/Height/i), {
-        target: { value: '6\'2"' },
+        target: { value: "6'2\"" },
       });
       fireEvent.change(screen.getByLabelText(/Weight/i), {
         target: { value: "195" },
@@ -321,7 +314,7 @@ describe("PlayerFormModal", () => {
         target: { value: "1995-05-15" },
       });
       fireEvent.change(screen.getByLabelText(/Height/i), {
-        target: { value: '6\'2"' },
+        target: { value: "6'2\"" },
       });
       fireEvent.change(screen.getByLabelText(/Weight/i), {
         target: { value: "195" },
@@ -334,10 +327,7 @@ describe("PlayerFormModal", () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockShowToast).toHaveBeenCalledWith(
-          "Team not found",
-          "error"
-        );
+        expect(mockShowToast).toHaveBeenCalledWith("Team not found", "error");
       });
     });
   });
@@ -469,7 +459,7 @@ describe("PlayerFormModal", () => {
         target: { value: "1990-01-01" },
       });
       fireEvent.change(screen.getByLabelText(/Height/i), {
-        target: { value: '6\'0"' },
+        target: { value: "6'0\"" },
       });
       fireEvent.change(screen.getByLabelText(/Weight/i), {
         target: { value: "200" },
@@ -516,9 +506,7 @@ describe("PlayerFormModal", () => {
 
       // Error should be cleared
       await waitFor(() => {
-        expect(
-          screen.queryByText("Name is required")
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
       });
     });
 
@@ -529,7 +517,9 @@ describe("PlayerFormModal", () => {
         expect(screen.getByLabelText(/Active/i)).toBeInTheDocument();
       });
 
-      const activeCheckbox = screen.getByLabelText(/Active/i) as HTMLInputElement;
+      const activeCheckbox = screen.getByLabelText(
+        /Active/i
+      ) as HTMLInputElement;
 
       // Should be checked by default
       expect(activeCheckbox.checked).toBe(true);
@@ -548,7 +538,9 @@ describe("PlayerFormModal", () => {
       renderModal({ isOpen: true, mode: "add" });
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /Cancel/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Cancel/i })
+        ).toBeInTheDocument();
       });
 
       const cancelButton = screen.getByRole("button", { name: /Cancel/i });

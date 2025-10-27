@@ -19,8 +19,17 @@ import "./PaginationControls.css";
 import PlayerDetailsModal from "./PlayerDetailsModal";
 import PlayerSearch from "./PlayerSearch";
 import "./PlayersTable.css";
+import {
+  useComponentPerformance,
+  useInteractionTracking,
+} from "../../hooks/usePerformance";
+import { PerformanceMonitor } from "../../utils/performance";
 
 const PlayersTable: React.FC = () => {
+  // Performance tracking hooks
+  useComponentPerformance("PlayersTable");
+  const interaction = useInteractionTracking();
+
   const { showToast } = useToast();
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -79,6 +88,10 @@ const PlayersTable: React.FC = () => {
       filters?: PlayerFilter[],
       isSearch?: boolean
     ) => {
+      const timerName = `fetchPlayers (page ${page || currentPage})`;
+      PerformanceMonitor.startTimer(timerName);
+      PerformanceMonitor.log(`📡 ${timerName} - FETCH STARTED`);
+
       try {
         if (isSearch) {
           setSearchLoading(true);
@@ -109,12 +122,17 @@ const PlayersTable: React.FC = () => {
         const response = await axios.get<PlayersApiResponse>(
           `${apiBaseUrl}/players?${params}`
         );
+        PerformanceMonitor.checkpoint(timerName, "response_received");
 
         setPlayers(response.data.players);
         setTotalCount(response.data.total);
         setTotalPages(response.data.total_pages);
+        PerformanceMonitor.checkpoint(timerName, "data_processed");
       } catch (err) {
         console.error("Error fetching players:", err);
+        PerformanceMonitor.log(
+          `❌ ${timerName} - FETCH ERROR: ${(err as any).message || err}`
+        );
         setError("Failed to fetch players. Please try again later.");
         setPlayers([]);
         setTotalCount(0);
@@ -122,6 +140,8 @@ const PlayersTable: React.FC = () => {
       } finally {
         setLoading(false);
         setSearchLoading(false);
+        PerformanceMonitor.endTimer(timerName);
+        PerformanceMonitor.log(`✅ ${timerName} - FETCH COMPLETE`);
       }
     },
     [
@@ -133,17 +153,51 @@ const PlayersTable: React.FC = () => {
     ]
   );
 
-  // Fetch default visible columns from backend on mount
+  // Fetch default visible columns AND initial players in parallel on mount
   useEffect(() => {
-    const fetchDefaultColumns = async () => {
+    const initializeData = async () => {
       try {
-        const response = await axios.get(`${apiBaseUrl}/column-metadata`);
-        if (response.data?.default_visible_columns) {
-          setVisibleColumns(response.data.default_visible_columns);
+        // Fetch both column metadata and players in parallel
+        const [columnsResponse, playersResponse] = await Promise.all([
+          axios.get(`${apiBaseUrl}/column-metadata`),
+          (async () => {
+            const params = new URLSearchParams({
+              page: String(currentPage),
+              limit: String(itemsPerPage),
+              sort_by: currentSortField,
+              sort_order: currentSortDirection,
+            });
+            return axios.get<PlayersApiResponse>(
+              `${apiBaseUrl}/players?${params}`
+            );
+          })(),
+        ]);
+
+        // Set columns
+        if (columnsResponse.data?.default_visible_columns) {
+          setVisibleColumns(columnsResponse.data.default_visible_columns);
+        } else {
+          // Fallback to hardcoded defaults
+          setVisibleColumns([
+            "name",
+            "jersey_number",
+            "position",
+            "team",
+            "goals",
+            "assists",
+            "points",
+            "active_status",
+          ]);
         }
+
+        // Set players data
+        setPlayers(playersResponse.data.players);
+        setTotalCount(playersResponse.data.total);
+        setTotalPages(playersResponse.data.total_pages);
+        setLoading(false);
       } catch (error) {
-        console.warn("Failed to fetch default columns, using fallback:", error);
-        // Fallback to hardcoded defaults if API fails
+        console.error("Error initializing data:", error);
+        // Set fallback columns
         setVisibleColumns([
           "name",
           "jersey_number",
@@ -154,18 +208,13 @@ const PlayersTable: React.FC = () => {
           "points",
           "active_status",
         ]);
+        setError("Failed to load data. Please try again later.");
+        setLoading(false);
       }
     };
 
-    fetchDefaultColumns();
-  }, [apiBaseUrl]);
-
-  useEffect(() => {
-    // Only fetch players once default columns are loaded
-    if (visibleColumns.length > 0) {
-      fetchPlayers();
-    }
-  }, [visibleColumns.length]);
+    initializeData();
+  }, [apiBaseUrl]); // Only run once on mount
 
   const handleSearch = useCallback(
     (search: string, field: SearchField) => {
@@ -275,7 +324,14 @@ const PlayersTable: React.FC = () => {
 
   const handlePageChange = useCallback(
     (page: number) => {
+      // Track user interaction
+      interaction.trackPageChange(page);
+
+      // Optimistically update the page number for instant UI feedback
       setCurrentPage(page);
+
+      // Scroll to top for better UX
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
       fetchPlayers(
         currentSearch,
@@ -296,6 +352,7 @@ const PlayersTable: React.FC = () => {
       currentSortField,
       currentSortDirection,
       currentFilters,
+      interaction,
     ]
   );
 
@@ -682,8 +739,33 @@ const PlayersTable: React.FC = () => {
         </div>
       </div>
 
-      <div className="table-container">
-        <table className="players-table">
+      <div className="table-container" style={{ position: "relative" }}>
+        {searchLoading && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10,
+              backdropFilter: "blur(2px)",
+            }}
+          >
+            <div className="loading">Loading...</div>
+          </div>
+        )}
+        <table
+          className="players-table"
+          style={{
+            opacity: searchLoading ? 0.5 : 1,
+            transition: "opacity 0.2s",
+          }}
+        >
           <thead>
             <tr>
               {visibleColumns.map((columnKey) => (

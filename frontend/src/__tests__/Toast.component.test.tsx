@@ -16,31 +16,23 @@ describe("Toast Component", () => {
   describe("Rendering", () => {
     it("should render toast with message", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test message" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test message" type="success" onClose={onClose} />);
 
       expect(screen.getByText("Test message")).toBeInTheDocument();
     });
 
     it("should have role alert for accessibility", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test message" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test message" type="success" onClose={onClose} />);
 
       expect(screen.getByRole("alert")).toBeInTheDocument();
     });
 
     it("should have close button with aria-label", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test message" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test message" type="success" onClose={onClose} />);
 
-      expect(
-        screen.getByLabelText("Close notification")
-      ).toBeInTheDocument();
+      expect(screen.getByLabelText("Close notification")).toBeInTheDocument();
     });
   });
 
@@ -82,9 +74,7 @@ describe("Toast Component", () => {
   describe("Manual Close", () => {
     it("should call onClose when close button is clicked", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test message" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test message" type="success" onClose={onClose} />);
 
       const closeButton = screen.getByLabelText("Close notification");
       fireEvent.click(closeButton);
@@ -96,9 +86,7 @@ describe("Toast Component", () => {
   describe("Auto-dismiss", () => {
     it("should auto-dismiss after default duration (5000ms)", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test message" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test message" type="success" onClose={onClose} />);
 
       expect(onClose).not.toHaveBeenCalled();
 
@@ -129,9 +117,7 @@ describe("Toast Component", () => {
 
     it("should not auto-dismiss before duration expires", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test message" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test message" type="success" onClose={onClose} />);
 
       jest.advanceTimersByTime(4999);
       expect(onClose).not.toHaveBeenCalled();
@@ -210,7 +196,9 @@ describe("Toast Component", () => {
       const onClose = jest.fn();
       render(<Toast message="" type="success" onClose={onClose} />);
 
-      const messageElement = screen.getByText("", { selector: ".toast-message" });
+      const messageElement = screen.getByText("", {
+        selector: ".toast-message",
+      });
       expect(messageElement).toBeInTheDocument();
     });
 
@@ -225,12 +213,7 @@ describe("Toast Component", () => {
     it("should handle duration of 0 (immediate dismiss)", () => {
       const onClose = jest.fn();
       render(
-        <Toast
-          message="Test"
-          type="success"
-          onClose={onClose}
-          duration={0}
-        />
+        <Toast message="Test" type="success" onClose={onClose} duration={0} />
       );
 
       jest.advanceTimersByTime(0);
@@ -240,12 +223,7 @@ describe("Toast Component", () => {
     it("should handle very short duration", () => {
       const onClose = jest.fn();
       render(
-        <Toast
-          message="Test"
-          type="success"
-          onClose={onClose}
-          duration={100}
-        />
+        <Toast message="Test" type="success" onClose={onClose} duration={100} />
       );
 
       jest.advanceTimersByTime(100);
@@ -274,9 +252,7 @@ describe("Toast Component", () => {
   describe("Interaction with Auto-dismiss", () => {
     it("should allow manual close before auto-dismiss", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test" type="success" onClose={onClose} />);
 
       jest.advanceTimersByTime(2500);
       expect(onClose).not.toHaveBeenCalled();
@@ -289,9 +265,7 @@ describe("Toast Component", () => {
 
     it("should have timer still fire after manual close if not unmounted", () => {
       const onClose = jest.fn();
-      render(
-        <Toast message="Test" type="success" onClose={onClose} />
-      );
+      render(<Toast message="Test" type="success" onClose={onClose} />);
 
       const closeButton = screen.getByLabelText("Close notification");
       fireEvent.click(closeButton);

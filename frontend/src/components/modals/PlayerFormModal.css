@@ -77,7 +77,7 @@
   color: var(--color-text-primary);
 }
 
-.radio-label input[type='radio'] {
+.radio-label input[type="radio"] {
   cursor: pointer;
   width: 16px;
   height: 16px;
