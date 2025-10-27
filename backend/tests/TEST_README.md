@@ -1,6 +1,6 @@
 # Hockey CRUD Application - Test Suite
 
-This directory contains comprehensive unit tests for the hockey player CRUD application backend. **All 115 tests passing ✅**
+This directory contains comprehensive unit and integration tests for the hockey player CRUD application backend. **All 144 tests passing ✅** | **Coverage: 95%+** | **CI Target: 85%+**
 
 ## 🧪 Test Structure
 
@@ -237,6 +237,27 @@ chmod +x tests/run_tests.sh
 - Default value assignment
 - Auto-incrementing IDs
 
+### Redis Caching (`test_redis.py`)
+**Caching Tests (5+ tests)**
+- Cache hit/miss scenarios
+- Cache invalidation on mutations
+- Graceful degradation when Redis unavailable
+- TTL expiration handling
+- Connection pool management
+
+### API Rate Limiting (`test_rate_limiting.py`)
+**Rate Limiting Tests (5+ tests)**
+- Request counting per IP address
+- Rate limit enforcement (429 responses)
+- Rate limit window reset
+- Distributed rate limiting with Redis
+- Fallback to in-memory when Redis unavailable
+
+**Logging Middleware Tests (3+ tests)**
+- Request logging with metadata
+- Response logging with duration
+- Error logging with stack traces
+
 ## 🎯 Test Data
 
 ### Fixtures
@@ -331,14 +352,18 @@ Coverage includes:
 - Line coverage for all application modules
 - Branch coverage for conditional logic
 - Missing line identification
-- **Expected Coverage**: ~95%+ across all modules
+- **Expected Coverage**:    
+  - Current Coverage: ~95%+
+  - CI/CD Target: 85%+
 
 Target coverage areas:
 - ✅ API endpoints (main.py)
 - ✅ CRUD operations (crud/player.py)
 - ✅ Schema validation (schemas/player.py)
 - ✅ Database models (models/player.py, models/team.py)
-
+- ✅ Redis Caching (redis_client.py, cache.py)
+- ✅ API Rate Limiting (rate_limit.py)
+- ✅ Logging Middleware (middleware.py)
 ## 🏗️ Adding New Tests
 
 ### Test File Structure
