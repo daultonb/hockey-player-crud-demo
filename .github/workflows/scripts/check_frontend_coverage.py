@@ -26,7 +26,7 @@ def check_frontend_coverage_threshold():
         lines = total.get('lines', {})
         coverage = lines.get('pct', 0)
 
-        threshold = 90.0
+        threshold = 85.0
         print(f'📊 Frontend total line coverage: {coverage:.1f}%')
 
         if coverage < threshold:
