@@ -14,6 +14,11 @@ from redis.asyncio.connection import ConnectionPool
 from app.config import settings
 
 
+class RedisUnavailableError(Exception):
+    """Raised when Redis is not available."""
+    pass
+
+
 class RedisClient:
     """
     Singleton Redis client with connection pooling.
@@ -32,6 +37,51 @@ class RedisClient:
 
     _pool: Optional[ConnectionPool] = None
     _client: Optional[redis.Redis] = None
+    _is_available: Optional[bool] = None
+
+    @classmethod
+    async def check_availability(cls) -> bool:
+        """
+        Check if Redis is available and cache the result.
+
+        This method should be called once during application startup.
+        Uses a fast timeout (0.5s) to quickly detect if Redis is unavailable.
+
+        Returns:
+            bool: True if Redis is available, False otherwise
+        """
+        if not settings.redis_enabled:
+            print("Redis: Disabled via configuration (REDIS_ENABLED=false)")
+            cls._is_available = False
+            return False
+
+        try:
+            # Create a temporary connection with fast timeout for checking
+            temp_pool = ConnectionPool.from_url(
+                settings.redis_url,
+                max_connections=1,
+                decode_responses=True,
+                socket_connect_timeout=0.5,  # Fast timeout for availability check
+                socket_timeout=0.5,
+                retry_on_timeout=False,
+            )
+            temp_client = redis.Redis(connection_pool=temp_pool)
+
+            # Try to ping Redis
+            await temp_client.ping()
+
+            # Clean up temporary connection
+            await temp_client.close()
+            await temp_pool.disconnect()
+
+            cls._is_available = True
+            print(f"Redis: Available ✓ ({settings.redis_url})")
+            return True
+
+        except Exception as e:
+            cls._is_available = False
+            print(f"Redis: Unavailable - caching disabled ({str(e)})")
+            return False
 
     @classmethod
     async def get_client(cls) -> redis.Redis:
@@ -41,19 +91,26 @@ class RedisClient:
         Returns:
             redis.Redis: Configured Redis client instance
 
+        Raises:
+            RedisUnavailableError: If Redis is known to be unavailable
+
         Note:
             This method is idempotent - calling it multiple times
             returns the same client instance.
         """
+        # Check if availability has been tested
+        if cls._is_available is False:
+            raise RedisUnavailableError("Redis is not available")
+
         if cls._client is None:
             print("Redis: Initializing connection pool...")
             cls._pool = ConnectionPool.from_url(
                 settings.redis_url,
                 max_connections=10,
                 decode_responses=True,  # Automatically decode bytes to strings
-                socket_connect_timeout=5,
-                socket_timeout=5,
-                retry_on_timeout=True,
+                socket_connect_timeout=0.5,  # Reduced from 5s for faster failure
+                socket_timeout=0.5,  # Reduced from 5s for faster failure
+                retry_on_timeout=False,  # Don't retry on timeout
             )
             cls._client = redis.Redis(connection_pool=cls._pool)
             print(f"Redis: Connected to {settings.redis_url}")

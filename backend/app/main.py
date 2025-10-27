@@ -14,6 +14,7 @@ from app.config import settings
 from app.middleware import PerformanceMiddleware
 from app.performance import PerformanceMonitor, RequestTimer
 from app.rate_limit import limiter
+from app.redis_client import RedisClient
 from app.crud.player import (
     create_player,
     delete_player,
@@ -62,6 +63,36 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Run tasks on application startup.
+
+    Checks Redis availability to enable/disable caching gracefully.
+    """
+    print("Application: Starting up...")
+
+    # Check if Redis is available
+    await RedisClient.check_availability()
+
+    print("Application: Startup complete")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """
+    Run cleanup tasks on application shutdown.
+
+    Closes Redis connections properly.
+    """
+    print("Application: Shutting down...")
+
+    # Close Redis connection pool
+    await RedisClient.close()
+
+    print("Application: Shutdown complete")
 
 
 def format_player_response(player: Player) -> dict:

@@ -30,6 +30,7 @@ class Settings:
     )
 
     # Redis settings
+    redis_enabled: bool = os.getenv("REDIS_ENABLED", "true").lower() == "true"
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379")
     redis_cache_ttl: int = int(os.getenv("REDIS_CACHE_TTL", "300"))
     redis_rate_limit_enabled: bool = (

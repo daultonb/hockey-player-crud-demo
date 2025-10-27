@@ -12,9 +12,20 @@ API_HOST=127.0.0.1
 API_PORT=8000
 
 # Database Configuration
-DATABASE_URL=sqlite:///./hockey_players.db
 DATABASE_URL=postgresql://hockey_app:password_here@localhost:5432/hockey_crud_db
 
+# Redis Configuration
+# Set REDIS_ENABLED=false to disable Redis entirely (no connection attempts)
+# Set REDIS_ENABLED=true to use Redis if available (graceful degradation if unavailable)
+REDIS_ENABLED=true
+REDIS_URL=redis://localhost:6379
+REDIS_CACHE_TTL=300
+REDIS_RATE_LIMIT_ENABLED=true
+
+# Elasticsearch Configuration
+ELASTICSEARCH_URL=http://localhost:9200
+ELASTICSEARCH_INDEX_NAME=hockey_players
+ELASTICSEARCH_ENABLED=true
 
 # CORS Settings (comma-separated list)
 ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000

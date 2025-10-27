@@ -18,11 +18,14 @@ import json
 from typing import Any, Optional
 
 from app.config import settings
-from app.redis_client import RedisClient
+from app.redis_client import RedisClient, RedisUnavailableError
 
 
 class CacheService:
     """Service for managing Redis cache operations."""
+
+    _error_count = 0  # Track consecutive errors to reduce log spam
+    _max_error_logs = 3  # Only log first 3 errors
 
     @staticmethod
     def _generate_key(namespace: str, identifier: str) -> str:
@@ -62,8 +65,14 @@ class CacheService:
                 print(f"Cache: MISS for {key}")
                 return None
 
+        except RedisUnavailableError:
+            # Redis is known to be unavailable - return immediately without logging
+            return None
         except Exception as e:
-            print(f"Cache: Failed to get {namespace}:{identifier} - {e}")
+            # Log unexpected errors (but limit spam)
+            if CacheService._error_count < CacheService._max_error_logs:
+                print(f"Cache: Failed to get {namespace}:{identifier} - {e}")
+                CacheService._error_count += 1
             # Graceful degradation - return None if cache fails
             return None
 
@@ -98,8 +107,14 @@ class CacheService:
             print(f"Cache: SET {key} (TTL: {cache_ttl}s)")
             return True
 
+        except RedisUnavailableError:
+            # Redis is known to be unavailable - return immediately without logging
+            return False
         except Exception as e:
-            print(f"Cache: Failed to set {namespace}:{identifier} - {e}")
+            # Log unexpected errors (but limit spam)
+            if CacheService._error_count < CacheService._max_error_logs:
+                print(f"Cache: Failed to set {namespace}:{identifier} - {e}")
+                CacheService._error_count += 1
             # Graceful degradation - continue without caching
             return False
 
@@ -122,8 +137,14 @@ class CacheService:
             print(f"Cache: DELETED {key}")
             return True
 
+        except RedisUnavailableError:
+            # Redis is known to be unavailable - return immediately without logging
+            return False
         except Exception as e:
-            print(f"Cache: Failed to delete {namespace}:{identifier} - {e}")
+            # Log unexpected errors (but limit spam)
+            if CacheService._error_count < CacheService._max_error_logs:
+                print(f"Cache: Failed to delete {namespace}:{identifier} - {e}")
+                CacheService._error_count += 1
             return False
 
     @staticmethod
@@ -151,8 +172,14 @@ class CacheService:
                 print(f"Cache: No keys found matching {pattern}")
                 return 0
 
+        except RedisUnavailableError:
+            # Redis is known to be unavailable - return immediately without logging
+            return 0
         except Exception as e:
-            print(f"Cache: Failed to delete pattern {pattern} - {e}")
+            # Log unexpected errors (but limit spam)
+            if CacheService._error_count < CacheService._max_error_logs:
+                print(f"Cache: Failed to delete pattern {pattern} - {e}")
+                CacheService._error_count += 1
             return 0
 
     @staticmethod
