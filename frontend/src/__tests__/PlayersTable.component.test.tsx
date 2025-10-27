@@ -389,13 +389,16 @@ describe("PlayersTable Component", () => {
      * Expected: Shows error message instead of table
      */
     test("renders error state when API call fails", async () => {
+      // Mock column-metadata call first (succeeds)
+      mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
+      // Mock players call (fails)
       mockedAxios.get.mockRejectedValueOnce(new Error("Network error"));
 
       renderPlayersTable();
 
       await waitFor(() => {
         expect(
-          screen.getByText("Failed to fetch players. Please try again later.")
+          screen.getByText("Failed to load data. Please try again later.")
         ).toBeInTheDocument();
       });
 
@@ -1062,7 +1065,7 @@ describe("PlayersTable Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("Failed to fetch players. Please try again later.")
+          screen.getByText("Failed to load data. Please try again later.")
         ).toBeInTheDocument();
       });
     });
@@ -1134,7 +1137,7 @@ describe("PlayersTable Component", () => {
 
       await waitFor(() => {
         expect(console.error).toHaveBeenCalledWith(
-          "Error fetching players:",
+          "Error initializing data:",
           mockError
         );
       });
