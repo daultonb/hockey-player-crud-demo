@@ -18,18 +18,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${'$'}{{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${'$'}{{ matrix.python-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${'$'}{{ runner.os }}-pip-${'$'}{{ hashFiles('**/requirements.txt', '**/tests/requirements-test.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/tests/requirements-test.txt') }}
           restore-keys: |
-            ${'$'}{{ runner.os }}-pip-
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
@@ -38,25 +38,13 @@ jobs:
           pip install -r requirements.txt
           pip install -r tests/requirements-test.txt
 
-      - name: Start Redis
-        uses: supercharge/redis-github-action@1.7.0
-        with:
-          redis-version: 7
-
-      - name: Start PostgreSQL
-        uses: ikalnytskyi/action-setup-postgres@v6
-        with:
-          username: hockey_app
-          password: HockeyApp2025
-          database: hockey_crud_db
-          port: 5432
-        id: postgres
+      - name: Create scripts directory
+        run: |
+          mkdir -p .github/workflows/scripts
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: ${'$'}{{ steps.postgres.outputs.connection-uri }}
-          REDIS_URL: redis://localhost:6379
-          REDIS_ENABLED: true
+          DATABASE_URL: sqlite:///./test_hockey_players.db
         run: |
           cd backend
           python -m pytest tests/ --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing -v
@@ -69,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: coverage-reports-${'$'}{{ matrix.python-version }}
+          name: coverage-reports-${{ matrix.python-version }}
           path: |
             backend/htmlcov/
             backend/coverage.xml
@@ -77,7 +65,7 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
-    if: always()
+    needs: test
 
     steps:
       - name: Checkout code
@@ -89,6 +77,8 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
+        env:
+          DATABASE_URL: sqlite:///./test_hockey_players.db
         run: |
           cd backend
           python -m pip install --upgrade pip
@@ -123,7 +113,7 @@ jobs:
 
   dependency-check:
     runs-on: ubuntu-latest
-    if: always()
+    needs: test
 
     steps:
       - name: Checkout code

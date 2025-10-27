@@ -1,0 +1,85 @@
+name: Frontend CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run tests with coverage
+        run: |
+          cd frontend
+          npm test -- --coverage --watchAll=false --coverageReporters=json-summary --coverageReporters=lcov --coverageReporters=text
+
+      - name: Check coverage threshold
+        run: |
+          python .github/workflows/scripts/check_frontend_coverage.py
+
+      - name: Upload coverage reports as artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage-reports
+          path: |
+            frontend/coverage/
+          retention-days: 30
+
+  npm-security:
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run npm audit
+        run: |
+          cd frontend
+          npm audit --json > npm-audit-report.json || true
+          echo "NPM audit completed"
+
+      - name: Check for critical npm vulnerabilities
+        run: |
+          python .github/workflows/scripts/check_npm_security.py
+
+      - name: Upload npm audit reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-audit-reports
+          path: frontend/npm-audit-report.json
+          retention-days: 30
