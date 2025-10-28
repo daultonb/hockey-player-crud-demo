@@ -27,15 +27,11 @@ jest.mock("../components/players/PlayerSearch", () => {
   return function MockPlayerSearch({
     onSearch,
     onClear,
-    onOpenFilters,
     disabled,
-    activeFiltersCount,
   }: {
     onSearch: (query: string, field: SearchField) => void;
     onClear: () => void;
-    onOpenFilters: () => void;
     disabled: boolean;
-    activeFiltersCount: number;
   }) {
     const [inputValue, setInputValue] = React.useState("");
     const searchTimeoutRef = React.useRef(null);
@@ -99,13 +95,6 @@ jest.mock("../components/players/PlayerSearch", () => {
           disabled={disabled}
         >
           Clear
-        </button>
-        <button
-          data-testid="filters-button"
-          onClick={onOpenFilters}
-          disabled={disabled}
-        >
-          Filters ({activeFiltersCount})
         </button>
       </div>
     );
@@ -174,6 +163,36 @@ jest.mock("../components/modals/FilterModal", () => {
           Apply Filters
         </button>
         <div data-testid="current-filters-count">{currentFilters.length}</div>
+      </div>
+    );
+  };
+});
+
+jest.mock("../components/help/HelpButton", () => {
+  return function MockHelpButton({ onClick }: { onClick: () => void }) {
+    return (
+      <button data-testid="help-button" onClick={onClick}>
+        Help
+      </button>
+    );
+  };
+});
+
+jest.mock("../components/help/HelpPanel", () => {
+  return function MockHelpPanel({
+    isOpen,
+    onClose,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+  }) {
+    if (!isOpen) return null;
+    return (
+      <div data-testid="mock-help-panel">
+        <h2>Help Panel</h2>
+        <button data-testid="close-help-panel-button" onClick={onClose}>
+          Close
+        </button>
       </div>
     );
   };
@@ -754,21 +773,21 @@ describe("PlayersTable Component", () => {
         expect(screen.getByText("Test Player")).toBeInTheDocument();
       });
 
-      // Initially no filters
-      expect(screen.getByText("Filters (0)")).toBeInTheDocument();
+      // Initially no filters - check the filters button exists (no count shown when 0)
+      const filtersButton = screen.getByTestId("filters-button");
+      expect(filtersButton).toHaveTextContent("🔽 Filters");
 
       // Setup filter response and apply filters
       mockedAxios.get.mockResolvedValueOnce({ data: mockColumnMetadata });
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      const filtersButton = screen.getAllByTestId("filters-button")[0];
       await userEvent.click(filtersButton);
 
       const applyButton = screen.getByTestId("apply-filters-button");
       await userEvent.click(applyButton);
 
       await waitFor(() => {
-        expect(screen.getByText("Filters (1)")).toBeInTheDocument();
+        expect(filtersButton).toHaveTextContent("🔽 Filters (1)");
       });
     });
   });
@@ -1099,7 +1118,7 @@ describe("PlayersTable Component", () => {
       await userEvent.clear(searchInput);
       await userEvent.type(searchInput, "test");
 
-      // Component doesn't show "Searching..." text, just disables controls during search
+      // Component doesn't show "Searching..." text, just disables search controls during search
       await waitFor(
         () => {
           expect(screen.getByTestId("search-input")).toBeDisabled();
@@ -1108,7 +1127,6 @@ describe("PlayersTable Component", () => {
       );
 
       expect(screen.getByTestId("clear-button")).toBeDisabled();
-      expect(screen.getAllByTestId("filters-button")[0]).toBeDisabled();
 
       // Complete the search
       resolveSearch!({ data: mockApiResponse });
@@ -1223,7 +1241,7 @@ describe("PlayersTable Component", () => {
 
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
 
-      const filtersButton = screen.getAllByTestId("filters-button")[0];
+      const filtersButton = screen.getByTestId("filters-button");
       await userEvent.click(filtersButton);
       const applyButton = screen.getByTestId("apply-filters-button");
       await userEvent.click(applyButton);
@@ -1238,8 +1256,8 @@ describe("PlayersTable Component", () => {
       expect(screen.getByText(/active_status = true/)).toBeInTheDocument();
       expect(screen.getByText(/team contains Maple/)).toBeInTheDocument();
 
-      // Should show 3 filters in the count
-      expect(screen.getByText("Filters (3)")).toBeInTheDocument();
+      // Should show 3 filters in the count on the filters button
+      expect(filtersButton).toHaveTextContent("🔽 Filters (3)");
 
       resetMockFilter();
     });
@@ -1707,7 +1725,7 @@ describe("PlayersTable Component", () => {
       });
 
       // Apply filter through modal
-      const filtersButton = screen.getAllByTestId("filters-button")[0];
+      const filtersButton = screen.getByTestId("filters-button");
       await userEvent.click(filtersButton);
 
       mockedAxios.get.mockResolvedValueOnce({ data: mockApiResponse });
@@ -1721,8 +1739,8 @@ describe("PlayersTable Component", () => {
         ).toBeInTheDocument();
       });
 
-      // Verify filter count in PlayerSearch
-      expect(screen.getByText("Filters (1)")).toBeInTheDocument();
+      // Verify filter count on the filters button
+      expect(filtersButton).toHaveTextContent("🔽 Filters (1)");
     });
 
     /*

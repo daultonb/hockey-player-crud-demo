@@ -40,7 +40,9 @@ describe("usePerformance hooks", () => {
       unmount();
 
       expect(PerformanceMonitor.log).toHaveBeenCalledWith(
-        expect.stringMatching(/TestComponent - UNMOUNTED \(lived \d+ms, \d+ renders\)/)
+        expect.stringMatching(
+          /TestComponent - UNMOUNTED \(lived \d+ms, \d+ renders\)/
+        )
       );
     });
 
@@ -75,9 +77,9 @@ describe("usePerformance hooks", () => {
     it("should not log re-render on first render", () => {
       renderHook(() => useComponentPerformance("TestComponent"));
 
-      const reRenderCalls = (PerformanceMonitor.log as jest.Mock).mock.calls.filter(
-        (call) => call[0].includes("RE-RENDER")
-      );
+      const reRenderCalls = (
+        PerformanceMonitor.log as jest.Mock
+      ).mock.calls.filter((call) => call[0].includes("RE-RENDER"));
       expect(reRenderCalls.length).toBe(0);
     });
   });
@@ -122,10 +124,7 @@ describe("usePerformance hooks", () => {
       const testData = { id: 1, name: "Test" };
       const asyncFn = jest.fn().mockResolvedValue(testData);
 
-      const returnValue = await result.current.trackAsync(
-        "fetchData",
-        asyncFn
-      );
+      const returnValue = await result.current.trackAsync("fetchData", asyncFn);
 
       expect(returnValue).toEqual(testData);
     });
@@ -239,7 +238,9 @@ describe("usePerformance hooks", () => {
 
       result.current.trackPageChange(3);
 
-      expect(PerformanceMonitor.log).toHaveBeenCalledWith("📄 PAGE CHANGE: → 3");
+      expect(PerformanceMonitor.log).toHaveBeenCalledWith(
+        "📄 PAGE CHANGE: → 3"
+      );
     });
 
     it("should track search queries", () => {

@@ -76,14 +76,14 @@ Time:        ~15-20s
 
 ### Coverage by File
 
-| File                    | Statements | Branches | Functions | Lines  |
-|-------------------------|------------|----------|-----------|--------|
-| PlayerFormModal.tsx     | 94.44%     | 82.2%    | 100%      | 94.28% |
-| usePerformance.ts       | 100%       | 100%     | 100%      | 100%   |
-| performance.ts          | 62.96%     | 37.5%    | 100%      | 60%    |
-| PlayersTable.tsx        | 95%+       | 90%+     | 95%+      | 95%+   |
-| ToastContainer.tsx      | 77.27%     | 50%      | 60%       | 83.33% |
-| Overall                 | 87.6%      | 80.53%   | 86.7%     | 87.84% |
+| File                | Statements | Branches | Functions | Lines  |
+| ------------------- | ---------- | -------- | --------- | ------ |
+| PlayerFormModal.tsx | 94.44%     | 82.2%    | 100%      | 94.28% |
+| usePerformance.ts   | 100%       | 100%     | 100%      | 100%   |
+| performance.ts      | 62.96%     | 37.5%    | 100%      | 60%    |
+| PlayersTable.tsx    | 95%+       | 90%+     | 95%+      | 95%+   |
+| ToastContainer.tsx  | 77.27%     | 50%      | 60%       | 83.33% |
+| Overall             | 87.6%      | 80.53%   | 86.7%     | 87.84% |
 
 ### Generate Coverage Report
 
@@ -102,12 +102,14 @@ start coverage/lcov-report/index.html  # Windows
 ### PlayerFormModal Tests (22 tests)
 
 **Modal Rendering (4 tests)**
+
 - Renders in add mode with correct title
 - Renders in edit mode with pre-populated data
 - Does not render when `isOpen` is false
 - Fetches teams on modal open
 
 **Form Fields (5 tests)**
+
 - Renders all required form fields (name, jersey, position, team, etc.)
 - Populates form fields correctly in edit mode
 - Handles user input changes
@@ -115,11 +117,13 @@ start coverage/lcov-report/index.html  # Windows
 - Validates field types and requirements
 
 **Playoff Fields Toggle (3 tests)**
+
 - Shows playoff statistics fields when toggle clicked
 - Auto-shows playoff fields in edit mode if player has playoff stats
 - Hides playoff fields when toggle clicked again
 
 **Form Validation (5 tests)**
+
 - Shows validation errors for required fields
 - Validates jersey number range (0-99)
 - Validates weight is positive
@@ -127,6 +131,7 @@ start coverage/lcov-report/index.html  # Windows
 - Prevents submission with validation errors
 
 **Form Submission (5 tests)**
+
 - Successfully submits new player in add mode
 - Successfully updates existing player in edit mode
 - Handles API errors with user-friendly messages
@@ -136,6 +141,7 @@ start coverage/lcov-report/index.html  # Windows
 ### PlayersTable Tests (299 tests)
 
 **Component Rendering**
+
 - Initial table rendering with loading state
 - Data table with player rows
 - Column headers with sort indicators
@@ -143,6 +149,7 @@ start coverage/lcov-report/index.html  # Windows
 - Search and filter UI
 
 **Data Fetching & Display**
+
 - Fetches players on mount
 - Fetches column metadata for dynamic columns
 - Displays player data in table rows
@@ -150,6 +157,7 @@ start coverage/lcov-report/index.html  # Windows
 - Handles empty results gracefully
 
 **Search Functionality**
+
 - Text search across all fields
 - Field-specific search (name, position, team, etc.)
 - Search with debouncing
@@ -157,6 +165,7 @@ start coverage/lcov-report/index.html  # Windows
 - Search persistence across page changes
 
 **Filter Functionality**
+
 - Add/remove filters dynamically
 - Multiple filter combinations
 - Filter by different field types (string, number, boolean)
@@ -164,6 +173,7 @@ start coverage/lcov-report/index.html  # Windows
 - Clear all filters
 
 **Sorting**
+
 - Sort by any column
 - Ascending/descending order toggle
 - Visual sort indicators
@@ -171,6 +181,7 @@ start coverage/lcov-report/index.html  # Windows
 - Multi-column sort support
 
 **Pagination**
+
 - Navigate between pages
 - Change items per page (10, 20, 50, 100)
 - Correct page calculation
@@ -178,6 +189,7 @@ start coverage/lcov-report/index.html  # Windows
 - Total results display
 
 **CRUD Operations**
+
 - View player details modal
 - Edit player (opens form modal)
 - Delete player with confirmation
@@ -185,12 +197,14 @@ start coverage/lcov-report/index.html  # Windows
 - Success/error toast notifications
 
 **Column Management**
+
 - Show/hide columns dynamically
 - Column visibility persistence
 - Toggle individual columns
 - Reset to default columns
 
 **Error Handling**
+
 - API error display
 - Network error recovery
 - Invalid data handling
@@ -202,17 +216,20 @@ start coverage/lcov-report/index.html  # Windows
 **usePerformance Hooks (20 tests)**
 
 `useComponentPerformance`:
+
 - Logs component mount events
 - Logs component unmount with lifetime
 - Tracks render count and re-renders
 - Does not log on first render
 
 `useAsyncPerformance`:
+
 - Tracks successful async operations
 - Tracks failed async operations with proper cleanup
 - Returns correct result from async function
 
 `useFetchPerformance`:
+
 - Starts fetch tracking with timer
 - Marks response received checkpoint
 - Marks data processed checkpoint
@@ -221,6 +238,7 @@ start coverage/lcov-report/index.html  # Windows
 - Tracks complete fetch lifecycle
 
 `useInteractionTracking`:
+
 - Tracks button clicks
 - Tracks page changes
 - Tracks search queries
@@ -229,6 +247,7 @@ start coverage/lcov-report/index.html  # Windows
 **Performance Utilities (18 tests)**
 
 `PerformanceMonitor`:
+
 - Logs messages with/without duration
 - Starts named timers
 - Ends timers and calculates duration
@@ -236,17 +255,20 @@ start coverage/lcov-report/index.html  # Windows
 - Handles missing timers gracefully
 
 `@timed Decorator`:
+
 - Tracks async method execution time
 - Tracks methods even if they throw errors
 - Preserves method return values
 
 `trackApiCall Function`:
+
 - Wraps and tracks API calls
 - Handles successful/failed API calls
 - Passes arguments through correctly
 - Preserves function return types
 
 `RenderTracker`:
+
 - Logs render start on construction
 - Logs render complete with duration
 - Tracks render duration accurately
@@ -340,10 +362,11 @@ Tests are configured through `react-scripts` with the following setup:
 ### setupTests.ts
 
 ```typescript
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 ```
 
 Imports jest-dom matchers for convenient assertions like:
+
 - `toBeInTheDocument()`
 - `toHaveTextContent()`
 - `toBeVisible()`
@@ -392,6 +415,7 @@ Failing to meet these thresholds will cause the CI pipeline to fail.
 ### Common Issues
 
 **1. Tests Not Found**
+
 ```bash
 # Clear Jest cache
 npm test -- --clearCache
@@ -401,6 +425,7 @@ ls src/__tests__/*.test.tsx
 ```
 
 **2. Module Not Found Errors**
+
 ```bash
 # Reinstall dependencies
 rm -rf node_modules package-lock.json
@@ -408,6 +433,7 @@ npm install
 ```
 
 **3. Timeout Errors**
+
 ```typescript
 // Increase timeout for slow tests
 it("slow test", async () => {
@@ -416,6 +442,7 @@ it("slow test", async () => {
 ```
 
 **4. Mock Not Working**
+
 ```typescript
 // Clear mocks between tests
 beforeEach(() => {
@@ -428,9 +455,10 @@ mockedAxios.get.mockResolvedValue({ data: newMockData });
 ```
 
 **5. State Updates After Test**
+
 ```typescript
 // Wrap async operations in act()
-import { act } from '@testing-library/react';
+import { act } from "@testing-library/react";
 
 act(() => {
   // Code that updates state
@@ -453,16 +481,19 @@ npm test -- --silent=false
 ## 📚 Additional Resources
 
 ### React Testing Library
+
 - [Official Documentation](https://testing-library.com/docs/react-testing-library/intro/)
 - [Cheat Sheet](https://testing-library.com/docs/react-testing-library/cheatsheet/)
 - [Common Mistakes](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library)
 
 ### Jest
+
 - [Jest Documentation](https://jestjs.io/docs/getting-started)
 - [Jest Matchers](https://jestjs.io/docs/expect)
 - [Mock Functions](https://jestjs.io/docs/mock-functions)
 
 ### User Event
+
 - [User Event API](https://testing-library.com/docs/user-event/intro)
 - [Pointer Interactions](https://testing-library.com/docs/user-event/pointer)
 - [Keyboard Interactions](https://testing-library.com/docs/user-event/keyboard)
@@ -540,11 +571,13 @@ describe("MyComponent", () => {
 ### Coverage Goals
 
 - **High Priority** (90%+ coverage):
+
   - Core components (PlayersTable, PlayerFormModal)
   - CRUD operations and API interactions
   - Search and filter functionality
 
 - **Medium Priority** (80%+ coverage):
+
   - UI components (Toast, Modal)
   - Helper utilities
   - Type definitions

@@ -75,7 +75,9 @@ describe("PlayerFormModal", () => {
       renderModal();
 
       await waitFor(() => {
-        expect(screen.getByRole("heading", { name: "Add Player" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("heading", { name: "Add Player" })
+        ).toBeInTheDocument();
       });
     });
 
@@ -83,14 +85,18 @@ describe("PlayerFormModal", () => {
       renderModal({ mode: "edit", player: mockPlayer });
 
       await waitFor(() => {
-        expect(screen.getByRole("heading", { name: "Edit Player" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("heading", { name: "Edit Player" })
+        ).toBeInTheDocument();
       });
     });
 
     it("should not render when isOpen is false", () => {
       renderModal({ isOpen: false });
 
-      expect(screen.queryByRole("heading", { name: "Add Player" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: "Add Player" })
+      ).not.toBeInTheDocument();
     });
 
     it("should fetch teams when modal opens", async () => {
@@ -131,7 +137,9 @@ describe("PlayerFormModal", () => {
         expect(nameInput.value).toBe("Test Player");
       });
 
-      const jerseyInput = screen.getByLabelText(/Jersey Number/i) as HTMLInputElement;
+      const jerseyInput = screen.getByLabelText(
+        /Jersey Number/i
+      ) as HTMLInputElement;
       expect(jerseyInput.value).toBe("99");
     });
 
@@ -172,14 +180,20 @@ describe("PlayerFormModal", () => {
       renderModal();
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Add Playoff Statistics" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Add Playoff Statistics" })
+        ).toBeInTheDocument();
       });
 
-      const toggleButton = screen.getByRole("button", { name: "Add Playoff Statistics" });
+      const toggleButton = screen.getByRole("button", {
+        name: "Add Playoff Statistics",
+      });
       await userEvent.click(toggleButton);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Hide Playoff Statistics" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Hide Playoff Statistics" })
+        ).toBeInTheDocument();
       });
     });
 
@@ -187,7 +201,9 @@ describe("PlayerFormModal", () => {
       renderModal({ mode: "edit", player: mockPlayer });
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Hide Playoff Statistics" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Hide Playoff Statistics" })
+        ).toBeInTheDocument();
       });
     });
 
@@ -195,21 +211,31 @@ describe("PlayerFormModal", () => {
       renderModal();
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Add Playoff Statistics" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Add Playoff Statistics" })
+        ).toBeInTheDocument();
       });
 
-      const addButton = screen.getByRole("button", { name: "Add Playoff Statistics" });
+      const addButton = screen.getByRole("button", {
+        name: "Add Playoff Statistics",
+      });
       await userEvent.click(addButton);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Hide Playoff Statistics" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Hide Playoff Statistics" })
+        ).toBeInTheDocument();
       });
 
-      const hideButton = screen.getByRole("button", { name: "Hide Playoff Statistics" });
+      const hideButton = screen.getByRole("button", {
+        name: "Hide Playoff Statistics",
+      });
       await userEvent.click(hideButton);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Add Playoff Statistics" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Add Playoff Statistics" })
+        ).toBeInTheDocument();
       });
     });
   });
@@ -219,7 +245,9 @@ describe("PlayerFormModal", () => {
       renderModal();
 
       await waitFor(() => {
-        expect(screen.getByRole("heading", { name: "Add Player" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("heading", { name: "Add Player" })
+        ).toBeInTheDocument();
       });
 
       const submitButton = screen.getByRole("button", { name: "Add Player" });
@@ -352,7 +380,9 @@ describe("PlayerFormModal", () => {
         expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
       });
 
-      const submitButton = screen.getByRole("button", { name: "Update Player" });
+      const submitButton = screen.getByRole("button", {
+        name: "Update Player",
+      });
       await userEvent.click(submitButton);
 
       await waitFor(() => {
@@ -409,7 +439,10 @@ describe("PlayerFormModal", () => {
 
     it("should disable submit button while submitting", async () => {
       mockedAxios.post.mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve({ data: mockPlayer }), 100))
+        () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve({ data: mockPlayer }), 100)
+          )
       );
 
       renderModal();
@@ -441,7 +474,9 @@ describe("PlayerFormModal", () => {
 
       // Button should show submitting state
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Submitting..." })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Submitting..." })
+        ).toBeInTheDocument();
       });
     });
   });
@@ -451,7 +486,9 @@ describe("PlayerFormModal", () => {
       renderModal();
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /Cancel/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /Cancel/i })
+        ).toBeInTheDocument();
       });
 
       const cancelButton = screen.getByRole("button", { name: /Cancel/i });

@@ -31,7 +31,9 @@ describe("PerformanceMonitor", () => {
     });
 
     it("should be callable with message and duration", () => {
-      expect(() => PerformanceMonitor.log("Test operation", 123.45)).not.toThrow();
+      expect(() =>
+        PerformanceMonitor.log("Test operation", 123.45)
+      ).not.toThrow();
     });
   });
 
@@ -56,12 +58,16 @@ describe("PerformanceMonitor", () => {
 
   describe("checkpoint", () => {
     it("should be callable", () => {
-      expect(() => PerformanceMonitor.checkpoint("timer", "checkpoint")).not.toThrow();
+      expect(() =>
+        PerformanceMonitor.checkpoint("timer", "checkpoint")
+      ).not.toThrow();
     });
 
     it("should work with existing timer", () => {
       PerformanceMonitor.startTimer("testTimer");
-      expect(() => PerformanceMonitor.checkpoint("testTimer", "midpoint")).not.toThrow();
+      expect(() =>
+        PerformanceMonitor.checkpoint("testTimer", "midpoint")
+      ).not.toThrow();
       PerformanceMonitor.endTimer("testTimer");
     });
   });

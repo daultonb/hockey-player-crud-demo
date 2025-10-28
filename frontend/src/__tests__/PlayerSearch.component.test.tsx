@@ -34,12 +34,10 @@ jest.mock("../types/Player", () => ({
 describe("PlayerSearch Component", () => {
   const mockOnSearch = jest.fn();
   const mockOnClear = jest.fn();
-  const mockOnOpenFilters = jest.fn();
 
   const defaultProps = {
     onSearch: mockOnSearch,
     onClear: mockOnClear,
-    onOpenFilters: mockOnOpenFilters,
   };
 
   beforeEach(() => {
@@ -72,9 +70,6 @@ describe("PlayerSearch Component", () => {
       expect(
         screen.getByRole("button", { name: /^search$/i })
       ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: /open filters/i })
-      ).toBeInTheDocument();
     });
 
     /*
@@ -87,24 +82,6 @@ describe("PlayerSearch Component", () => {
       expect(screen.getByRole("combobox")).toBeDisabled();
       expect(screen.getByRole("textbox")).toBeDisabled();
       expect(screen.getByRole("button", { name: /^search$/i })).toBeDisabled();
-      expect(
-        screen.getByRole("button", { name: /open filters/i })
-      ).toBeDisabled();
-    });
-
-    /*
-     * Tests that the active filters count is displayed correctly on the filter
-     * button and updates the button's appearance and accessibility attributes.
-     */
-    test("displays active filters count when provided", () => {
-      render(<PlayerSearch {...defaultProps} activeFiltersCount={3} />);
-
-      const filterButton = screen.getByRole("button", {
-        name: /open filters \(3 active\)/i,
-      });
-      expect(filterButton).toBeInTheDocument();
-      expect(filterButton).toHaveClass("has-filters");
-      expect(screen.getByText("3")).toBeInTheDocument();
     });
 
     /*
@@ -410,7 +387,7 @@ describe("PlayerSearch Component", () => {
      * accessibility attributes for screen reader compatibility.
      */
     test("has proper accessibility attributes", () => {
-      render(<PlayerSearch {...defaultProps} activeFiltersCount={2} />);
+      render(<PlayerSearch {...defaultProps} />);
 
       expect(screen.getByRole("combobox")).toHaveAttribute(
         "aria-label",
@@ -424,9 +401,6 @@ describe("PlayerSearch Component", () => {
         "aria-label",
         "Search"
       );
-      expect(
-        screen.getByRole("button", { name: /open filters/i })
-      ).toHaveAttribute("aria-label", "Open filters (2 active)");
     });
   });
 
@@ -492,52 +466,6 @@ describe("PlayerSearch Component", () => {
   });
 
   // @component
-  describe("Filter Button Functionality", () => {
-    /*
-     * Tests that clicking the filter button calls the onOpenFilters callback
-     * function to open the filtering interface.
-     */
-    test("calls onOpenFilters when filter button is clicked", async () => {
-      render(<PlayerSearch {...defaultProps} />);
-
-      const filterButton = screen.getByRole("button", {
-        name: /open filters/i,
-      });
-      await userEvent.click(filterButton);
-
-      expect(mockOnOpenFilters).toHaveBeenCalled();
-    });
-
-    /*
-     * Tests that the filter button displays the correct visual indicator
-     * and styling when active filters are present.
-     */
-    test("shows active filter count and styling", () => {
-      render(<PlayerSearch {...defaultProps} activeFiltersCount={5} />);
-
-      const filterButton = screen.getByRole("button", {
-        name: /open filters \(5 active\)/i,
-      });
-      expect(filterButton).toHaveClass("has-filters");
-      expect(screen.getByText("5")).toBeInTheDocument();
-    });
-
-    /*
-     * Tests that the filter button shows no count indicator when there
-     * are no active filters applied.
-     */
-    test("shows no count when no active filters", () => {
-      render(<PlayerSearch {...defaultProps} activeFiltersCount={0} />);
-
-      const filterButton = screen.getByRole("button", {
-        name: /open filters$/i,
-      });
-      expect(filterButton).not.toHaveClass("has-filters");
-      expect(screen.queryByText("0")).not.toBeInTheDocument();
-    });
-  });
-
-  // @component
   describe("Disabled State Handling", () => {
     /*
      * Tests that when disabled prop is true, all user interactions are
@@ -551,19 +479,14 @@ describe("PlayerSearch Component", () => {
       const submitButton = screen.getByRole("button", {
         name: /^search$/i,
       });
-      const filterButton = screen.getByRole("button", {
-        name: /open filters/i,
-      });
 
       await userEvent.type(searchInput, "test");
       await userEvent.selectOptions(fieldSelector, "name");
       await userEvent.click(submitButton);
-      await userEvent.click(filterButton);
 
       expect(searchInput).toHaveValue("");
       expect(fieldSelector).toHaveValue("all");
       expect(mockOnSearch).not.toHaveBeenCalled();
-      expect(mockOnOpenFilters).not.toHaveBeenCalled();
     });
 
     /*
