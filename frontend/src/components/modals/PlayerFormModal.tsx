@@ -44,6 +44,24 @@ interface FormErrors {
   [key: string]: string;
 }
 
+// Map full position names from DB to abbreviations used in form
+const POSITION_NAME_TO_ABBREV: Record<string, string> = {
+  Center: "C",
+  "Left Wing": "LW",
+  "Right Wing": "RW",
+  Defense: "D",
+  Goalie: "G",
+};
+
+// Map abbreviations to full names for sending to API
+const POSITION_ABBREV_TO_NAME: Record<string, string> = {
+  C: "Center",
+  LW: "Left Wing",
+  RW: "Right Wing",
+  D: "Defense",
+  G: "Goalie",
+};
+
 const PlayerFormModal: React.FC<PlayerFormModalProps> = ({
   isOpen,
   onClose,
@@ -97,10 +115,13 @@ const PlayerFormModal: React.FC<PlayerFormModalProps> = ({
 
   useEffect(() => {
     if (isOpen && mode === "edit" && player) {
+      // Convert full position name from DB to abbreviation for the form
+      const positionAbbrev =
+        POSITION_NAME_TO_ABBREV[player.position] || player.position;
       setFormData({
         name: player.name,
         jersey_number: String(player.jersey_number),
-        position: player.position,
+        position: positionAbbrev,
         team_id: String(player.team.id),
         nationality: player.nationality,
         birth_date: player.birth_date,
@@ -252,10 +273,14 @@ const PlayerFormModal: React.FC<PlayerFormModalProps> = ({
       setSubmitting(true);
 
       try {
+        // Convert position abbreviation back to full name for API
+        const positionFullName =
+          POSITION_ABBREV_TO_NAME[formData.position] || formData.position;
+
         const payload: PlayerCreate | PlayerUpdate = {
           name: formData.name.trim(),
           jersey_number: parseInt(formData.jersey_number),
-          position: formData.position,
+          position: positionFullName,
           team_id: parseInt(formData.team_id),
           nationality: formData.nationality.trim(),
           birth_date: formData.birth_date,
@@ -376,7 +401,7 @@ const PlayerFormModal: React.FC<PlayerFormModalProps> = ({
               onChange={handleInputChange}
               className={`form-select ${errors.position ? "error" : ""}`}
             >
-              <option value="">Select position</option>
+              {mode === "add" && <option value="">Select position</option>}
               {POSITION_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
