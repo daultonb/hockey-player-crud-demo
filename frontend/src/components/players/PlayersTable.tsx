@@ -24,6 +24,8 @@ import {
   useInteractionTracking,
 } from "../../hooks/usePerformance";
 import { PerformanceMonitor } from "../../utils/performance";
+import HelpButton from "../help/HelpButton";
+import HelpPanel from "../help/HelpPanel";
 
 const PlayersTable: React.FC = () => {
   // Performance tracking hooks
@@ -73,6 +75,9 @@ const PlayersTable: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [deletingPlayer, setDeletingPlayer] = useState<Player | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  // Help panel state
+  const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
 
   const apiBaseUrl =
     process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8000";
@@ -658,13 +663,12 @@ const PlayersTable: React.FC = () => {
       <PlayerSearch
         onSearch={handleSearch}
         onClear={() => handleSearch("", "all")}
-        onOpenFilters={handleOpenFilters}
         disabled={searchLoading}
-        activeFiltersCount={currentFilters.length}
       />
 
       <div className="table-top-bar">
         <div className="top-bar-left">
+          <HelpButton onClick={() => setIsHelpOpen(true)} />
           <button
             type="button"
             className="add-player-button"
@@ -844,6 +848,8 @@ const PlayersTable: React.FC = () => {
         player={deletingPlayer}
         isDeleting={isDeleting}
       />
+
+      <HelpPanel isOpen={isHelpOpen} onClose={() => setIsHelpOpen(false)} />
     </div>
   );
 };

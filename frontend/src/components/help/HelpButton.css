@@ -1,0 +1,70 @@
+.help-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.help-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.help-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.help-button:focus {
+  outline: 2px solid #0056b3;
+  outline-offset: 2px;
+}
+
+.help-button-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.help-button-text {
+  font-size: 0.95rem;
+}
+
+/* Responsive Design - Mobile */
+@media (max-width: 768px) {
+  .help-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .help-button-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .help-button-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* Very small screens - show icon only */
+@media (max-width: 480px) {
+  .help-button-text {
+    display: none;
+  }
+
+  .help-button {
+    padding: 10px;
+    border-radius: 50%;
+  }
+}
